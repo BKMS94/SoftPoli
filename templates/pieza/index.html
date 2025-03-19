@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Gestor de Piezas{% endblock title %}
+
+{% block content %}
+
+<a href="{% url "pieza_crear" %}">Crear</a>
+<form action="{% url 'pieza_index' %}" method="get">
+    <input type="search" name="search" placeholder="Buscar pieza...">
+    <input type="submit" value="Buscar">
+</form>
+
+<table>
+    <tr>
+       <th>Nombre</th>
+        <th>Stock</th>
+        <th>Nro. Reordenar</th>
+        <th>Acciones</th>
+    </tr>
+    {% for pieza in piezas %}
+    <tr>
+        <td>{{ pieza.nombre}}</td>
+        <td>{{pieza.cantidad_stock}}</td>
+        <td>{{pieza.reorder}}</td>
+        {% include "componentes/botones.html" with modelo=pieza %}
+    </tr>
+    {% endfor %}
+
+</table>
+{% include "componentes/pagination.html" with page=piezas %}
+{% endblock content %}
+
+

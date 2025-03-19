@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Grados{% endblock title %}
+{% block content %}
+
+<a href="{% url "grado_crear" %}">Crear</a>
+<form action="{% url 'grado_lista' %}" method="get">
+    <input type="search" name="search" placeholder="Buscar grado...">
+    <input type="submit" value="Buscar">
+</form>
+
+    <h1>GESTION GRADOS</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+            {% for grado in grados %}
+            <tr>
+                <td>{{ grado.id }}</td>
+                <td>{{ grado.nombre }}</td>
+                {% include "componentes/botones.html" with modelo=grado %}
+            </tr>
+            {% endfor %}    
+        </table>
+            
+    {% include "componentes/pagination.html" with page=grados %}
+{% endblock content %}

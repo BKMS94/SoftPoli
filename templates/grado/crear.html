@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %} Crear Grado {% endblock title %}
+
+{% block content %}
+<form action="" method='post'>
+    {% csrf_token %}    
+    {{ form.as_table }}
+    <input type="submit" value="Crear">
+    <a href="{% url 'grado_lista' %}">Cancelar</a>
+</form>
+    
+{% endblock content %}

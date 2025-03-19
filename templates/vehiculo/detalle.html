@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %} {{ vehiculo.placa }} {% endblock title %}
+
+{% block content %}
+    <h2>{{ vehiculo.placa }}</h2>
+    <h2>{{ vehiculo.marca }}</h2>
+    <h2>{{ vehiculo.modelo }}</h2>
+    <h2>{{ vehiculo.anio }}</h2>
+    <h2>{{ vehiculo.kilometraje }}</h2>
+    <h2>{{ vehiculo.created }}</h2>
+
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %} {{ tecnico.nombre }} {% endblock title %}
+
+{% block content %}
+    <h2>{{ tecnico.codigo }}</h2>
+    <h2>{{ tecnico.nombre }}</h2>
+    <h2>{{ tecnico.grado }}</h2>
+    <h2>{{ tecnico.telefono }}</h2>
+
+{% endblock content %}

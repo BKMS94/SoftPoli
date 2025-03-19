@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion Técnicos{% endblock title %}
+
+{% block content %}
+    <h1>GESTION TECNICOS</h1>
+    <a href="{% url 'tecnico_crear' %}">Crear</a>
+
+    <div>
+        <form action="">
+        <input type="search" name="search" placeholder="Buscar tecnico ...">
+        <input type="submit" name="buscar" value="Buscar">
+        </form>
+    </div>
+    
+    <table>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Grado</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+        {% for tecnico in tecnicos %}
+        <tr>
+            <td>{{tecnico.codigo}}</td>
+            <td>{{tecnico.nombre}}</td>
+            <td>{{tecnico.grado}}</td>
+            <td>{{tecnico.telefono}}</td>
+            {% include "componentes/botones.html" with modelo=tecnico %}
+        </tr>
+        {% endfor %}
+        
+    </table>
+    {% include "componentes/pagination.html" with page=tecnicos %}
+{% endblock content %}

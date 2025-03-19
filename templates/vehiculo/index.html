@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Gestor de Vehículos{% endblock title %}
+
+{% block content %}
+
+<a href="{% url "vehiculo_crear" %}">Crear</a>
+<form action="{% url 'vehiculo_index' %}" method="get">
+    <input type="search" name="search" placeholder="Buscar vehículo...">
+    <input type="submit" value="Buscar">
+</form>
+
+<table>
+    <tr>
+       <th>Placa</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Año</th>
+        <th>Kilometraje</th>
+        <th>Acciones</th>
+    </tr>
+    {% for vehiculo in vehiculos %}
+    <tr>
+        <td>{{ vehiculo.placa}}</td>
+        <td>{{vehiculo.marca}}</td>
+        <td>{{vehiculo.modelo}}</td>
+        <td>{{vehiculo.anio}}</td>
+        <td>{{vehiculo.kilometraje}}</td>
+        {% include "componentes/botones.html" with modelo=vehiculo %}
+    </tr>
+    {% endfor %}
+
+</table>
+{% include "componentes/pagination.html" with page=vehiculos %}
+{% endblock content %}
+
+

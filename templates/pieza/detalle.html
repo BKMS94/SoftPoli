@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %} {{ pieza.nombre }} {% endblock title %}
+
+{% block content %}
+    <h2>{{ pieza.nombre }}</h2>
+    <h2>{{ pieza.cantidad_stock }}</h2>
+    <h2>{{ pieza.reorder }}</h2>
+
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} {{ servicio.vehiculo }} {% endblock title %}
+
+{% block content %}
+<h2>{{ servicio.vehiculo }}</h2>
+<h2>{{ servicio.tecnico }}</h2>
+<h2>{{ servicio.persona }}</h2>
+<h2>{{ servicio.kilometraje_act }}</h2>
+<h2>{{ servicio.kilometraje_diff }}</h2>
+<h2>{{ servicio.descripcion }}</h2>
+<h2>{{ servicio.costo }}</h2>
+<h2>{{ servicio.fecha }}</h2>
+
+{% endblock content %}

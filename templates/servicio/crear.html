@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Servicio{% endblock title %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" id="id_kilometraje_vehiculo">
+    <button type="button" onclick="calcularDiferencia()">Calcular Diferencia de Kilometraje</button>
+    <button type="submit">Guardar</button>
+    <a href="{% url 'servicio_lista' %}">Cancelar</a>
+</form>
+
+<script>
+document.getElementById("id_vehiculo").addEventListener("change", function() {
+    // Step 1: Get the selected vehicle ID
+    var vehiculoId = this.value;
+    
+    // Step 2: Fetch the mileage data for the selected vehicle
+    fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
+        .then(response => response.json()) // Step 3: Parse the JSON response
+        .then(data => {
+            // Step 4: Update the hidden input field with the fetched mileage data
+            document.getElementById("id_kilometraje_vehiculo").value = data.kilometraje;
+        });
+});
+</script>
+{% endblock content %}
+

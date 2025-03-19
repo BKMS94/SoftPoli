@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Pieza{% endblock title %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Crear">
+    <a href="{% url 'pieza_index'%}">Cancelar</a>
+</form>
+{% endblock content %}

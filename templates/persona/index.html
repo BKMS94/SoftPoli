@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion Personas{% endblock title %}
+
+{% block content %}
+    <h1>GESTION PERSONAS</h1>
+    <a href="{% url 'persona_crear' %}">Crear</a>
+
+    <div>
+        <form action="">
+        <input type="search" name="search" placeholder="Buscar persona ...">
+        <input type="submit" name="buscar" value="Buscar">
+        </form>
+    </div>
+    
+    <table>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Grado</th>
+            <th>Teléfono</th>
+            <th>Es Técnico?</th>
+            <th>Acciones</th>
+        </tr>
+        {% for persona in personas %}
+        <tr>
+            <td>{{persona.codigo}}</td>
+            <td>{{persona.nombre}}</td>
+            <td>{{persona.grado}}</td>
+            <td>{{persona.telefono}}</td>
+            <td>
+                {% if persona.estecnico %}
+                Si
+                {% else %}
+                No
+                {% endif %}</td>
+            {% include "componentes/botones.html" with modelo=persona %}
+        </tr>
+        {% endfor %}
+        
+    </table>
+    {% include "componentes/pagination.html" with page=personas %}
+{% endblock content %}
