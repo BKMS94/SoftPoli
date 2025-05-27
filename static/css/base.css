@@ -1,3 +1,47 @@
-body {
-    background-color: #80af8a;
-}
+
+        body { background: #9DB2BF; }
+
+        .sidebar {
+            background: #27374D;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .sidebar .nav-link, .sidebar .nav-link.active {
+            color: #fff;
+            font-weight: 500;
+        }
+        .sidebar .nav-link.active {
+            background: #526D82;
+            border-radius: 8px;
+        }
+        .card-summary {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px #0001;
+        }
+        .tab-content {
+            background: #DDE6ED;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .table thead { background: #f5f6fa; }
+
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                min-height: auto;
+            }
+            .sidebar .nav-link {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 767.98px) {
+            .sidebar {
+                display: none;
+            }
+            main {
+                padding-left: 0 !important;
+            }
+        }

@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock title %}
+{% block content %}
+                    <div class="tab-content">
+
+            <div class="row mb-4 g-3">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="card card-summary p-3 h-100">
+                        <div>Vehículos en Servicio</div>
+                        <h3>8</h3>
+                        <small class="text-success">↑ 12% desde el mes pasado</small>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="card card-summary p-3 h-100">
+                        <div>Servicios Completados</div>
+                        <h3>24</h3>
+                        <small class="text-success">↑ 8% desde el mes pasado</small>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="card card-summary p-3 h-100">
+                        <div>Mantenimientos Pendientes</div>
+                        <h3>5</h3>
+                        <small class="text-danger">↑ 2 desde la semana pasada</small>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="card card-summary p-3 h-100">
+                        <div>Productos Bajos en Stock</div>
+                        <h3>12</h3>
+                        <small class="text-danger">↑ 4 desde la semana pasada</small>
+                    </div>
+                </div>
+            </div>
+            <!-- Registrar Nuevo Servicio -->
+            <div class="card p-4 mb-4">
+                <h4 class="mb-4">Registrar Nuevo Servicio</h4>
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label">Cliente</label>
+                            <select class="form-select">
+                                <option>Seleccionar cliente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Servicio</label>
+                            <input type="date" class="form-control" placeholder="dd/mm/yyyy">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label">Vehículo</label>
+                            <select class="form-select">
+                                <option>Seleccionar vehículo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Técnico Asignado</label>
+                            <select class="form-select">
+                                <option>Seleccionar técnico</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label">Tipo de Servicio</label>
+                            <select class="form-select">
+                                <option>Seleccionar servicio</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Observaciones</label>
+                            <textarea class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <h6 class="mt-4 mb-2">Materiales a Utilizar</h6>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-select">
+                                            <option>Seleccionar</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control" value="1" min="1"></td>
+                                    <td><input type="text" class="form-control" value="$25.00"></td>
+                                    <td>$25.00</td>
+                                    <td><button type="button" class="btn btn-link text-danger">✖</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="#" class="text-primary mb-3 d-inline-block">+ Agregar material</a>
+                    <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-3">
+                        <button type="button" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Servicio</button>
+                    </div>
+                </form>
+            </div>
+                    </div>
+            <!-- Tabs and tables -->
+            <div class="row">
+                <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                    <div class="tab-content">
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item"><a class="nav-link active" href="#">Próximos</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Historial</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Programar</a></li>
+                        </ul>
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Mantenimientos Preventivos</h5>
+                                <button class="btn btn-primary btn-sm">+ Nuevo</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehículo</th>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Toyota Corolla (ABC-123)</td>
+                                            <td>Juan Pérez</td>
+                                            <td>Cambio de aceite</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Honda Civic (XYZ-789)</td>
+                                            <td>María González</td>
+                                            <td>Revisión general</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ford Focus (DEF-456)</td>
+                                            <td>Carlos Rodríguez</td>
+                                            <td>Alineación</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav>
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled"><a class="page-link" href="#">‹</a></li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">›</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="tab-content">
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item"><a class="nav-link active" href="#">Inventario</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Movimientos</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Proveedores</a></li>
+                        </ul>
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Inventario de Materiales</h5>
+                                <button class="btn btn-primary btn-sm">+ Nuevo</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Categoría</th>
+                                            <th>Stock</th>
+                                            <th>Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Aceite 10W-40</td>
+                                            <td>Lubricantes</td>
+                                            <td>15 L</td>
+                                            <td>$250</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Filtro de aceite</td>
+                                            <td>Filtros</td>
+                                            <td>8 unidades</td>
+                                            <td>$120</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pastillas de freno</td>
+                                            <td>Frenos</td>
+                                            <td>4 juegos</td>
+                                            <td>$450</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav>
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled"><a class="page-link" href="#">‹</a></li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">›</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://unpkg.com/@tailwindcss/browser@4"></script> -->
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+    {% include 'componentes/navegador.html' %}
+    <div>{% block content %}{% endblock content %}</div>
+    <script src="{% static 'js/calculo.js' %}"></script>
+</body>
+</html>
