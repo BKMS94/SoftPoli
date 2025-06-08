@@ -3,27 +3,58 @@
 {% block title %}Grados{% endblock title %}
 {% block content %}
 
-<a href="{% url "grado_crear" %}">Crear</a>
-<form action="{% url 'grado_lista' %}" method="get">
-    <input type="search" name="search" placeholder="Buscar grado...">
-    <input type="submit" value="Buscar">
-</form>
+<div class="container">
+    <div class="row mb-2 text-center">
+        <h5>GESTION GRADOS</h5>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-xl-8 col-md-7 col-sm-5">
+            <form action="{% url 'grado_lista' %}" method="get">
 
-    <h1>GESTION GRADOS</h1>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-            {% for grado in grados %}
-            <tr>
-                <td>{{ grado.id }}</td>
-                <td>{{ grado.nombre }}</td>
-                {% include "componentes/botones.html" with modelo=grado %}
-            </tr>
-            {% endfor %}    
-        </table>
-            
-    {% include "componentes/pagination.html" with page=grados %}
+                <input class="form-control w-100 w-md-25" type="search" name="search" placeholder="Buscar grado...">
+
+        </div>
+        <div class="col-lg-4 col-xl-4 col-md-5 col-sm-7 align-items-space ">
+            <input class="btn btn-light px-4" type="submit" value="Buscar">
+            <a href="{% url 'grado_crear' %}" class="btn btn-success btn-sm px-4 ms-4">+ Nuevo</a>
+        </div>
+
+        </form>
+    </div>
+
+    <div class="mt-4 row">
+        <div class="col-12 col-lg-12 my-4 mb-lg-0">
+            <div class="tab-content">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grado in grados %}
+                        <tr>
+                            <td>{{ grado.id }}</td>
+                            <td>{{ grado.nombre }}</td>
+                            {% include "componentes/botones.html" with modelo=grado %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                {% include "componentes/pagination.html" with page=grados %}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}

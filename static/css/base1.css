@@ -1,0 +1,26 @@
+:root{
+--Primary-color: #333;
+--Text-color: #ffffffc9;
+
+}
+
+
+nav{
+  background-color: var(--Primary-color);
+  color: var(--Text-color);
+  
+}
+
+nav ul li:hover{
+  background-color: var(--Text-color);
+  color: var(--Primary-color);
+}
+
+table{
+  border: solid 1px rgba(0, 0, 0, 0.5);
+  
+}
+
+td span a {
+  width: 80px;
+}

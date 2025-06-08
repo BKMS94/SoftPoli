@@ -1,27 +1,37 @@
-        <!-- Sidebar -->
-        <nav class="col-lg-2 d-none d-lg-block sidebar py-4">
-            <div class="text-center mb-4">
-                <h4>Maestranza</h4>
-                <small>Sistema de Gestión</small>
-            </div>
-            <ul class="nav flex-column mb-4">
-                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'vehiculo_index' %}">Vehículos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'persona_index' %}">Clientes</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'servicio_lista' %}">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Inventario</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Facturas</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
-            </ul>
-            <div class="mt-auto">
-                <hr>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="#">Ajustes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
-                </ul>
-                <div class="mt-4 text-center">
-                    <strong>Admin</strong><br>
-                    <small>Gerente</small>
-                </div>
-            </div>
-        </nav>
+<!-- Sidebar -->
+<nav class="col-lg-2 d-none d-xl-block sidebar py-4 vh-100">
+  <div class="text-center">
+    <h4>Maestranza</h4>
+    <small>Sistema de Gestión</small>
+    <hr />
+  </div>
+  <ul class="navbar-nav flex-column mb-4 text-center">
+    <li class="navbar-item">
+      <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'vehiculo_index' %}">Vehículos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'persona_index' %}">Clientes</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'servicio_lista' %}">Servicios</a>
+    </li>
+    <li class=""><a class="nav-link" href="{% url 'grado_lista' %}">Grados</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Facturas</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
+    <!-- </ul> -->
+
+    <hr />
+    <!-- <ul class="navbar-nav flex-column"> -->
+    <li class="nav-item"><a class="nav-link" href="#">Ajustes</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
+  </ul>
+  <hr />
+  <div class="mt-4 text-center">
+    <strong>Admin</strong><br />
+    <small>Gerente</small>
+  </div>
+
+</nav>

@@ -1,30 +1,40 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Sistema Maestranza</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <title>Sistema Maestranza</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{% static 'css/base1.css' %}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
 </head>
-<body>
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-    {% include 'componentes/navegador.html' %}
-        <!-- Main content -->
-        <main class="col-lg-10 col-12 ms-sm-auto px-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3 pb-2 mb-3 gap-3">
-                <h2 class="mb-0">{% block title %}{% endblock title %}</h2>
-                <!-- <input class="form-control w-100 w-md-25" type="search" placeholder="Buscar..."> -->
-            </div>
-            <!-- Summary cards -->
-            {% block content %}{% endblock content %}    
-    </main>
-    </div>
-</div>
-    <script src="{% static 'js/calculo.js' %}"></script>
 
+<body>
+  <!-- Nav -->
+  <div class="container-fluid ">
+    <div class="row">
+      {% include 'componentes/navegador.html' %}
+      <section class="col mb-0 p-5">
+        {% block content %}{% endblock content %}
+      </section>
+    </div>
+  </div>
+
+  <!-- Main content -->
+
+  <!-- <input class="form-control w-100 w-md-25" type="search" placeholder="Buscar..."> -->
+
+  <!-- Summary cards -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+    crossorigin="anonymous"></script>
+
+  <script src="{% static 'js/calculo.js' %}"></script>
 </body>
+
 </html>

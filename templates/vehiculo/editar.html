@@ -1,14 +1,13 @@
-{% extends "base.html" %}
+{% extends "componentes/formulario.html" %}
 
 {% block title %}Editar: {{vehiculo.placa}}{% endblock title %}
 
 
-{% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{form.as_table}}
-        <input type="submit" value="Editar">
-        <a href="{% url 'vehiculo_index' %}">Cancelar</a>
-    </form>
+{% block formtit %} Editar Vehículo: {{vehiculo.placa}}{% endblock formtit %}
 
-{% endblock content %}
+{% block formulario %}
+{% csrf_token %}
+{{form}}
+<input class="btn btn-success" type="submit" value="Editar">
+<a class="btn btn-danger" href="{% url 'vehiculo_index'%}">Cancelar</a>
+{% endblock formulario %}

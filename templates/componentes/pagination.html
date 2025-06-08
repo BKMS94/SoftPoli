@@ -1,14 +1,13 @@
-<div class="pagination justify-content-center">
-    <spam class="step_links">
+<div class="pagination justify-content-center ">
+    <spam class="mx-auto step_links nav">
         {% if page.has_previous %}
-        <a href="?page={{ page.previous_page_number }}">Atras</a>
+        <a class="nav-link" href="?page={{ page.previous_page_number }}">Atras</a>
         {% endif %}
-        <span class="current">
-            Pagina {{page.number}}  de {{page.paginator.num_pages}}. 
+        <span class="current mt-2 ">
+            Pagina {{page.number}} de {{page.paginator.num_pages}}.
         </span>
         {% if page.has_next %}
-        <a href="?page={{ page.next_page_number }}">Siguiente   </a>
+        <a class="nav-link" href="?page={{ page.next_page_number }}">Siguiente </a>
         {% endif %}
     </spam>
 </div>
-
