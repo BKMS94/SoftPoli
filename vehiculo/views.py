@@ -16,7 +16,9 @@ def vehiculo_lista(request):
         vehiculos = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         vehiculos = paginator.page(1)
-    context = {'vehiculos': vehiculos}
+    context = {'vehiculos': vehiculos,
+               'urlindex': 'vehiculo_index',
+               'urlcrear': 'vehiculo_crear'}
     return render(request, 'vehiculo/index.html', context)
 
 def vehiculo_crear(request):

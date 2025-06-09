@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row mb-2 text-center">
+        <h5>{% block titabla %}{% endblock titabla %}
+        </h5>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-xl-8 col-md-7 col-sm-5">
+            <form action="{% url urlindex %}" method="get">
+
+                <input class="form-control w-100 w-md-25" type="search" name="search" placeholder="Buscar...">
+
+        </div>
+        <div class="col-lg-4 col-xl-4 col-md-5 col-sm-7 align-items-space ">
+            <input class="btn btn-light px-4" type="submit" value="Buscar">
+            <a href="{% url urlcrear %}" class="btn btn-success btn-sm px-4 ms-4">+
+                Nuevo</a>
+        </div>
+
+        </form>
+    </div>
+
+    <div class="mt-4 row">
+        <div class="col-12 col-lg-12 my-4 mb-lg-0">
+            <div class="tab-content">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% block Thead %}{% endblock Thead %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% block tbody %}{% endblock tbody %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            {% block tfoot %}{% endblock tfoot %}
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

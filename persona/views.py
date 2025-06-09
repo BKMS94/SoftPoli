@@ -15,7 +15,9 @@ def persona_index(request):
         personas = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         personas = paginator.page(1)
-    context = {'personas': personas}
+    context = {'personas': personas,
+               'urlindex': 'persona_index',
+               'urlcrear': 'persona_crear'}
     return render(request, 'persona/index.html', context)
 
 def persona_crear(request):

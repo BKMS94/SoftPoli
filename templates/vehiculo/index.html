@@ -1,70 +1,32 @@
-{% extends "base.html" %}
+{% extends "componentes/tablas.html" %}
 
-{% block title %}Gestor de Vehículos{% endblock title %}
-
-{% block content %}
-
-<section class="col mb-0 p-5">
-    <div class="container">
-        <div class="row mb-5 text-center">
-            <h4>Gestión de Vehículos</h4>
-        </div>
-        <div class="row">
-            <div class="col-lg-9 col-md-7">
-                <form action="{% url 'vehiculo_index' %}" method="get">
-
-                    <input class="form-control w-100 w-md-25" type="search" name="search"
-                        placeholder="Buscar vehículo...">
-
-            </div>
-            <div class="col-lg-3 col-md-5 align-items-space"><input class="btn btn-light px-4" type="submit"
-                    value="Buscar">
-                <a href="{% url 'vehiculo_crear' %}" class="btn btn-success btn-sm px-4 ms-4">+ Nuevo</a>
-            </div>
-
-            </form>
-        </div>
+{% block title %}Gestión de Vehículos{% endblock title %}
 
 
-        <div class="mt-4 row ">
-            <div class="col-12 col-lg-12 my-4 mb-lg-0 ">
-                <div class="tab-content">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Placa</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                                <th>Año</th>
-                                <th>Kilometraje</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for vehiculo in vehiculos %}
-                            <tr>
-                                <td>{{ vehiculo.placa}}</td>
-                                <td>{{vehiculo.marca}}</td>
-                                <td>{{vehiculo.modelo}}</td>
-                                <td>{{vehiculo.anio}}</td>
-                                <td>{{vehiculo.kilometraje}}</td>
-                                {% include "componentes/botones.html" with modelo=vehiculo %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <td colspan="7">{% include "componentes/pagination.html" with page=vehiculos %}</td>
-                            </tr>
-                        </tfoot>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+{% block titabla %}Gestión de Vehículos{% endblock titabla %}
 
 
-</section>
-{% endblock content %}
+{% block Thead %}
+<th>Placa</th>
+<th>Marca</th>
+<th>Modelo</th>
+<th>Año</th>
+<th>Kilometraje</th>
+<th>Acciones</th>
+{% endblock Thead %}
+
+{% block tbody %}
+{% for vehiculo in vehiculos %}
+<tr>
+    <td>{{ vehiculo.placa}}</td>
+    <td>{{vehiculo.marca}}</td>
+    <td>{{vehiculo.modelo}}</td>
+    <td>{{vehiculo.anio}}</td>
+    <td>{{vehiculo.kilometraje}}</td>
+    {% include "componentes/botones.html" with modelo=vehiculo %}
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% block tfoot %}
+<td colspan="6">{% include "componentes/pagination.html" with page=vehiculos %}</td>
+{% endblock tfoot %}

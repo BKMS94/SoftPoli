@@ -1,14 +1,13 @@
-{% extends "base.html" %}
+{% extends "componentes/formulario.html" %}
 
-{% block title %}Editar: {{pieza.nombre}}{% endblock title %}
+{% block title %} Editar: {{pieza.nombre}} {% endblock title %}
 
 
-{% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{form.as_table}}
-        <input type="submit" value="Editar">
-        <a href="{% url 'pieza_index' %}">Cancelar</a>
-    </form>
+{% block formtit %} Editar: {{pieza.nombre}} {% endblock formtit %}
 
-{% endblock content %}
+{% block formulario %}
+{% csrf_token %}
+{{ form.as_table }}
+<input class="btn btn-primary" type="submit" value="Actualizar">
+<a class="btn btn-danger" href="{% url 'pieza_index' %}">Cancelar</a>
+{% endblock formulario %}

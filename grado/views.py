@@ -18,7 +18,9 @@ def grado_lista(request):
         grados = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         grados = paginator.page(1)
-    content = {'grados': grados}
+    content = {'grados': grados,
+               'urlindex': 'vehiculo_index',
+               'urlcrear': 'vehiculo_crear'}
     return render(
         request, 'grado/lista.html', content
     )

@@ -16,7 +16,9 @@ def pieza_lista(request):
     except PageNotAnInteger:
         piezas = paginator.page(1)
     
-    context = {'piezas':piezas} 
+    context = {'piezas':piezas,
+               'urlindex': 'pieza_index',
+               'urlcrear': 'pieza_crear'} 
     return render(request, 'pieza/index.html', context)
 
 def pieza_crear(request):
