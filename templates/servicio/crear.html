@@ -1,30 +1,92 @@
-{% extends "base.html" %}
+{% extends "componentes/formulario.html" %}
 
 {% block title %}Crear Servicio{% endblock title %}
 
-{% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="hidden" id="id_kilometraje_vehiculo">
-    <button type="button" onclick="calcularDiferencia()">Calcular Diferencia de Kilometraje</button>
-    <button type="submit">Guardar</button>
-    <a href="{% url 'servicio_lista' %}">Cancelar</a>
-</form>
 
+{% block formtit %} Crear Servicio {% endblock formtit %}
+
+{% block formulario %}
+{% csrf_token %}
+{{ form.as_p }}
+{{ form.media }}
+
+<h5>Piezas a Utilizar</h5>
+{{ formset.management_form }}
+<div class="table-responsive">
+    <table class="table" id="movimientos-table">
+        <thead>
+            <tr>
+                <th>Pieza</th>
+                <th>Cantidad</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in formset %}
+            <tr>
+                <td>{{ f.pieza }}</td>
+                <td>{{ f.cantidad }}</td>
+                <td>
+                    {% if formset.can_delete %}
+                    {{ f.DELETE }} <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="#" id="add-movimiento-btn" class="btn btn-link">+ Agregar pieza</a>
+<br>
+<input type="hidden" id="id_kilometraje_vehiculo">
+<button class="btn btn-warning" type="button" onclick="calcularDiferencia()">Calcular Diferencia de Kilometraje</button>
+<button class="btn btn-success" type="submit">Crear</button>
+<a class="btn btn-danger" href="{% url 'servicio_lista' %}">Cancelar</a>
+{% endblock formulario %}
+
+{% block script %}
 <script>
-document.getElementById("id_vehiculo").addEventListener("change", function() {
-    // Step 1: Get the selected vehicle ID
-    var vehiculoId = this.value;
-    
-    // Step 2: Fetch the mileage data for the selected vehicle
-    fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
-        .then(response => response.json()) // Step 3: Parse the JSON response
-        .then(data => {
-            // Step 4: Update the hidden input field with the fetched mileage data
-            document.getElementById("id_kilometraje_vehiculo").value = data.kilometraje;
-        });
-});
-</script>
-{% endblock content %}
+    document.getElementById("id_vehiculo").addEventListener("change", function () {
+        // Step 1: Get the selected vehicle ID
+        var vehiculoId = this.value;
 
+        // Step 2: Fetch the mileage data for the selected vehicle
+        fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
+            .then(response => response.json()) // Step 3: Parse the JSON response
+            .then(data => {
+                // Step 4: Update the hidden input field with the fetched mileage data
+                document.getElementById("id_kilometraje_vehiculo").value = data.kilometraje;
+            });
+    });
+
+
+    // Lógica para agregar filas dinámicamente
+    document.addEventListener('DOMContentLoaded', function () {
+        const addBtn = document.getElementById('add-movimiento-btn');
+        const table = document.getElementById('movimientos-table').getElementsByTagName('tbody')[0];
+        const totalForms = document.getElementById('id_movimientostock_set-TOTAL_FORMS');
+        addBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const currentForms = parseInt(totalForms.value);
+            const newForm = table.rows[0].cloneNode(true);
+            // Limpiar los valores del nuevo formulario
+            Array.from(newForm.querySelectorAll('input, select')).forEach(input => {
+                if (input.type === 'checkbox') input.checked = false;
+                else input.value = '';
+                // Cambiar los atributos name y id para el nuevo índice
+                if (input.name) input.name = input.name.replace(/-\d+-/, `-${currentForms}-`);
+                if (input.id) input.id = input.id.replace(/-\d+-/, `-${currentForms}-`);
+            });
+            table.appendChild(newForm);
+            totalForms.value = currentForms + 1;
+        });
+        // Eliminar fila (opcional)
+        table.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-row') && table.rows.length > 1) {
+                e.target.closest('tr').remove();
+                totalForms.value = table.rows.length;
+            }
+        });
+    });
+</script>
+{% endblock script %}

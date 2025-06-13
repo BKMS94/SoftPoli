@@ -1,0 +1,153 @@
+{% block piezas%}
+
+
+<h2 class="col">Piezas a Utilizar</h2>
+
+<div class="table-responsive">
+    <table class="table table-bordered" id="movimientos-table">
+        <thead>
+            <tr>
+                <th>Pieza</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {# Este es el espacio para los formularios del formset #}
+            {% for item_form in formset %}
+            <tr class="formset-row {% if item_form.instance.pk %}existing-row{% else %}empty-row{% endif %}">
+                {# Renderiza los campos ocultos de management del formset #}
+                {# Estos son cruciales para que Django sepa qué formulario corresponde a qué instancia #}
+                {{ item_form.management_form }}
+                {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+
+                <td>
+                    {# Campo de selección de pieza #}
+                    {{ item_form.pieza }}
+                    {% if item_form.pieza.errors %}
+                    <div class="text-danger small">{{ item_form.pieza.errors }}</div>
+                    {% endif %}
+                </td>
+                <td>
+                    {# Campo de cantidad #}
+                    {{ item_form.cantidad }}
+                    {% if item_form.cantidad.errors %}
+                    <div class="text-danger small">{{ item_form.cantidad.errors }}</div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if formset.can_delete %}
+                    {# Checkbox para eliminar la fila #}
+                    <label>
+                        {{ item_form.DELETE }}
+                        <button type="button" class="btn btn-danger btn-sm remove-row-btn ms-2" aria-label="Eliminar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </button>
+                    </label>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Link para agregar nueva pieza #}
+<p><a href="#" id="add-movimiento-btn" class="text-decoration-none">+ Agregar pieza</a></p>
+
+{# Input oculto para la cuenta total de formularios (importante para formsets) #}
+{# Este es el management_form del formset principal, es CRUCIAL que esté presente #}
+{{ formset.management_form }}
+
+
+</div>
+
+{# Script JavaScript para la funcionalidad dinámica #}
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const movimientosTable = document.getElementById('movimientos-table');
+        const addMovimientoBtn = document.getElementById('add-movimiento-btn');
+        const totalFormsInput = document.querySelector('input[name="{{ formset.management_form.prefix }}-TOTAL_FORMS"]');
+        const formsetPrefix = '{{ formset.management_form.prefix }}'; // Usar el prefijo del formset de management
+
+        // Función para clonar una fila vacía y añadirla
+        function addFormsetRow(e) {
+            if (e) e.preventDefault();
+
+            const currentForms = parseInt(totalFormsInput.value);
+            const newFormIndex = currentForms;
+
+            // Clona la primera fila existente como plantilla
+            const tbody = movimientosTable.querySelector('tbody');
+            const sampleRow = tbody.querySelector('tr');
+            let newRow = sampleRow.cloneNode(true);
+
+            // Limpiar clases y valores del clon
+            newRow.classList.remove('existing-row');
+            newRow.classList.add('empty-row');
+
+            newRow.querySelectorAll('input, select').forEach(input => {
+                if (input.type !== 'hidden' && input.type !== 'checkbox') {
+                    input.value = ''; // Limpia el valor de la pieza y cantidad
+                }
+                if (input.type === 'checkbox') {
+                    input.checked = false; // Desmarca el checkbox DELETE si se clonó de una fila eliminada
+                }
+            });
+
+            // Reemplazar el prefijo en los atributos 'name', 'id' y 'for'
+            // Es esencial para que Django reconozca los nuevos campos
+            // Utilizamos un patrón de reemplazo más seguro para evitar conflictos si '__prefix__' aparece en otros lugares
+            const regex = new RegExp(`${formsetPrefix}-(\\d+|__prefix__)-`, 'g');
+            newRow.innerHTML = newRow.innerHTML.replace(regex, `${formsetPrefix}-${newFormIndex}-`);
+
+            newRow.querySelectorAll('[name*="__prefix__"], [id*="__prefix__"], [for*="__prefix__"]').forEach(element => {
+                if (element.name) {
+                    element.name = element.name.replace(`__prefix__`, newFormIndex);
+                }
+                if (element.id) {
+                    element.id = element.id.replace(`__prefix__`, newFormIndex);
+                }
+                if (element.htmlFor) { // Para etiquetas <label>
+                    element.htmlFor = element.htmlFor.replace(`__prefix__`, newFormIndex);
+                }
+            });
+
+            // Añadir la nueva fila a la tabla
+            tbody.appendChild(newRow);
+
+            // Incrementar el TOTAL_FORMS para que Django sepa cuántos formularios hay
+            totalFormsInput.value = currentForms + 1;
+
+            // Re-adjuntar eventos a los nuevos elementos (principalmente el botón de eliminar)
+            attachRowEvents(newRow);
+        }
+
+        // Función para adjuntar eventos a una fila (útil para filas nuevas y existentes)
+        function attachRowEvents(row) {
+            const deleteCheckbox = row.querySelector('input[type="checkbox"][id$="-DELETE"]');
+            const removeButton = row.querySelector('.remove-row-btn');
+
+            if (removeButton && deleteCheckbox) {
+                removeButton.addEventListener('click', function () {
+                    deleteCheckbox.checked = true;
+                    row.style.display = 'none'; // Ocultar la fila visualmente
+                });
+            }
+        }
+
+        // Adjuntar eventos a todas las filas existentes cuando la página carga
+        movimientosTable.querySelectorAll('tbody tr').forEach(row => {
+            attachRowEvents(row);
+        });
+
+        // Adjuntar evento al botón "Agregar pieza"
+        addMovimientoBtn.addEventListener('click', addFormsetRow);
+    });
+</script>
+
+{% endblock piezas%}

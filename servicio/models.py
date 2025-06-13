@@ -10,7 +10,6 @@ class Servicio(models.Model):
     descripcion = models.TextField(null=False, blank=False)
     kilometraje_act = models.IntegerField(default=0, null=False, blank=False)
     kilometraje_diff= models.IntegerField(default=0)
-    costo = models.DecimalField(max_digits=12,decimal_places=2)
     vehiculo = models.ForeignKey(Vehiculo, on_delete= models.CASCADE)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE)
@@ -35,7 +34,8 @@ class MovimientoStock(models.Model):
     
 
     def __str__(self):
-        return self.pieza
+        return f"{self.cantidad} x {self.pieza.nombre} en Servicio {self.servicio.id}"
+
     
     def get_detalle_url(self):
         return reverse('movimiento_detalle', args=[self.id])

@@ -1,40 +1,36 @@
-{% extends "base.html" %}
+{% extends "componentes/tablas.html" %}
 
-{% block title %}Lista de Servicios{% endblock title %}
+{% block title %}Gestión Servicios{% endblock title %}
 
-{% block content %}
-<a href="{% url 'servicio_crear' %}">Crear Servicio</a>
-<table>
-    <tr>
-        <th>Vehículo</th>
-        <th>Técnico</th>
-        <th>Persona</th>
-        <th>Km. Actual</th>
-        <th>Km. Diferencia</th>
-        <th>Descripción</th>
-        <th>Costo</th>
-        <th>Fecha</th>
-        
-        <th>Acciones</th>
-    </tr>
-    {% for servicio in servicios %}
-    <tr>
-        <td>{{ servicio.vehiculo }}</td>
-        <td>{{ servicio.tecnico }}</td>
-        <td>{{ servicio.persona }}</td>
-        <td>{{ servicio.kilometraje_act }}</td>
-        <td>{{ servicio.kilometraje_diff }}</td>
-        <td>{{ servicio.descripcion }}</td>
-        <td>{{ servicio.costo }}</td>
-        <td>{{ servicio.fecha }}</td>
 
-        <td>
-            <a href="{% url 'servicio_detalle' servicio.id %}">Ver</a>
-            <a href="{% url 'servicio_editar' servicio.id %}">Editar</a>
-            <a href="{% url 'servicio_borrar' servicio.id %}">Borrar</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% include "componentes/pagination.html" with page=servicios %}
-{% endblock content %}
+{% block titabla %}Gestión Servicios{% endblock titabla %}
+
+
+{% block Thead %}
+<th>Vehículo</th>
+<th>Técnico</th>
+<th>Persona</th>
+<th>Km. Actual</th>
+<!-- <th>Km. Diferencia</th> -->
+<th>Descripción</th>
+<th>Fecha</th>
+<th>Acciones</th>
+{% endblock Thead %}
+
+{% block tbody %}
+{% for servicio in servicios %}
+<tr>
+    <td>{{ servicio.vehiculo }}</td>
+    <td>{{ servicio.tecnico }}</td>
+    <td>{{ servicio.persona }}</td>
+    <td>{{ servicio.kilometraje_act }}</td>
+    <!-- <td>{{ servicio.kilometraje_diff }}</td> -->
+    <td>{{ servicio.descripcion }}</td>
+    <td>{{ servicio.fecha }}</td>
+    {% include "componentes/botones.html" with modelo=servicio %}
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% block tfoot %}
+<td colspan="7">{% include "componentes/pagination.html" with page=servicios %}</td>
+{% endblock tfoot %}

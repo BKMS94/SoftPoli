@@ -13,10 +13,10 @@ class PersonaForm(ModelForm):
         }
 
         widgets = {
-            'codigo':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe tu código'}),
-            'nombre':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe tu nombre'}),
+            'codigo':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el código'}),
+            'nombre':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el nombre'}),
             'grado':forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
-            'telefono':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe tu teléfono'}),
+            'telefono':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el teléfono'}),
         }
         
 class TecnicoForm(ModelForm):
@@ -27,6 +27,12 @@ class TecnicoForm(ModelForm):
         labels = {
             'codigo': 'Código',
             'telefono': 'Teléfono',
+        }
+        widgets = {
+            'codigo':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el código'}),
+            'nombre':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el nombre'}),
+            'grado':forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
+            'telefono':forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el teléfono'}),
         }
         
 

@@ -65,7 +65,9 @@ def tecnico_index(request):
         tecnicos = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         tecnicos = paginator.page(1)
-    context = {'tecnicos': tecnicos}
+    context = {'tecnicos': tecnicos,
+               'urlindex': 'tecnico_index',
+               'urlcrear': 'tecnico_crear'}
     return render(request, 'tecnico/index.html', context)
 
 def tecnico_crear(request):

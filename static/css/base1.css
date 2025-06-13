@@ -1,20 +1,11 @@
 :root{
 --Primary-color: #333;
 --Text-color: #ffffffc9;
-
+--sidebar-width-bs5: 250px; /* Ancho de la barra lateral para Bootstrap 5 */
 }
 
 
-nav{
-  background-color: var(--Primary-color);
-  color: var(--Text-color);
-  
-}
 
-nav ul li:hover{
-  background-color: var(--Text-color);
-  color: var(--Primary-color);
-}
 
 table{
   border: solid 1px rgba(0, 0, 0, 0.5);
@@ -23,4 +14,80 @@ table{
 
 td span a {
   width: 80px;
+}
+
+
+
+/* Estilos personalizados para el sidebar de Bootstrap */
+.sidebar-bs5 {
+    width: var(--sidebar-width-bs5);
+    /* Opcional: para un scroll interno si el menú es muy largo */
+    overflow-y: auto;
+    /* Sombra sutil para el sidebar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    /* Asegura que el contenido del nav no tenga padding extra si no es un div #*/
+    padding: 0;
+    background-color: var(--Primary-color);
+    color: var(--Text-color);
+  }
+
+
+/* Ajusta el margen del contenido principal para dejar espacio al sidebar fijo */
+.main-content-wrapper-bs5 {
+    margin-left: var(--sidebar-width-bs5);
+    min-height: 100vh; /* Asegura que el main-content ocupe al menos la altura de la vista */
+    background-color: #f8f9fa; /* Color de fondo de la página principal */
+    /* Asegúrate de que el padding del main-content se gestione aquí o en la clase de Bootstrap 'p-4' */
+}
+
+/* Estilos para los enlaces del sidebar */
+/* Asumo que 'navegador.html' contendrá una estructura de lista tipo nav-pills */
+.sidebar-bs5 .nav-link {
+    color: #ecf0f1; /* Texto claro */
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-bs5 .nav-link:hover {
+    background-color: var(--Text-color); /* Fondo oscuro al pasar el ratón */
+    color: var(--Primary-color); /* Mantener color de texto al pasar el ratón */
+}
+
+.sidebar-bs5 .nav-link.active {
+    background-color: #3498db; /* Color de fondo para el elemento activo (azul) */
+    font-weight: bold;
+}
+
+/* Estilo para los títulos de sección dentro del sidebar (como "Configuración") */
+.sidebar-section-title-bs5 {
+    color: #bdc3c7;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 20px 5px; /* Espaciado */
+    margin-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1); /* Línea divisoria */
+    padding-top: 15px;
+}
+
+/* Estilo para el título principal del sistema (como "Sistema de Gestión") */
+.system-title-bs5 {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+    color: #ecf0f1; /* Asegurar que el título sea visible */
+    padding-top: 20px; /* Añadir padding superior para que no se pegue al borde */
+}
+
+/* Estilos para el footer del sidebar (Admin/Gerente) */
+.sidebar-footer-bs5 {
+    position: absolute; /* Permite posicionarlo respecto a su padre fixed */
+    bottom: 20px;       /* Lo pega a 20px del fondo del sidebar */
+    width: 100%;        /* Ocupa el ancho completo del sidebar */
+    text-align: center;
+    font-size: 0.9em;
+    color: #bdc3c7;
 }

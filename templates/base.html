@@ -13,13 +13,15 @@
 
 <body>
   <!-- Nav -->
-  <div class="container-fluid ">
-    <div class="row">
+  <div class="d-flex">
+
+    <section class="col-xxl-2 sidebar-bs5 position-fixed top-0 start-0 vh-100 d-flex flex-column">
       {% include 'componentes/navegador.html' %}
-      <section class="col mb-0 p-5">
-        {% block content %}{% endblock content %}
-      </section>
-    </div>
+    </section>
+    <section class="col-xxl-10 main-content-wrapper-bs5 flex-grow-1 p-4">
+      {% block content %}{% endblock content %}
+    </section>
+
   </div>
 
   <!-- Main content -->
