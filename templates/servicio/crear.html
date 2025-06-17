@@ -1,90 +1,155 @@
 {% extends "componentes/formulario.html" %}
 
-{% block title %}Crear Servicio{% endblock title %}
+{% block title %}
+{% if modo == 'editar' %}
+Editar Servicio
+{% else %}
+Crear Servicio
+{% endif %}{% endblock title %}
 
 
 {% block formtit %} Crear Servicio {% endblock formtit %}
 
+
 {% block formulario %}
 {% csrf_token %}
-{{ form.as_p }}
 {{ form.media }}
 
-<h5>Piezas a Utilizar</h5>
-{{ formset.management_form }}
-<div class="table-responsive">
-    <table class="table" id="movimientos-table">
-        <thead>
-            <tr>
-                <th>Pieza</th>
-                <th>Cantidad</th>
-                <th>Eliminar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for f in formset %}
-            <tr>
-                <td>{{ f.pieza }}</td>
-                <td>{{ f.cantidad }}</td>
-                <td>
-                    {% if formset.can_delete %}
-                    {{ f.DELETE }} <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            {{ form.vehiculo.label_tag }}
+            {{ form.vehiculo }}
+        </div>
+        <div class="col-md-4 mb-3">
+            {{ form.persona.label_tag }}
+            {{ form.persona }}
+        </div>
+        <div class="col-md-4 mb-3">
+            {{ form.tecnico.label_tag }}
+            {{ form.tecnico }}
+        </div>
+    </div>
+    <input type="hidden" id="id_kilometraje_vehiculo" name="kilometraje_vehiculo" value="0">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form.kilometraje_act.label_tag }}
+            {{ form.kilometraje_act }}
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form.kilometraje_diff.label_tag }}
+            {{ form.kilometraje_diff }}
+        </div>
+    </div>
+    <div class="mb-3">
+        {{ form.descripcion.label_tag }}
+        {{ form.descripcion }}
+    </div>
+
+    <h5 class="mt-4">Piezas a Utilizar</h5>
+    {{ formset.management_form }}
+    <div class="table-responsive">
+        <table class="table align-middle" id="movimientos-table">
+            <thead>
+                <tr>
+                    <th>Pieza</th>
+                    <th>Cantidad</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in formset %}
+                <tr>
+                    <td class="align-middle">{{ f.pieza }}</td>
+                    <td class="align-middle">{{ f.cantidad }}</td>
+                    <td class="align-middle">
+                        {% if formset.can_delete %}
+                        {{ f.DELETE }} <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- Fila plantilla oculta para agregar dinámicamente -->
+                <tr id="empty-form-row" style="display:none;">
+                    <td class="align-middle">{{ formset.empty_form.pieza }}</td>
+                    <td class="align-middle">{{ formset.empty_form.cantidad }}</td>
+                    <td class="align-middle">
+                        {% if formset.can_delete %}
+                        {{ formset.empty_form.DELETE }} <button type="button"
+                            class="btn btn-danger btn-sm remove-row">X</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <a href="#" id="add-movimiento-btn" class="btn btn-link">+ Agregar pieza</a>
+    <div class="mt-4">
+        <button class="btn btn-success" type="submit">Guardar</button>
+        <a class="btn btn-danger" href="{% url 'servicio_lista' %}">Cancelar</a>
+    </div>
 </div>
-<a href="#" id="add-movimiento-btn" class="btn btn-link">+ Agregar pieza</a>
-<br>
-<input type="hidden" id="id_kilometraje_vehiculo">
-<button class="btn btn-warning" type="button" onclick="calcularDiferencia()">Calcular Diferencia de Kilometraje</button>
-<button class="btn btn-success" type="submit">Crear</button>
-<a class="btn btn-danger" href="{% url 'servicio_lista' %}">Cancelar</a>
 {% endblock formulario %}
+
 
 {% block script %}
 <script>
-    document.getElementById("id_vehiculo").addEventListener("change", function () {
-        // Step 1: Get the selected vehicle ID
-        var vehiculoId = this.value;
-
-        // Step 2: Fetch the mileage data for the selected vehicle
-        fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
-            .then(response => response.json()) // Step 3: Parse the JSON response
-            .then(data => {
-                // Step 4: Update the hidden input field with the fetched mileage data
-                document.getElementById("id_kilometraje_vehiculo").value = data.kilometraje;
-            });
-    });
-
-
-    // Lógica para agregar filas dinámicamente
-    document.addEventListener('DOMContentLoaded', function () {
-        const addBtn = document.getElementById('add-movimiento-btn');
-        const table = document.getElementById('movimientos-table').getElementsByTagName('tbody')[0];
-        const totalForms = document.getElementById('id_movimientostock_set-TOTAL_FORMS');
-        addBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const currentForms = parseInt(totalForms.value);
-            const newForm = table.rows[0].cloneNode(true);
-            // Limpiar los valores del nuevo formulario
-            Array.from(newForm.querySelectorAll('input, select')).forEach(input => {
-                if (input.type === 'checkbox') input.checked = false;
-                else input.value = '';
-                // Cambiar los atributos name y id para el nuevo índice
-                if (input.name) input.name = input.name.replace(/-\d+-/, `-${currentForms}-`);
-                if (input.id) input.id = input.id.replace(/-\d+-/, `-${currentForms}-`);
-            });
-            table.appendChild(newForm);
-            totalForms.value = currentForms + 1;
+    $(document).ready(function () {
+        // --- Cálculo de kilometraje ---
+        function calcularDiferencia() {
+            const kmAnterior = parseFloat($('#id_kilometraje_vehiculo').val()) || 0;
+            const kmActual = parseFloat($('#id_kilometraje_act').val()) || 0;
+            const diff = kmActual - kmAnterior;
+            $('#id_kilometraje_diff').val(diff >= 0 ? diff : 0);
+        }
+        $('#id_kilometraje_act').on('input', calcularDiferencia);
+        $('#id_vehiculo').on('change', function () {
+            const vehiculoId = $(this).val();
+            if (vehiculoId) {
+                fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        $('#id_kilometraje_vehiculo').val(data.kilometraje);
+                        calcularDiferencia();
+                    });
+            } else {
+                $('#id_kilometraje_vehiculo').val(0);
+                calcularDiferencia();
+            }
         });
-        // Eliminar fila (opcional)
-        table.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-row') && table.rows.length > 1) {
-                e.target.closest('tr').remove();
-                totalForms.value = table.rows.length;
+        if ($('#id_vehiculo').val()) {
+            $('#id_vehiculo').trigger('change');
+        }
+
+        // --- Agregar piezas dinámicamente usando la plantilla ---
+        const addBtn = $('#add-movimiento-btn');
+        const table = $('#movimientos-table tbody');
+        const totalForms = $('#id_movimientostock_set-TOTAL_FORMS');
+        const emptyRow = $('#empty-form-row');
+
+        addBtn.on('click', function (e) {
+            e.preventDefault();
+            const currentForms = parseInt(totalForms.val());
+            let newRowHtml = emptyRow.html().replace(/__prefix__/g, currentForms);
+            let newRow = $('<tr>' + newRowHtml + '</tr>');
+            // Re-inicializar select2/DAL para el nuevo select
+            newRow.find('select.django-autocomplete-light-widget').each(function () {
+                $(this).removeAttr('data-select2-id');
+                $(this).select2({ width: 'style' });
+            });
+            table.append(newRow);
+            console.log(currentForms)
+            totalForms.val(currentForms + 1);
+        });
+
+        // Eliminar fila (solo cuenta filas visibles, excluye la plantilla oculta)
+        table.on('click', '.remove-row', function () {
+            const visibleRows = table.find('tr').not('#empty-form-row');
+            if (visibleRows.length > 1) { // deja al menos una fila visible
+                $(this).closest('tr').remove();
+                totalForms.val(visibleRows.length - 1);
             }
         });
     });

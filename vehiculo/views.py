@@ -55,9 +55,10 @@ def vehiculo_borrar(request,id):
     vehiculo.delete()
     return redirect('vehiculo_index')
 
-def obtener_kilometraje(request, vehiculo_id):
-    vehiculo = get_object_or_404(Vehiculo, id=vehiculo_id)
-    data = {
-        'kilometraje': vehiculo.kilometraje
-    }
-    return JsonResponse(data)
+def vehiculo_kilometraje(request, pk):
+    try:
+        vehiculo = Vehiculo.objects.get(pk=pk)
+        kilometraje = vehiculo.kilometraje  # Ajusta el nombre del campo si es diferente
+    except Vehiculo.DoesNotExist:
+        kilometraje = 0
+    return JsonResponse({'kilometraje': kilometraje})

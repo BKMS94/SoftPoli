@@ -11,9 +11,9 @@ class ServicioForm(ModelForm):
         widgets = {
             'vehiculo':autocomplete.ModelSelect2(url='vehiculo-autocomplete', attrs={'class': 'form-control mb-4 mt-1'}),
             'persona':autocomplete.ModelSelect2(url='persona-autocomplete',attrs={'class': 'form-control mb-4 mt-1'}),
-            'tecnico':autocomplete.ModelSelect2(url='tecnico-autocomplete',attrs={'class': 'form-control mb-4 mt-1'}),
+            'tecnico':autocomplete.ModelSelect2(url='tecnico-autocomplete',attrs={'class': 'form-control mb-4 mt-1', 'readonly': True}),
             'kilometraje_act':forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1'}),
-            'kilometraje_diff':forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1'}),
+            'kilometraje_diff': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'readonly': True}),
             'descripcion':forms.Textarea(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la observación', 'rows':3}),
 
         }

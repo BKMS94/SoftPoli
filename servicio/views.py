@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from dal import autocomplete
 from django.db.models import Q
 from django.db import transaction
@@ -13,7 +14,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def servicio_lista(request):
     search_query = request.GET.get('search', '')
-    servicios = Servicio.objects.filter(Q(vehiculo__placa__icontains=search_query))
+    servicios = Servicio.objects.filter(Q(vehiculo__placa__icontains=search_query)) \
+                               .order_by('-fecha')
     paginator = Paginator(servicios, 10)
     page_number = request.GET.get('page', 1)
     try:
@@ -28,42 +30,72 @@ def servicio_lista(request):
                'search_query': search_query}
     return render(request, 'servicio/index.html', context)
 
-def servicio_crear(request):
+def servicio_form(request, id=None):
+    if id:
+        servicio = get_object_or_404(Servicio, id=id)
+        modo = 'editar'
+    else:
+        servicio = None
+        modo = 'crear'
+
+    print(modo)
+
     if request.method == 'POST':
-        form = ServicioForm(request.POST)
-        formset = MovimientoStockFormSet(request.POST)
+        form = ServicioForm(request.POST, instance=servicio)
+        formset = MovimientoStockFormSet(request.POST, instance=servicio)
         if form.is_valid() and formset.is_valid():
             try:
                 with transaction.atomic():
-                    # Guardar el servicio principal
                     servicio = form.save()
-                    # Asignar el servicio a cada movimiento y guardar el formset
+                    # Actualiza el kilometraje del vehículo si corresponde
+                    vehiculo = servicio.vehiculo
+                    nuevo_kilometraje = servicio.kilometraje_act
+                    if vehiculo.kilometraje < nuevo_kilometraje:
+                        vehiculo.kilometraje = nuevo_kilometraje
+                        vehiculo.save()
                     formset.instance = servicio
                     formset.save()
                 return redirect('servicio_lista')
             except Exception as e:
-                # Si algo falla, nada se guarda
                 print("Error:", e)
     else:
-        form = ServicioForm()
-        formset = MovimientoStockFormSet()
-    context = {'form': form, 'formset': formset,
-               'urlindex': 'servicio_lista',
-               'urlcrear': 'servicio_crear'} 
+        form = ServicioForm(instance=servicio)
+        formset = MovimientoStockFormSet(instance=servicio)
+
+    context = {
+        'form': form,
+        'formset': formset,
+        'servicio': servicio,
+        'modo': modo,
+    }
     return render(request, 'servicio/crear.html', context)
 
 
-def servicio_editar(request, id):
-    servicio = get_object_or_404(Servicio, id=id)
-    if request.method == 'POST':
-        form = ServicioForm(request.POST, instance=servicio)
-        if form.is_valid():
-            form.save()
-            return redirect('servicio_lista')
-    else:
-        form = ServicioForm(instance=servicio)
-    context = {'form': form, 'servicio': servicio}
-    return render(request, 'servicio/editar.html', context)
+# def servicio_editar(request, id):
+#     servicio = get_object_or_404(Servicio, id=id)
+#     if request.method == 'POST':
+#         form = ServicioForm(request.POST, instance=servicio)
+#         formset = MovimientoStockFormSet(request.POST, instance=servicio)
+#         if form.is_valid() and formset.is_valid():
+#             try:
+#                 with transaction.atomic():
+#                     servicio = form.save()
+#                     # Actualiza el kilometraje del vehículo si corresponde
+#                     vehiculo = servicio.vehiculo
+#                     nuevo_kilometraje = servicio.kilometraje_act
+#                     if vehiculo.kilometraje < nuevo_kilometraje:
+#                         vehiculo.kilometraje = nuevo_kilometraje
+#                         vehiculo.save()
+#                     formset.instance = servicio
+#                     formset.save()
+#                 return redirect('servicio_lista')
+#             except Exception as e:
+#                 print("Error:", e)
+#     else:
+#         form = ServicioForm(instance=servicio)
+#         formset = MovimientoStockFormSet(instance=servicio)
+#     context = {'form': form, 'formset': formset, 'servicio': servicio, 'modo': 'crear',}
+#     return render(request, 'servicio/editar.html', context)
 
 def servicio_detalle(request, id):
     servicio = get_object_or_404(Servicio, id=id)
