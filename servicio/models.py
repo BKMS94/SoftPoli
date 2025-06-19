@@ -8,14 +8,14 @@ from pieza.models import Pieza
 class Servicio(models.Model):
     fecha = models.DateTimeField(editable=False, auto_now=True)
     descripcion = models.TextField(null=False, blank=False)
-    kilometraje_act = models.IntegerField(default=0, null=False, blank=False)
-    kilometraje_diff= models.IntegerField(default=0)
+    kilometraje_act = models.PositiveIntegerField(default=0)
+    kilometraje_diff = models.PositiveIntegerField(default=0)
     vehiculo = models.ForeignKey(Vehiculo, on_delete= models.CASCADE)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.vehiculo
+        return f"Servicio {self.id} - {self.vehiculo.placa}"
 
     def get_detalle_url(self):
         return reverse('servicio_detalle', args=[self.id])
@@ -29,7 +29,7 @@ class Servicio(models.Model):
 class MovimientoStock(models.Model):
     pieza = models.ForeignKey(Pieza, on_delete=models.CASCADE)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
+    cantidad = models.PositiveIntegerField()
     fecha = models.DateTimeField(editable=None, auto_now=True)
     
 

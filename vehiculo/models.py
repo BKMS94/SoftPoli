@@ -5,12 +5,40 @@ from django.urls import reverse
 # Create your models here.
 
 class Vehiculo(models.Model):
-    placa = models.CharField(max_length=6, blank= None)
-    marca = models.CharField(max_length=50, blank= None)
-    modelo = models.CharField(max_length=50)
-    anio = models.IntegerField(blank= None)
-    kilometraje = models.IntegerField(blank=None)
-    created = models.DateTimeField(editable=None, auto_now=True)
+    placa = models.CharField(
+        max_length=6,
+        unique=True,
+        blank=False,
+        null=False,
+        verbose_name="Placa",
+        help_text="Placa única del vehículo"
+    )
+    marca = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
+        verbose_name="Marca"
+    )
+    modelo = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
+        verbose_name="Modelo"
+    )
+    anio = models.PositiveIntegerField(
+        blank=False,
+        null=False,
+        verbose_name="Año"
+    )
+    kilometraje = models.PositiveIntegerField(
+        blank=False,
+        null=False,
+        verbose_name="Kilometraje"
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        editable=False
+    )
 
     def __str__(self):
         return self.placa
@@ -23,4 +51,3 @@ class Vehiculo(models.Model):
     
     def get_borrar_url(self):
         return reverse('vehiculo_borrar', args=[self.id])
-    

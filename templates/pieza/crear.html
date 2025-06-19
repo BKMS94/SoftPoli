@@ -10,4 +10,10 @@
 {{form}}
 <input class="btn btn-success" type="submit" value="Crear">
 <a class="btn btn-danger" href="{% url 'pieza_index'%}">Cancelar</a>
+{% if form.errors %}
+  <div class="alert alert-danger">{{ form.errors }}</div>
+{% endif %}
+{% if formset.non_form_errors %}
+  <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+{% endif %}
 {% endblock formulario %}

@@ -15,11 +15,19 @@
 </head>
 
 <body>
+
   <div class="d-flex">
     <section class="col-xxl-2  col-sm-0 sidebar-bs5 position-fixed top-0 start-0 vh-100 d-flex flex-column">
       {% include 'componentes/navegador.html' %}
     </section>
     <section class="col-xxl-10 col-sm-12 main-content-wrapper-bs5 flex-grow-1 p-4">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} mt-2 mb-2">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
       {% block content %}{% endblock content %}
     </section>
   </div>

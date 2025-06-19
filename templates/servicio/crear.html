@@ -5,94 +5,134 @@
 Editar Servicio
 {% else %}
 Crear Servicio
-{% endif %}{% endblock title %}
+{% endif %}
+{% endblock title %}
 
-
-{% block formtit %} Crear Servicio {% endblock formtit %}
-
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Servicio
+{% else %}
+Crear Servicio
+{% endif %}
+{% endblock formtit %}
 
 {% block formulario %}
-{% csrf_token %}
-{{ form.media }}
+<form method="post" id="servicio-form">
+    {% csrf_token %}
+    {{ form.media }}
 
+    {% if formset.non_form_errors %}
+    <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+    {% endif %}
+    {% for f in formset %}
+    {% for field in f.visible_fields %}
+    {% for error in field.errors %}
+    <div class="alert alert-danger">
+        <strong>Pieza #{{ forloop.parentloop.counter }} - {{ field.label }}:</strong> {{ error }}
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
 
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% for field in form %}
+    {% for error in field.errors %}
+    <div class="alert alert-danger"><strong>{{ field.label }}:</strong> {{ error }}</div>
+    {% endfor %}
+    {% endfor %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            {{ form.vehiculo.label_tag }}
-            {{ form.vehiculo }}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.vehiculo.label_tag }}
+                {{ form.vehiculo }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.persona.label_tag }}
+                {{ form.persona }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.tecnico.label_tag }}
+                {{ form.tecnico }}
+            </div>
         </div>
-        <div class="col-md-4 mb-3">
-            {{ form.persona.label_tag }}
-            {{ form.persona }}
+        <input type="hidden" id="id_kilometraje_vehiculo" name="kilometraje_vehiculo" value="0">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.kilometraje_act.label_tag }}
+                {{ form.kilometraje_act }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.kilometraje_diff.label_tag }}
+                {{ form.kilometraje_diff }}
+            </div>
         </div>
-        <div class="col-md-4 mb-3">
-            {{ form.tecnico.label_tag }}
-            {{ form.tecnico }}
+        <div class="mb-3">
+            {{ form.descripcion.label_tag }}
+            {{ form.descripcion }}
         </div>
-    </div>
-    <input type="hidden" id="id_kilometraje_vehiculo" name="kilometraje_vehiculo" value="0">
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            {{ form.kilometraje_act.label_tag }}
-            {{ form.kilometraje_act }}
-        </div>
-        <div class="col-md-6 mb-3">
-            {{ form.kilometraje_diff.label_tag }}
-            {{ form.kilometraje_diff }}
-        </div>
-    </div>
-    <div class="mb-3">
-        {{ form.descripcion.label_tag }}
-        {{ form.descripcion }}
-    </div>
 
-    <h5 class="mt-4">Piezas a Utilizar</h5>
-    {{ formset.management_form }}
-    <div class="table-responsive">
-        <table class="table align-middle" id="movimientos-table">
-            <thead>
-                <tr>
-                    <th>Pieza</th>
-                    <th>Cantidad</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for f in formset %}
-                <tr>
-                    <td class="align-middle">{{ f.pieza }}</td>
-                    <td class="align-middle">{{ f.cantidad }}</td>
-                    <td class="align-middle">
-                        {% if formset.can_delete %}
-                        {{ f.DELETE }} <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                <!-- Fila plantilla oculta para agregar dinámicamente -->
-                <tr id="empty-form-row" style="display:none;">
-                    <td class="align-middle">{{ formset.empty_form.pieza }}</td>
-                    <td class="align-middle">{{ formset.empty_form.cantidad }}</td>
-                    <td class="align-middle">
-                        {% if formset.can_delete %}
-                        {{ formset.empty_form.DELETE }} <button type="button"
-                            class="btn btn-danger btn-sm remove-row">X</button>
-                        {% endif %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <h5 class="mt-4">Piezas a Utilizar</h5>
+        {{ formset.management_form }}
+        <div class="table-responsive">
+            <table class="table align-middle" id="movimientos-table">
+                <thead>
+                    <tr>
+                        <th>Pieza</th>
+                        <th>Cantidad</th>
+                        <th>Stock</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in formset %}
+                    <tr>
+                        {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+                        <td class="align-middle">{{ f.pieza }}</td>
+                        <td class="align-middle">{{ f.cantidad }}</td>
+                        <td class="align-middle">
+                            <span class="text-muted small stock-info">
+                                {% if f.instance.pieza %}(Stock: {{ f.instance.pieza.cantidad_stock }}){% else %}(Stock:
+                                -){% endif %}
+                            </span>
+                        </td>
+                        <td class="align-middle">
+                            {% if formset.can_delete %}
+                            {{ f.DELETE }} <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <!-- Fila plantilla oculta para agregar dinámicamente -->
+                    <tr id="empty-form-row" style="display:none;">
+                        {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <td class="align-middle">{{ formset.empty_form.pieza }}</td>
+                        <td class="align-middle">{{ formset.empty_form.cantidad }}</td>
+                        <td class="align-middle">
+                            <span class="text-muted small stock-info">(Stock: -)</span>
+                        </td>
+                        <td class="align-middle">
+                            {% if formset.can_delete %}
+                            {{ formset.empty_form.DELETE }} <button type="button"
+                                class="btn btn-danger btn-sm remove-row">X</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <a href="#" id="add-movimiento-btn" class="btn btn-link">+ Agregar pieza</a>
+        <div class="mt-4">
+            <button class="btn btn-success" type="submit">
+                {% if modo == 'editar' %}Actualizar{% else %}Guardar{% endif %}
+            </button>
+            <a class="btn btn-danger" href="{% url 'servicio_lista' %}">Cancelar</a>
+        </div>
     </div>
-    <a href="#" id="add-movimiento-btn" class="btn btn-link">+ Agregar pieza</a>
-    <div class="mt-4">
-        <button class="btn btn-success" type="submit">Guardar</button>
-        <a class="btn btn-danger" href="{% url 'servicio_lista' %}">Cancelar</a>
-    </div>
-</div>
+</form>
 {% endblock formulario %}
-
 
 {% block script %}
 <script>
@@ -123,6 +163,34 @@ Crear Servicio
             $('#id_vehiculo').trigger('change');
         }
 
+        // --- Stock dinámico ---
+        function actualizarStockEnFilas() {
+            $('#movimientos-table tbody tr').each(function () {
+                var row = $(this);
+                var selectPieza = row.find('select');
+                var stockSpan = row.find('.stock-info');
+                if (selectPieza.length && stockSpan.length) {
+                    selectPieza.off('change').on('change', function () {
+                        var piezaId = $(this).val();
+                        if (piezaId) {
+                            fetch(`/piezas/stock/${piezaId}/`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    stockSpan.text('(Stock: ' + data.stock + ')');
+                                });
+                        } else {
+                            stockSpan.text('(Stock: -)');
+                        }
+                    });
+                    // Trigger para mostrar stock inicial si ya hay valor
+                    if (selectPieza.val()) {
+                        selectPieza.trigger('change');
+                    }
+                }
+            });
+        }
+        actualizarStockEnFilas();
+
         // --- Agregar piezas dinámicamente usando la plantilla ---
         const addBtn = $('#add-movimiento-btn');
         const table = $('#movimientos-table tbody');
@@ -140,17 +208,20 @@ Crear Servicio
                 $(this).select2({ width: 'style' });
             });
             table.append(newRow);
-            console.log(currentForms)
             totalForms.val(currentForms + 1);
+            actualizarStockEnFilas();
         });
 
-        // Eliminar fila (solo cuenta filas visibles, excluye la plantilla oculta)
-        table.on('click', '.remove-row', function () {
-            const visibleRows = table.find('tr').not('#empty-form-row');
-            if (visibleRows.length > 1) { // deja al menos una fila visible
-                $(this).closest('tr').remove();
-                totalForms.val(visibleRows.length - 1);
+        // Eliminar fila con confirmación
+        table.on('click', '.remove-row', function (e) {
+            e.preventDefault();
+            if (!confirm('¿Estás seguro de eliminar esta pieza?')) return;
+            var row = $(this).closest('tr');
+            var checkbox = row.find('input[type=checkbox][name$="-DELETE"]');
+            if (checkbox.length) {
+                checkbox.prop('checked', true);
             }
+            row.hide();
         });
     });
 </script>

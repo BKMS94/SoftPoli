@@ -19,34 +19,20 @@ class ServicioForm(ModelForm):
         }
 
 
-class MovimientoStockForm(ModelForm):
-    """
-    Formulario para un solo item de pieza usada en el servicio.
-    """
+class MovimientoStockForm(forms.ModelForm):
     class Meta:
         model = MovimientoStock
-        fields = ['pieza', 'cantidad'] # Solo pieza y cantidad
+        fields = ['pieza', 'cantidad']
         widgets = {
-            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete',attrs={'class': 'form-control pieza-select mb-2'}),
-            'cantidad': forms.NumberInput(attrs={'class': 'form-control cantidad-input mb-2', 'min': '1'}), # Cantidad mínima 1
-        }
-        labels = {
-            'pieza': 'Pieza',
-            'cantidad': 'Cantidad',
+            'pieza': forms.Select(attrs={'class': 'form-control'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Puedes filtrar las piezas disponibles aquí si es necesario
-        self.fields['pieza'].queryset = Pieza.objects.all().order_by('nombre')
-
-
-# Crea un formset para MovimientoStock relacionados con un Servicio.
-MovimientoStockFormSet = inlineformset_factory(
-    Servicio,                 # Modelo padre
-    MovimientoStock,          # Modelo hijo
-    form=MovimientoStockForm, # Formulario para el hijo
-    extra=1,                  # Número de formularios vacíos a mostrar inicialmente
-    can_delete=True,          # Permite eliminar formularios existentes
-    fields=['pieza', 'cantidad'] # Solo pieza y cantidad
-)
+    def clean(self):
+        cleaned_data = super().clean()
+        pieza = cleaned_data.get('pieza')
+        cantidad = cleaned_data.get('cantidad')
+        if pieza and cantidad:
+            if cantidad > pieza.cantidad_stock:
+                raise forms.ValidationError(f"No hay suficiente stock para la pieza {pieza.nombre}. Stock disponible: {pieza.cantidad_stock}")
+        return cleaned_data

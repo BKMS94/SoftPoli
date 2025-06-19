@@ -16,7 +16,9 @@ td span a {
   width: 80px;
 }
 
-
+input[type="checkbox"][name$="-DELETE"] {
+        display: none !important;
+}
 
 /* Estilos personalizados para el sidebar de Bootstrap */
 .sidebar-bs5 {

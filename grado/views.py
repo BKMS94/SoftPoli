@@ -9,7 +9,7 @@ from .forms import GradosForm
 # Create your views here.
 
 def grado_lista(request):
-    grados_list = Grado.objects.filter(nombre__icontains= request.GET.get('search', ''))
+    grados_list = Grado.objects.filter(nombre__icontains= request.GET.get('search', '')).order_by('id')
     paginator = Paginator(grados_list, 10)
     page_numbre = request.GET.get('page',1)
     try:
@@ -19,8 +19,8 @@ def grado_lista(request):
     except PageNotAnInteger:
         grados = paginator.page(1)
     content = {'grados': grados,
-               'urlindex': 'vehiculo_index',
-               'urlcrear': 'vehiculo_crear'}
+               'urlindex': 'grado_lista',
+               'urlcrear': 'grado_crear'}
     return render(
         request, 'grado/lista.html', content
     )

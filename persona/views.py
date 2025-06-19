@@ -1,12 +1,12 @@
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from django.shortcuts import render, get_object_or_404,redirect
 from .models import Persona, Tecnico
-from .forms import PersonaForm, TecnicoForm
+from .forms import PersonaForm, TecnicoForm, TelefonoCleanMixin as forms
 
 # Create your views here.
 
 def persona_index(request):
-    personas = Persona.objects.filter(codigo__contains= request.GET.get('search', ''))
+    personas = Persona.objects.filter(codigo__contains= request.GET.get('search', '')).order_by('id')
     paginator = Paginator(personas, 10)
     page_number = request.GET.get('page',1)
     try:
@@ -103,3 +103,11 @@ def tecnico_borrar(request,id):
     tecnico = get_object_or_404(Tecnico, id=id)
     tecnico.delete()
     return redirect('tecnico_index')
+
+def clean_telefono(self):
+    telefono = self.cleaned_data['telefono']
+    if not telefono.isdigit():
+        raise forms.ValidationError("El teléfono debe contener solo números.")
+    if len(telefono) < 7 or len(telefono) > 12:
+        raise forms.ValidationError("El teléfono debe tener entre 7 y 12 dígitos.")
+    return telefono

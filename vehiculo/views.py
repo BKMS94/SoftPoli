@@ -7,7 +7,7 @@ from .forms import VehiculoForm
 # Create your views here.
 
 def vehiculo_lista(request):
-    vehiculos = Vehiculo.objects.filter(placa__icontains= request.GET.get('search', ''))
+    vehiculos = Vehiculo.objects.filter(placa__icontains= request.GET.get('search', '')).order_by('id')
     paginator = Paginator(vehiculos, 10)
     page_number = request.GET.get('page',1)
     try:
