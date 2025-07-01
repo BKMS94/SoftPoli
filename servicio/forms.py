@@ -1,7 +1,7 @@
-from django.forms import ModelForm,inlineformset_factory
+from django.forms import ModelForm
 from dal import autocomplete
 from django import forms
-from .models import Servicio, MovimientoStock,Pieza,Vehiculo,Tecnico
+from .models import Servicio, MovimientoStock
 
 class ServicioForm(ModelForm):
     class Meta:
@@ -9,9 +9,9 @@ class ServicioForm(ModelForm):
         fields = ['vehiculo', 'persona', 'tecnico', 'kilometraje_act', 'kilometraje_diff', 'descripcion']
 
         widgets = {
-            'vehiculo':autocomplete.ModelSelect2(url='vehiculo-autocomplete', attrs={'class': 'form-control mb-4 mt-1'}),
+            'vehiculo':autocomplete.ModelSelect2(url='vehiculo-autocomplete', attrs={'class': 'form-control  mb-4 mt-1'}),
             'persona':autocomplete.ModelSelect2(url='persona-autocomplete',attrs={'class': 'form-control mb-4 mt-1'}),
-            'tecnico':autocomplete.ModelSelect2(url='tecnico-autocomplete',attrs={'class': 'form-control mb-4 mt-1', 'readonly': True}),
+            'tecnico':autocomplete.ModelSelect2(url='tecnico-autocomplete',attrs={'class': 'form-control  mb-4 mt-1', 'readonly': True}),
             'kilometraje_act':forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1'}),
             'kilometraje_diff': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'readonly': True}),
             'descripcion':forms.Textarea(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la observación', 'rows':3}),
@@ -24,7 +24,7 @@ class MovimientoStockForm(forms.ModelForm):
         model = MovimientoStock
         fields = ['pieza', 'cantidad']
         widgets = {
-            'pieza': forms.Select(attrs={'class': 'form-control'}),
+            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete', attrs={'class': 'form-control '}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
 
