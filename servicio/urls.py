@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     # path('', views.servicio_lista, name='servicio_lista'),
     path('crear/', views.servicio_form, name='servicio_crear'),
-    # path('<int:id>/', views.servicio_detalle, name='servicio_detalle'),
+    path('<int:id>/', views.servicio_detalle, name='servicio_detalle'),
     path('editar/<int:id>/', views.servicio_form, name='servicio_editar'),
     path('', views.servicio_lista, name='servicio_lista'),
     path('<int:pk>/', views.servicio_detalle, name='servicio_detalle'), # Asegúrate de que esta vista acepte 'pk'

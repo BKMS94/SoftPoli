@@ -115,3 +115,6 @@ input[type="checkbox"][name$="-DELETE"] {
 .select2-container {
     width: 100% !important;
 }
+.select2-selection__clear {
+    display: none !important;
+}

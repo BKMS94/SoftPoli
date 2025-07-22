@@ -2,14 +2,29 @@
 
 {% block title %} {{ servicio.vehiculo }} {% endblock title %}
 
+
 {% block content %}
-<h2>{{ servicio.vehiculo }}</h2>
-<h2>{{ servicio.tecnico }}</h2>
-<h2>{{ servicio.persona }}</h2>
-<h2>{{ servicio.kilometraje_act }}</h2>
-<h2>{{ servicio.kilometraje_diff }}</h2>
-<h2>{{ servicio.descripcion }}</h2>
-<h2>{{ servicio.costo }}</h2>
-<h2>{{ servicio.fecha }}</h2>
+
+<div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detalleModalLabel">Detalle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="detalle-modal-body">
+                <h2>{{ servicio.vehiculo }}</h2>
+                <h2>{{ servicio.tecnico }}</h2>
+                <h2>{{ servicio.persona }}</h2>
+                <h2>{{ servicio.kilometraje_act }}</h2>
+                <h2>{{ servicio.kilometraje_diff }}</h2>
+                <h2>{{ servicio.descripcion }}</h2>
+                <h2>{{ servicio.costo }}</h2>
+                <h2>{{ servicio.fecha }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock content %}

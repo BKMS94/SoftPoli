@@ -24,7 +24,7 @@ class MovimientoStockForm(forms.ModelForm):
         model = MovimientoStock
         fields = ['pieza', 'cantidad']
         widgets = {
-            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete', attrs={'class': 'form-control '}),
+            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete', attrs={'class': 'form-control'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
 
