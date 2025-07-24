@@ -13,5 +13,6 @@ urlpatterns = [
     path('persona-autocomplete/', views.PersonaAutocomplete.as_view(), name='persona-autocomplete'),
     path('tecnico-autocomplete/', views.TecnicoAutocomplete.as_view(), name='tecnico-autocomplete'),
     path('pieza-autocomplete/', views.PiezaAutocomplete.as_view(), name='pieza-autocomplete'),
+    path('generar_pdf_servicio/<int:id>/', views.generar_pdf_servicio, name='generar_pdf_servicio'),
 
 ]

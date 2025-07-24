@@ -8,6 +8,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from dal import autocomplete
 # from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.http import HttpResponse
+from django.utils import timezone
 
 # Vistas para Servicio
 
@@ -161,3 +165,18 @@ class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
         return qs
+
+def generar_pdf_servicio(request, id):
+    servicio = Servicio.objects.get(pk=id)
+    html_string = render_to_string(
+        'pdf/pdf_servicios.html',
+        {
+            'servicio': servicio,
+            'logo_url': request.build_absolute_uri('/static/img/logo.png'),
+            'fecha_actual': timezone.now(),
+        }
+    )
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="servicio_{servicio.id}.pdf"'
+    return response

@@ -1,120 +1,375 @@
-:root{
---Primary-color: #333;
---Text-color: #ffffffc9;
---sidebar-width-bs5: 250px; /* Ancho de la barra lateral para Bootstrap 5 */
+/* =========================
+   1. VARIABLES
+   ========================= */
+:root {
+  --Primary-color: #1B3A1B;
+  --Secondary-color: #2E5939;
+  --Accent-color: #C9B037;
+  --Text-color: #fff;
+  --Sidebar-bg: #1B3A1B;
+  --Sidebar-active: #C9B037;
+  --Sidebar-hover: #2E5939;
+  --Table-header-bg: #2E5939;
+  --Table-header-text: #fff;
+  --Table-row-hover: #e9f5e1;
+  --Button-primary: #1B3A1B;
+  --Button-primary-hover: #2E5939;
+  --Button-danger: #b02a37;
+  --Button-danger-hover: #7a1d25;
+  --Button-secondary: #495057;
+  --Button-secondary-hover: #343a40;
+  --Input-border: #C9B037;
+  --Input-focus: #2E5939;
+  --sidebar-width-bs5: 250px;
+  --sidebar-bg-mobile: rgba(27,58,27,0.97);
 }
 
-table{
-  border: solid 1px rgba(0, 0, 0, 0.5);
-  
+/* =========================
+   2. RESET Y FUENTES
+   ========================= */
+body, .sidebar-bs5, .main-content-wrapper-bs5 {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
 }
 
-td span a {
-  width: 80px;
-}
-
-input[type="checkbox"][name$="-DELETE"] {
-        display: none !important;
-}
-
-/* Estilos personalizados para el sidebar de Bootstrap */
+/* =========================
+   3. SIDEBAR
+   ========================= */
+/* --- Desktop --- */
 .sidebar-bs5 {
-    width: var(--sidebar-width-bs5);
-    /* Opcional: para un scroll interno si el menú es muy largo */
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-width-bs5);
+  height: 100vh;
+  background: var(--Primary-color, #1b3a1b);
+  color: #fff;
+  z-index: 1061;
+  transition: none;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+}
+
+/* --- Desktop mejoras --- */
+@media (min-width: 992px) {
+  .sidebar-bs5 {
+    background: linear-gradient(180deg, #1B3A1B 80%, #2E5939 100%);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.10);
+    border-right: 3px solid var(--Accent-color, #C9B037);
+    padding-top: 2rem;
+    min-height: 100vh;
     overflow-y: auto;
-    /* Sombra sutil para el sidebar */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-    /* Asegura que el contenido del nav no tenga padding extra si no es un div #*/
-    padding: 0;
-    background-color: var(--Primary-color);
-    color: var(--Text-color);
   }
-
-
-/* Ajusta el margen del contenido principal para dejar espacio al sidebar fijo */
-.main-content-wrapper-bs5 {
-    margin-left: var(--sidebar-width-bs5);
-    min-height: 100vh; /* Asegura que el main-content ocupe al menos la altura de la vista */
-    background-color: #f8f9fa; /* Color de fondo de la página principal */
-    /* Asegúrate de que el padding del main-content se gestione aquí o en la clase de Bootstrap 'p-4' */
 }
 
-/* Estilos para los enlaces del sidebar */
-/* Asumo que 'navegador.html' contendrá una estructura de lista tipo nav-pills */
-.sidebar-bs5 .nav-link {
-    color: #ecf0f1; /* Texto claro */
-    padding: 10px 20px;
-    transition: background-color 0.3s ease;
+/* --- Móvil (offcanvas) --- */
+@media (max-width: 992px) {
+  .sidebar-bs5 {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100vw !important;
+    min-width: 0 !important;
+    height: 100vh;
+    background: var(--sidebar-bg-mobile);
+    color: #fff;
+    z-index: 1061;
+    box-shadow: 2px 0 16px rgba(0,0,0,0.25);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-100%);
+    display: block !important;
+    overflow-y: auto;
+    padding-top: 3.5rem;
+  }
+  .sidebar-bs5.active {
+    transform: translateX(0);
+  }
+  .sidebar-bs5.d-none {
+    display: none !important;
+  }
 }
 
-.sidebar-bs5 .nav-link:hover {
-    background-color: var(--Text-color); /* Fondo oscuro al pasar el ratón */
-    color: var(--Primary-color); /* Mantener color de texto al pasar el ratón */
-}
-
-.sidebar-bs5 .nav-link.active {
-    background-color: #3498db; /* Color de fondo para el elemento activo (azul) */
-    font-weight: bold;
-}
-
-/* Estilo para los títulos de sección dentro del sidebar (como "Configuración") */
-.sidebar-section-title-bs5 {
-    color: #bdc3c7;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 10px 20px 5px; /* Espaciado */
-    margin-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.1); /* Línea divisoria */
-    padding-top: 15px;
-}
-
-/* Estilo para el título principal del sistema (como "Sistema de Gestión") */
+/* --- Títulos y secciones del menú --- */
 .system-title-bs5 {
-    font-size: 1.5em;
-    font-weight: bold;
-    text-align: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 20px;
-    color: #ecf0f1; /* Asegurar que el título sea visible */
-    padding-top: 20px; /* Añadir padding superior para que no se pegue al borde */
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffe082;
+  letter-spacing: 1.5px;
+  margin-bottom: 2.2rem;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
 }
-
-/* Estilos para el footer del sidebar (Admin/Gerente) */
+.sidebar-section-title-bs5 {
+  font-size: 1.15rem;
+  color: #ffe082;
+  margin: 1.5rem 0 1rem 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  padding-bottom: 0.5rem;
+}
 .sidebar-footer-bs5 {
-    position: absolute; /* Permite posicionarlo respecto a su padre fixed */
-    bottom: 20px;       /* Lo pega a 20px del fondo del sidebar */
-    width: 100%;        /* Ocupa el ancho completo del sidebar */
-    text-align: center;
-    font-size: 0.9em;
-    color: #bdc3c7;
+  color: #ffe082;
+  font-size: 0.95rem;
+  margin: 2rem 0 1rem 0;
 }
 
-.select2-container--default .select2-selection--single {
-    height: 38px !important;
-    display: flex;
-    align-items: center;
-    border: 1px solid #ced4da;
-    border-radius: 0.375rem;
-    background-color: #fff;
-    padding: 0 8px;
+/* --- Responsive títulos sidebar --- */
+@media (max-width: 576px) {
+  .system-title-bs5 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
 }
 
+/* --- Centrado de menú y títulos --- */
+.sidebar-bs5 nav,
+.sidebar-bs5 .nav,
+.sidebar-bs5 .sidebar-section-title-bs5 {
+  text-align: center;
+  width: 100%;
+}
+
+/* =========================
+   4. MAIN CONTENT
+   ========================= */
+.main-content-wrapper-bs5 {
+  margin-left: var(--sidebar-width-bs5);
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+@media (max-width: 992px) {
+  .main-content-wrapper-bs5 {
+    margin-left: 0 !important;
+    padding: 0 0.5rem;
+  }
+}
+
+/* =========================
+   5. NAVEGACIÓN Y MENÚS
+   ========================= */
+/* --- Enlaces del menú y subenlaces --- */
+.sidebar-bs5 .nav-link,
+.sidebar-bs5 .dropdown-item {
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 1.1em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  letter-spacing: 0.5px;
+}
+.sidebar-bs5 .nav-link.active,
+.sidebar-bs5 .dropdown-item.active {
+  background: var(--Accent-color, #C9B037);
+  color: #222 !important;
+  font-weight: 800;
+}
+.sidebar-bs5 .nav-link:hover,
+.sidebar-bs5 .dropdown-item:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--Accent-color, #C9B037) !important;
+}
+
+/* --- Dropdown menú centrado y resaltado --- */
+.sidebar-bs5 .dropdown-menu {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  min-width: 180px;
+  background: rgba(27,58,27,0.98);
+  border: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  padding: 0.5rem 0;
+}
+.sidebar-bs5 .dropdown-item {
+  color: #ffe082 !important;
+  font-weight: 700;
+  font-size: 1.08em;
+  border-radius: 6px;
+  margin: 0.15rem 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.sidebar-bs5 .dropdown-item.active,
+.sidebar-bs5 .dropdown-item:active {
+  background: var(--Accent-color, #C9B037);
+  color: #222 !important;
+}
+.sidebar-bs5 .dropdown-item:hover {
+  background: rgba(255,255,255,0.13);
+  color: var(--Accent-color, #C9B037) !important;
+}
+
+/* --- Responsive menú --- */
+@media (max-width: 576px) {
+  .sidebar-bs5 .nav-link,
+  .sidebar-bs5 .dropdown-item {
+    font-size: 0.98rem;
+    padding: 0.6rem 0.7rem;
+  }
+}
+
+/* =========================
+   6. BOTONES
+   ========================= */
+.btn {
+  border-radius: 0.375rem !important;
+  font-weight: 600 !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.5px;
+  padding: 0.5rem 1.2rem !important;
+  box-shadow: none !important;
+  border-width: 2px !important;
+  margin-bottom: 0.5rem;
+  white-space: normal;
+}
+.btn-primary {
+  background-color: var(--Button-primary) !important;
+  border-color: var(--Button-primary) !important;
+  color: #fff !important;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--Button-primary-hover) !important;
+  border-color: var(--Button-primary-hover) !important;
+  color: #fff !important;
+}
+.btn-danger {
+  background-color: var(--Button-danger);
+  border-color: var(--Button-danger);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.btn-danger:hover, .btn-danger:focus {
+  background-color: var(--Button-danger-hover);
+  border-color: var(--Button-danger-hover);
+  color: #fff;
+}
+.btn-secondary {
+  background-color: var(--Button-secondary);
+  border-color: var(--Button-secondary);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background-color: var(--Button-secondary-hover);
+  border-color: var(--Button-secondary-hover);
+  color: #fff;
+}
+.btn-warning {
+  background-color: var(--Accent-color) !important;
+  border-color: var(--Accent-color) !important;
+  color: #222 !important;
+}
+.btn-warning:hover, .btn-warning:focus {
+  background-color: #b89c2c !important;
+  border-color: #b89c2c !important;
+  color: #222 !important;
+}
+/* --- Responsive botones --- */
+@media (max-width: 576px) {
+  .btn {
+    font-size: 0.95rem !important;
+    padding: 0.4rem 0.7rem !important;
+  }
+}
+
+/* =========================
+   7. FORMULARIOS
+   ========================= */
+.form-control, .select2-container--default .select2-selection--single {
+  border: 1.5px solid var(--Input-border) !important;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  color: #222;
+  height: 38px !important;
+  box-shadow: none;
+}
+.form-control:focus, .select2-container--default .select2-selection--single:focus {
+  border-color: var(--Input-focus) !important;
+  box-shadow: 0 0 0 0.2rem rgba(41, 128, 85, 0.15);
+}
+@media (max-width: 768px) {
+  .form-control, .select2-container--default .select2-selection--single {
+    font-size: 0.98rem;
+    height: 34px !important;
+  }
+}
 .select2-selection__rendered {
-    height: 38px !important;
-    display: flex !important;
-    align-items: center !important;
-    line-height: 38px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  line-height: 38px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
-
 .select2-container {
-    width: 100% !important;
+  width: 100% !important;
 }
 .select2-selection__clear {
-    display: none !important;
+  display: none !important;
+}
+
+/* =========================
+   8. TABLAS
+   ========================= */
+.table thead {
+  background-color: var(--Table-header-bg);
+  color: var(--Table-header-text);
+}
+.table tbody tr:hover {
+  background-color: var(--Table-row-hover);
+}
+.table th, .table td {
+  vertical-align: middle !important;
+}
+.table th {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+.table-responsive {
+  overflow-x: auto;
+}
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.3rem;
+  }
+}
+
+/* =========================
+   9. UTILIDADES Y RESPONSIVE
+   ========================= */
+input[type="checkbox"][name$="-DELETE"] {
+  display: none !important;
+}
+@media (max-width: 992px) {
+  .main-content-wrapper-bs5 {
+    margin-left: 0 !important;
+    padding: 0 0.5rem;
+  }
+}
+
+/* =========================
+   10. OTROS DETALLES
+   ========================= */
+/* Títulos principales de cada sección/CRUD */
+.crud-title {
+  color: var(--Primary-color);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  border-left: 6px solid var(--Accent-color);
+  padding-left: 16px;
+  margin-bottom: 24px;
+  background: linear-gradient(90deg, #f8f9fa 80%, #fff 100%);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 2px 0 0 var(--Accent-color, #C9B037);
+}
+@media (max-width: 576px) {
+  .crud-title {
+    font-size: 1.2rem;
+    padding-left: 8px;
+    border-left-width: 4px;
+    margin-bottom: 16px;
+  }
 }
