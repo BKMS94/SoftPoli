@@ -20,36 +20,38 @@ ESTADOS_VEHICULO_CHOICES = [
     ('Mantenimiento', 'Mantenimiento'),
 ]
 
+TIPO_COMBUSTIBLE_CHOICES =[
+    ('Gasolina', 'Gasolina'),
+    ('Diésel', 'Diésel'), 
+    ('GLP', 'GLP'), 
+    ('GNV', 'GNV'), 
+]
+
 class Vehiculo(models.Model):
     placa = models.CharField(
         max_length=6,
         unique=True,
-        blank=False,
-        null=False,
         verbose_name="Placa"
+    )
+    vin = models.CharField(
+        max_length= 25,
+
+        verbose_name= 'VIN'
     )
     marca = models.CharField(
         max_length=50,
-        blank=False,
-        null=False,
         verbose_name="Marca"
     )
     modelo = models.CharField(
         max_length=50,
-        blank=False,
-        null=False,
         verbose_name="Modelo"
     )
     anio = models.PositiveIntegerField(
-        blank=False,
-        null=False,
         verbose_name="Año"
     )
     tipo = models.CharField(
         max_length=30, 
         choices=TIPOS_VEHICULO_CHOICES,
-        blank=False,
-        null=False,
         default='Sedan',
         verbose_name='Tipo'
     )
@@ -62,13 +64,22 @@ class Vehiculo(models.Model):
         max_length=30, 
         choices=ESTADOS_VEHICULO_CHOICES,
         default='Activo', 
-        blank=False,
-        null=False,
         verbose_name='Estado'
     )
+    fecha_adquisicion = models.DateTimeField(
+        blank=True,
+        null= True,
+        verbose_name= 'Fecha de adquisición'
+    )
+    tipo_combustible = models.CharField(
+        max_length=20, 
+        choices=TIPO_COMBUSTIBLE_CHOICES, 
+        default='Gasolina', 
+        verbose_name="Tipo de Combustible")
+
     created = models.DateTimeField(
         auto_now_add=True,
-        editable=False
+        editable=True
     )
 
     class Meta:

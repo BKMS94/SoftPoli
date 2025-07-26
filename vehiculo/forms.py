@@ -4,16 +4,19 @@ from .models import Vehiculo
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        fields = ['placa', 'marca', 'modelo', 'tipo', 'anio', 'kilometraje', 'estado']
+        fields = ['placa', 'vin', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 'kilometraje', 'estado','fecha_adquisicion']
         labels = {'anio': 'Año'}
         widgets = {
             'placa': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Placa'}),
+            'vin': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el VIN'}),
             'marca': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Marca'}),
             'modelo': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Modelo'}),
             'tipo': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
             'anio': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Año'}),
+            'tipo_combustible': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
             'kilometraje': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el kilometraje'}),
             'estado': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
+            'fecha_adquisicion': forms.DateTimeInput(attrs={'class': 'form-control mb-4 mt-1'}),
 
         }
 
