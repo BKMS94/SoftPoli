@@ -1,8 +1,24 @@
 from django.db import models
 from django.urls import reverse
 
+# Define los choices como una lista de tuplas (valor_db, valor_display)
+# Es una buena práctica que el valor de la base de datos sea una clave corta y única.
+# Aunque aquí usas el mismo string, es válido.
+TIPOS_VEHICULO_CHOICES = [
+    ('Sedan', 'Sedan'),
+    ('Pick-up', 'Pick-up'),
+    ('Motocicleta', 'Motocicleta'),
+    ('Blindado', 'Blindado'),
+    ('Porta tropas', 'Porta tropas'),
+    ('Vehículos de rescate', 'Vehículos de rescate'),
+    ('Especiales', 'Especiales')
+]
 
-# Create your models here.
+ESTADOS_VEHICULO_CHOICES = [
+    ('Activo', 'Activo'),
+    ('Inoperativo', 'Inoperativo'), # Corregido: 'Pick-up' a 'Inoperativo'
+    ('Mantenimiento', 'Mantenimiento'),
+]
 
 class Vehiculo(models.Model):
     placa = models.CharField(
@@ -10,8 +26,7 @@ class Vehiculo(models.Model):
         unique=True,
         blank=False,
         null=False,
-        verbose_name="Placa",
-        help_text="Placa única del vehículo"
+        verbose_name="Placa"
     )
     marca = models.CharField(
         max_length=50,
@@ -30,16 +45,37 @@ class Vehiculo(models.Model):
         null=False,
         verbose_name="Año"
     )
+    tipo = models.CharField(
+        max_length=30, 
+        choices=TIPOS_VEHICULO_CHOICES,
+        blank=False,
+        null=False,
+        default='Sedan',
+        verbose_name='Tipo'
+    )
     kilometraje = models.PositiveIntegerField(
         blank=False,
         null=False,
         verbose_name="Kilometraje"
+    )
+    estado = models.CharField(
+        max_length=30, 
+        choices=ESTADOS_VEHICULO_CHOICES,
+        default='Activo', 
+        blank=False,
+        null=False,
+        verbose_name='Estado'
     )
     created = models.DateTimeField(
         auto_now_add=True,
         editable=False
     )
 
+    class Meta:
+        verbose_name = "Vehículo"
+        verbose_name_plural = "Vehículos"
+        ordering = ['created'] 
+        
     def __str__(self):
         return self.placa
 

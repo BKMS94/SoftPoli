@@ -7,20 +7,22 @@
 
 
 {% block Thead %}
-<th>ID</th>
+<th>Orden</th>
 <th>Nombre</th>
+<th>Abreviatura</th>
 <th>Acciones</th>
 {% endblock Thead %}
 
 {% block tbody %}
 {% for grado in grados %}
 <tr>
-    <td>{{ grado.id }}</td>
+    <td>{{ grado.orden }}</td>
     <td>{{ grado.nombre }}</td>
+    <td>{{ grado.abreviatura }}</td>
     {% include "componentes/botones.html" with modelo=grado %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="3">{% include "componentes/pagination.html" with page=grados %}</td>
+<td colspan="4">{% include "componentes/pagination.html" with page=grados %}</td>
 {% endblock tfoot %}

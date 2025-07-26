@@ -5,11 +5,17 @@ from persona.models import Persona,Tecnico
 from pieza.models import Pieza
 # Create your models here.
 
+TIPO_MANTENIMIENTO_CHOICES = [
+    ('Correctivo', 'Correctivo'),
+    ('Preventivo', 'Preventivo')
+    ]
+
 class Servicio(models.Model):
     fecha = models.DateTimeField(editable=False, auto_now=True)
     descripcion = models.TextField(null=False, blank=False)
     kilometraje_act = models.PositiveIntegerField(default=0)
     kilometraje_diff = models.PositiveIntegerField(default=0)
+    tipo = models.TextField(choices=TIPO_MANTENIMIENTO_CHOICES, default='Preventivo')
     vehiculo = models.ForeignKey(Vehiculo, on_delete= models.CASCADE)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE)
