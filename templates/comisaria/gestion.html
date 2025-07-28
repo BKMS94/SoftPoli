@@ -1,0 +1,25 @@
+{% extends "componentes/formulario.html" %}
+
+{% block title %}
+{% if modo == 'editar' %}
+Editar Servicio
+{% else %}
+Crear Servicio
+{% endif %}
+{% endblock title %}
+
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Servicio
+{% else %}
+Crear Servicio
+{% endif %}
+{% endblock formtit %}
+
+{% block formulario %}
+{% csrf_token %}
+{{form}}
+{{ form.media }}
+<input class="btn btn-success" type="submit" value="Crear">
+<a class="btn btn-danger" href="{% url 'comisaria_index'%}">Cancelar</a>
+{% endblock formulario %}

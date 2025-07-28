@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.db import transaction
 from .models import Servicio, MovimientoStock,Persona,Pieza,Vehiculo,Tecnico
 from .forms import ServicioForm, MovimientoStockForm
+from maestranza.utils import paginacion, modo_gestion
 from django.forms import inlineformset_factory
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from dal import autocomplete
 # from django.contrib.auth.decorators import login_required
@@ -23,14 +23,9 @@ def servicio_lista(request):
         Q(persona__nombre__icontains=search_query) |
         Q(tecnico__nombre__icontains=search_query)
     ).order_by('-fecha')
-    paginator = Paginator(servicios, 10)
-    page_number = request.GET.get('page', 1)
-    try:
-        servicios = paginator.page(page_number)
-    except EmptyPage:
-        servicios = paginator.page(paginator.num_pages)
-    except PageNotAnInteger:
-        servicios = paginator.page(1)
+    
+    servicios = paginacion(request, servicios)
+    
     context = {
         'servicios': servicios,
         'urlindex': 'servicio_lista',
@@ -41,14 +36,8 @@ def servicio_lista(request):
 
 # @login_required
 def servicio_form(request, id=None):
-    if id:
-        servicio = get_object_or_404(Servicio, id=id)
-        modo = 'editar'
-        extra = 0
-    else:
-        servicio = None
-        modo = 'crear'
-        extra = 1
+   
+    servicio, modo, extra = modo_gestion(Servicio,id)
 
     MovimientoStockFormSet = inlineformset_factory(
         Servicio,

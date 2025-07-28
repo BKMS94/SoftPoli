@@ -1,0 +1,29 @@
+{% extends "componentes/tablas.html" %}
+
+{% block title %}Gestión Comisarias{% endblock title %}
+
+{% block titabla %}Gestión Comisarias{% endblock titabla %}
+
+
+{% block Thead %}
+<th>Nombre</th>
+<th>Dirección</th>
+<th>Telefono</th>
+<th>Responsable</th>
+<th>Acciones</th>
+{% endblock Thead %}
+
+{% block tbody %}
+{% for comisaria in comisarias %}
+<tr>
+    <td>{{ comisaria.nombre }}</td>
+    <td>{{ comisaria.direccion }}</td>
+    <td>{{ comisaria.telefono_contacto }}</td>
+    <td>{{ comisaria.responsable }}</td>
+    {% include "componentes/botones.html" with modelo=comisaria %}
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% block tfoot %}
+<td colspan="5">{% include "componentes/pagination.html" with page=comisarias %}</td>
+{% endblock tfoot %}
