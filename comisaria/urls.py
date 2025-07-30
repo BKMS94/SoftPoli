@@ -7,5 +7,5 @@ urlpatterns = [
     path('crear/', views.comisaria_gestion, name='comisaria_crear'),
     path('editar/<int:id>/', views.comisaria_gestion, name='comisaria_editar'),
     path('<int:id>/', views.comisaria_detalle, name='comisaria_detalle'),
-    path('borrar/<int:pk>/', views.comisaria_borrar, name='comisaria_borrar'),
+    path('borrar/<int:id>/', views.comisaria_borrar, name='comisaria_borrar'),
 ]

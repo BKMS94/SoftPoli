@@ -41,9 +41,14 @@ def comisaria_gestion(request, id=None):
     return render(request, 'comisaria/gestion.html', context)
     
 def comisaria_detalle(request, id):
-    pass
+    comisaria = get_object_or_404(Comisaria, id=id)
+    context = {'comisaria': comisaria}
+    return render(request, 'comisaria/detalle.html', context)
 
 def comisaria_borrar(request, id):
-    pass
+    comisaria = get_object_or_404(Comisaria, id=id)
+    comisaria.delete()
+    return redirect('comisaria_index')
+
 
 
