@@ -1,9 +1,20 @@
 {% extends "componentes/formulario.html" %}
 
-{% block title %} Crear Grado {% endblock title %}
+{% block title %}
+{% if modo == 'editar' %}
+Editar Grado
+{% else %}
+Crear Grado
+{% endif %}
+{% endblock title %}
 
-
-{% block formtit %} Crear Grados {% endblock formtit %}
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Grado
+{% else %}
+Crear Grado
+{% endif %}
+{% endblock formtit %}
 
 {% block formulario %}
 {% csrf_token %}

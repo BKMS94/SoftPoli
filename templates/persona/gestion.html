@@ -1,9 +1,20 @@
 {% extends "componentes/formulario.html" %}
 
-{% block title %}Crear Person{% endblock title %}
+{% block title %}
+{% if modo == 'editar' %}
+Editar Persona
+{% else %}
+Crear Persona
+{% endif %}
+{% endblock title %}
 
-
-{% block formtit %} Crear Persona{% endblock formtit %}
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Persona
+{% else %}
+Crear Persona
+{% endif %}
+{% endblock formtit %}
 
 {% block formulario %}
 {% csrf_token %}

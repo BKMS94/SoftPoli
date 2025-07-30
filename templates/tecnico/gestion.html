@@ -1,9 +1,20 @@
 {% extends "componentes/formulario.html" %}
 
-{% block title %}Crear Técnico{% endblock title %}
+{% block title %}
+{% if modo == 'editar' %}
+Editar Técnico
+{% else %}
+Crear Técnico
+{% endif %}
+{% endblock title %}
 
-
-{% block formtit %} Gestión Técnico {% endblock formtit %}
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Técnico
+{% else %}
+Crear Técnico
+{% endif %}
+{% endblock formtit %}
 
 {% block formulario %}
 {% csrf_token %}
