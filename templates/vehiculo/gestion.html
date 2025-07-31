@@ -19,7 +19,58 @@ Crear Vehículos
 
 {% block formulario %}
 {% csrf_token %}
-{{form}}
+<div class="row">
+    <div class="col-md-6 mb-2">
+        <div>{{form.placa.label}}:</div>
+        <div>{{form.placa}}</div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div>{{form.vin.label}}:</div>
+        <div>{{form.vin}}</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-2">
+        <div>{{form.marca.label}}:</div>
+        <div>{{form.marca}}</div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div>{{form.modelo.label}}:</div>
+        <div>{{form.modelo}}</div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-6 mb-2">
+        <div>{{form.anio.label}}:</div>
+        <div>{{form.anio}}</div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div>{{form.tipo.label}}:</div>
+        <div>{{form.tipo}}</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-2">
+        <div>{{form.fecha_adquisicion.label}}:</div>
+        <div>{{form.fecha_adquisicion}}</div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div>{{form.kilometraje.label}}:</div>
+        <div>{{form.kilometraje}}</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-2">
+        <div>{{form.tipo_combustible.label}}:</div>
+        <div>{{form.tipo_combustible}}</div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div>{{form.estado.label}}:</div>
+        <div>{{form.estado}}</div>
+    </div>
+</div>
 <input class="btn btn-success" type="submit" value="Crear">
 <a class="btn btn-danger" href="{% url 'vehiculo_index'%}">Cancelar</a>
 {% endblock formulario %}

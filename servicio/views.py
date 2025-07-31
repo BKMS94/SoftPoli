@@ -112,7 +112,7 @@ def servicio_form(request, id=None):
         'servicio': servicio,
         'modo': modo
     }
-    return render(request, 'servicio/crear.html', context)
+    return render(request, 'servicio/gestion.html', context)
 
 # @login_required
 def servicio_detalle(request, id):
