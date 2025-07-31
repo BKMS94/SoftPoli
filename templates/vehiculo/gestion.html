@@ -1,9 +1,21 @@
 {% extends "componentes/formulario.html" %}
 
-{% block title %}Crear Vehículo{% endblock title %}
+{% block title %}
+{% if modo == 'editar' %}
+Editar Vehículos
+{% else %}
+Crear Vehículos
+{% endif %}
+{% endblock title %}
 
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Vehículos
+{% else %}
+Crear Vehículos
+{% endif %}
+{% endblock formtit %}
 
-{% block formtit %} Gestión Vehículos {% endblock formtit %}
 
 {% block formulario %}
 {% csrf_token %}

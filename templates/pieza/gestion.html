@@ -1,0 +1,31 @@
+{% extends "componentes/formulario.html" %}
+
+{% block title %}
+{% if modo == 'editar' %}
+Editar Pieza
+{% else %}
+Crear Pieza
+{% endif %}
+{% endblock title %}
+
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Pieza
+{% else %}
+Crear Pieza
+{% endif %}
+{% endblock formtit %}
+
+
+{% block formulario %}
+{% csrf_token %}
+{{form}}
+<input class="btn btn-success" type="submit" value="Crear">
+<a class="btn btn-danger" href="{% url 'pieza_index'%}">Cancelar</a>
+{% if form.errors %}
+<div class="alert alert-danger">{{ form.errors }}</div>
+{% endif %}
+{% if formset.non_form_errors %}
+<div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+{% endif %}
+{% endblock formulario %}
