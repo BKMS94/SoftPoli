@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{% endblock title %}
 
@@ -12,12 +13,14 @@
         <div class="col-lg-8 col-xl-8 col-md-7 col-sm-5 mt-4">
             <form action="{% url urlindex %}" method="get">
 
-                <input class="form-control w-100 w-md-25" type="search" name="search" placeholder="Buscar...">
+                <input class="form-control w-100 w-md-25" type="search" name="search"
+                    placeholder="Buscar por vehículo o técnico o persona  + Enter">
 
         </div>
         <div class="col-lg-4 col-xl-4 col-md-5 col-sm-7 align-items-space mt-4 ">
-            <input class="btn btn-info px-4" type="submit" value="Buscar">
-            <a href="{% url urlcrear %}" class="btn btn-success btn-sm px-4 ms-4">+ Nuevo</a>
+            <!-- <input class="btn btn-info px-4" type="submit" value="{% static 'img/buscar.png' %}"> -->
+            <a href="{% url urlcrear %}" class="btn btn-success btn-sm px-4 ms-4"><img src="{% static 'img/add.png' %}"
+                    alt=" "></a>
         </div>
 
         </form>

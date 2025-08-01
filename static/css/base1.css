@@ -208,7 +208,13 @@ body, .sidebar-bs5, .main-content-wrapper-bs5 {
 /* =========================
    6. BOTONES
    ========================= */
+a.btn > img{
+  width: 1.5rem !important;
+  height: 1.5rem  !important;  
+}
+
 .btn {
+
   border-radius: 0.375rem !important;
   font-weight: 600 !important;
   font-size: 1.05rem !important;

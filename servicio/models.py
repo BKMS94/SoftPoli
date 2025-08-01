@@ -13,6 +13,7 @@ TIPO_MANTENIMIENTO_CHOICES = [
 class Servicio(models.Model):
     fecha = models.DateTimeField(editable=False, auto_now=True)
     descripcion = models.TextField(null=False, blank=False)
+    kilometraje_ant = models.PositiveIntegerField(default=0)
     kilometraje_act = models.PositiveIntegerField(default=0)
     kilometraje_diff = models.PositiveIntegerField(default=0)
     tipo = models.TextField(choices=TIPO_MANTENIMIENTO_CHOICES, default='Preventivo')

@@ -58,11 +58,12 @@ Crear Servicio
                 {{ form.tecnico }}
             </div>
         </div>
-        <input type="hidden" id="id_kilometraje_vehiculo" name="kilometraje_vehiculo" value="0">
+        <!-- <input type="hidden" id="id_kilometraje_vehiculo" name="kilometraje_vehiculo" value="0"> -->
         <div class="row">
             <div class="col-md-4 mb-3">
                 {{ form.kilometraje_act.label_tag }}
                 {{ form.kilometraje_act }}
+                {{ form.kilometraje_ant }}
             </div>
             <div class="col-md-4 mb-3">
                 {{ form.kilometraje_diff.label_tag }}

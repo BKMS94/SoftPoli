@@ -51,9 +51,9 @@ def vehiculo_borrar(request,id):
     vehiculo.delete()
     return redirect('vehiculo_index')
 
-def vehiculo_kilometraje(request, pk):
+def vehiculo_kilometraje(request, id):
     try:
-        vehiculo = Vehiculo.objects.get(pk=pk)
+        vehiculo = get_object_or_404(Vehiculo, id=id)
         kilometraje = vehiculo.kilometraje  # Ajusta el nombre del campo si es diferente
     except Vehiculo.DoesNotExist:
         kilometraje = 0

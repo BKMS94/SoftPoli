@@ -20,7 +20,6 @@ $(document).ready(function () {
       .then(data => {
         kilometrajeAnteriorInput.val(data.kilometraje);
         calcularDiferencia();
-        console.log(data.kilometraje);
       })
       .catch(error => {
         console.error("Error al obtener el kilometraje:", error);

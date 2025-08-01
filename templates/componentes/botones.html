@@ -1,9 +1,13 @@
+{% load static %}
 <td>
     <span>
-        <a class="btn btn-primary" href="{{ modelo.get_detalle_url }}">Ver</a>
-        <a class="btn btn-secondary mx-2" href="{{ modelo.get_editar_url }}">Editar</a>
+        <a class="btn btn-primary" href="{{ modelo.get_detalle_url }}"><img src="{% static 'img/ver.png' %}"
+                alt=" "></a>
+        <a class="btn btn-secondary mx-2" href="{{ modelo.get_editar_url }}"><img src="{% static 'img/edit.png' %}"
+                alt=" "></a>
         <a class="btn btn-danger" href="{{ modelo.get_borrar_url }}"
-            onclick="return confirm('¿Estás seguro de que deseas borrar este registro?');">Borrar</a>
+            onclick="return confirm('¿Estás seguro de que deseas borrar este registro?');"><img
+                src="{% static 'img/delete.png' %}" alt=" "></a>
         <!-- <a href="{#% url 'generar_pdf_servicio' servicio.id %#}" class="btn btn-primary" target="_blank">
             Descargar Orden de Servicio (PDF)
         </a> -->
