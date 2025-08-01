@@ -41,12 +41,13 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
 
+    'ubicacion',
     'grado',
     'persona',
     'vehiculo',
     'pieza',
     'servicio',
-    'comisaria',
+    
 ]
 
 MIDDLEWARE = [

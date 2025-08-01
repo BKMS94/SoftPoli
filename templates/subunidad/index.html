@@ -1,0 +1,29 @@
+{% extends "componentes/tablas.html" %}
+
+{% block title %}Gestión Sub Unidad{% endblock title %}
+
+{% block titabla %}Gestión Sub Unidad{% endblock titabla %}
+
+
+{% block Thead %}
+<th>Nombre</th>
+<th>Dirección</th>
+<th>Telefono</th>
+<th>Responsable</th>
+<th>Acciones</th>
+{% endblock Thead %}
+
+{% block tbody %}
+{% for subunidad in subunidades %}
+<tr>
+    <td>{{ subunidad.nombre }}</td>
+    <td>{{ subunidad.direccion }}</td>
+    <td>{{ subunidad.telefono_contacto }}</td>
+    <td>{{ subunidad.responsable }}</td>
+    {% include "componentes/botones.html" with modelo=subunidad %}
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% block tfoot %}
+<td colspan="5">{% include "componentes/pagination.html" with page=subunidades %}</td>
+{% endblock tfoot %}

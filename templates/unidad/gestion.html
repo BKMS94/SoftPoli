@@ -1,0 +1,25 @@
+{% extends "componentes/formulario.html" %}
+
+{% block title %}
+{% if modo == 'editar' %}
+Editar Sub Unidad
+{% else %}
+Crear Sub Unidad
+{% endif %}
+{% endblock title %}
+
+{% block formtit %}
+{% if modo == 'editar' %}
+Editar Sub Unidad
+{% else %}
+Crear Sub Unidad
+{% endif %}
+{% endblock formtit %}
+
+{% block formulario %}
+{% csrf_token %}
+{{form}}
+{{ form.media }}
+<input class="btn btn-success" type="submit" value="Crear">
+<a class="btn btn-danger" href="{% url 'subunidad_index'%}">Cancelar</a>
+{% endblock formulario %}

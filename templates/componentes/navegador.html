@@ -25,11 +25,18 @@
           <li><a class="dropdown-item" href="{% url 'tecnico_index' %}">Técnicos</a></li>
           <li><a class="dropdown-item" href="{% url 'pieza_index' %}">Piezas</a></li>
           <li><a class="dropdown-item" href="{% url 'grado_lista' %}">Grados</a></li>
-          <li><a class="dropdown-item" href="{% url 'comisaria_index' %}">Comisaría</a></li>
         </ul>
       </li>
 
-      <li class="nav-item"><a class="nav-link" href="#">Facturas</a></li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Ubicacion
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'unidad_index' %}">Unidades</a></li>
+          <li><a class="dropdown-item" href="{% url 'subunidad_index' %}">Sub Unidades</a></li>
+        </ul>
+      </li>
       <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
       <!-- </ul> -->
       <!-- <ul class="navbar-nav flex-column"> -->

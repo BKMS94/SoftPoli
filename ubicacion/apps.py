@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ComisariaConfig(AppConfig):
+class UbicacionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'comisaria'
+    name = 'ubicacion'

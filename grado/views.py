@@ -29,7 +29,7 @@ def grado_gestion(request, id=None):
             try:
                 grado = form.save()
                 messages.success(request, f"Grado {'creado' if modo == 'crear' else 'actualizado'} correctamente.")
-                return redirect('grado_index')
+                return redirect('grado_lista')
             except Exception as e:
                 messages.error(request, f"Error al guardar el Grado: {e}")
     else:
