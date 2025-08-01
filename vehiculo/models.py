@@ -5,38 +5,70 @@ from django.urls import reverse
 # Es una buena práctica que el valor de la base de datos sea una clave corta y única.
 # Aunque aquí usas el mismo string, es válido.
 TIPOS_VEHICULO_CHOICES = [
-    ('Sedan', 'Sedan'),
-    ('Pick-up', 'Pick-up'),
-    ('Motocicleta', 'Motocicleta'),
-    ('Blindado', 'Blindado'),
-    ('Porta tropas', 'Porta tropas'),
-    ('Vehículos de rescate', 'Vehículos de rescate'),
-    ('Especiales', 'Especiales')
+    ('AMBULANCIA', 'AMBULANCIA'),
+    ('AUTOMOVIL', 'AUTOMOVIL'),
+    ('AUTOMOVIL SEDAN', 'AUTOMOVIL SEDAN'),
+    ('CAMION BARANDA', 'CAMION BARANDA'),
+    ('CAMIONETA  FUNERARIO', 'CAMIONETA  FUNERARIO'),
+    ('CAMIONETA  PANEL', 'CAMIONETA  PANEL'),
+    ('CAMIONETA  PICK UP', 'CAMIONETA  PICK UP'),
+    ('CAMIONETA  SUV', 'CAMIONETA  SUV'),
+    ('MINIBUS', 'MINIBUS'),
+    ('MICROBUS', 'MICROBUS'),
+    ('MOTO ACUATICA', 'MOTO ACUATICA'),
+    ('MOTOCICLETA', 'MOTOCICLETA'),
+    ('MOTOR FUERA DE BORDA ', 'MOTOR FUERA DE BORDA '),
+    ('OMNIBUS', 'OMNIBUS'),
+    ('PORTATROPA', 'PORTATROPA'),
+    ('STATION WAGON', 'STATION WAGON'),
+    ('TRIMOTO', 'TRIMOTO')
 ]
 
 ESTADOS_VEHICULO_CHOICES = [
-    ('Activo', 'Activo'),
-    ('Inoperativo', 'Inoperativo'), # Corregido: 'Pick-up' a 'Inoperativo'
-    ('Mantenimiento', 'Mantenimiento'),
+    ('ACTIVO', 'ACTIVO'),
+    ('INOPERATIVO', 'INOPERATIVO'), 
+    ('MANTENIMIENTO', 'MANTENIMIENTO'),
 ]
 
+ESTADOS_ODOMETRO_VEHICULO_CHOICES = [
+    ('ACTIVO', 'ACTIVO'),
+    ('INOPERATIVO', 'INOPERATIVO'), 
+]
+
+
 TIPO_COMBUSTIBLE_CHOICES =[
-    ('Gasolina', 'Gasolina'),
-    ('Diésel', 'Diésel'), 
+    ('GASOLINA', 'GASOLINA'),
+    ('DIESEL', 'DIESEL'), 
     ('GLP', 'GLP'), 
     ('GNV', 'GNV'), 
 ]
 
+FUNCION_VEHICULO_CHOICES = [
+    ('ADMINISTRATIVO','ADMINISTRATIVO'),
+    ('OPERATIVO','OPERATIVO'),
+    ('PATRULLAJE','PATRULLAJE'),
+    ('ASIG. AL CARGO','ADMASIG. AL CARGO')
+]
+
 class Vehiculo(models.Model):
-    placa = models.CharField(
+    placa_int = models.CharField(
         max_length=6,
         unique=True,
-        verbose_name="Placa"
+        verbose_name="Placa Interna"
+    )
+    placa_rod = models.CharField(
+        max_length=6,
+        unique=True,
+        verbose_name="Placa Rodaje"
     )
     vin = models.CharField(
+        max_length= 20,
+        unique=True,
+        verbose_name= 'N° de serie'
+    )
+    num_motor = models.CharField(
         max_length= 25,
-
-        verbose_name= 'VIN'
+        verbose_name= 'N° de motor'
     )
     marca = models.CharField(
         max_length=50,
@@ -60,23 +92,41 @@ class Vehiculo(models.Model):
         null=False,
         verbose_name="Kilometraje"
     )
-    estado = models.CharField(
+    estado_vehi = models.CharField(
         max_length=30, 
         choices=ESTADOS_VEHICULO_CHOICES,
-        default='Activo', 
-        verbose_name='Estado'
+        default='ACTIVO', 
+        verbose_name='Estado del vehículo'
+    )
+    estado_odo = models.CharField(
+        max_length=30, 
+        choices=ESTADOS_ODOMETRO_VEHICULO_CHOICES,
+        default='ACTIVO', 
+        verbose_name='Estado del odometro'
     )
     fecha_adquisicion = models.DateTimeField(
         blank=True,
         null= True,
         verbose_name= 'Fecha de adquisición'
     )
+
     tipo_combustible = models.CharField(
         max_length=20, 
         choices=TIPO_COMBUSTIBLE_CHOICES, 
         default='Gasolina', 
-        verbose_name="Tipo de Combustible")
-
+        verbose_name="Tipo de Combustible"
+    )
+    funcion = models.CharField(
+        max_length=30, 
+        choices=FUNCION_VEHICULO_CHOICES,
+        default='ACTIVO', 
+        verbose_name='Función policial'
+    )
+    valor = models.PositiveIntegerField(
+        blank=False,
+        null=False,
+        verbose_name="Valor"
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         editable=True
@@ -88,7 +138,7 @@ class Vehiculo(models.Model):
         ordering = ['created'] 
         
     def __str__(self):
-        return self.placa
+        return self.placa_int
 
     def get_detalle_url(self):
         return reverse('vehiculo_detalle', args=[self.id])

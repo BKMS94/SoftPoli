@@ -9,7 +9,7 @@ from .forms import VehiculoForm
 # Create your views here.
 
 def vehiculo_lista(request):
-    vehiculos = Vehiculo.objects.filter(placa__icontains= request.GET.get('search', '')).order_by('id') 
+    vehiculos = Vehiculo.objects.filter(placa_int__icontains= request.GET.get('search', '')).order_by('id') 
     vehiculos = paginacion(request,vehiculos)
     context = {'vehiculos': vehiculos,
                'urlindex': 'vehiculo_index',

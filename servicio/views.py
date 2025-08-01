@@ -19,7 +19,7 @@ from django.utils import timezone
 def servicio_lista(request):
     search_query = request.GET.get('search', '')
     servicios = Servicio.objects.filter(
-        Q(vehiculo__placa__icontains=search_query) |
+        Q(vehiculo__placa_int__icontains=search_query) |
         Q(persona__nombre__icontains=search_query) |
         Q(tecnico__nombre__icontains=search_query)
     ).order_by('-fecha')

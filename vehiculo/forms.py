@@ -4,19 +4,25 @@ from .models import Vehiculo
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        fields = ['placa', 'vin', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 'kilometraje', 'estado','fecha_adquisicion']
+        fields = ['placa_int','placa_rod', 'vin', 'num_motor', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 
+                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion']
         labels = {'anio': 'Año'}
         widgets = {
-            'placa': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Placa'}),
+            'placa_int': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Placa'}),
+            'placa_rod': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Placa'}),
             'vin': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el VIN'}),
+            'num_motor': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el VIN'}),
             'marca': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Marca'}),
             'modelo': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Modelo'}),
             'tipo': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
             'anio': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Año'}),
             'tipo_combustible': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
             'kilometraje': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el kilometraje'}),
-            'estado': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
+            'estado_vehi': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
+            'estado_odo': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
+            'funcion': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),            
             'fecha_adquisicion': forms.DateTimeInput(attrs={'class': 'form-control mb-4 mt-1'}),
+            'valor': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Año'}),
 
         }
 
