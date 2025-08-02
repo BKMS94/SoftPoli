@@ -87,7 +87,9 @@ class Vehiculo(models.Model):
         default='Sedan',
         verbose_name='Tipo'
     )
-    kilometraje = models.PositiveIntegerField(
+    kilometraje = models.DecimalField(
+        max_digits= 18,
+        decimal_places=1,
         blank=False,
         null=False,
         verbose_name="Kilometraje"
@@ -122,9 +124,11 @@ class Vehiculo(models.Model):
         default='ACTIVO', 
         verbose_name='Función policial'
     )
-    valor = models.PositiveIntegerField(
-        blank=False,
-        null=False,
+    valor = models.DecimalField(
+        max_digits= 18,
+        decimal_places=2,
+        blank=True,
+        null=True,
         verbose_name="Valor"
     )
     created = models.DateTimeField(

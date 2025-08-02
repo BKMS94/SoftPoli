@@ -19,7 +19,7 @@ def persona_gestion(request, id=None):
     persona, modo,extra = modo_gestion(Persona,id)
 
     if request.method == 'POST':
-        form = Persona(request.POST, isinstance=persona)
+        form = PersonaForm(request.POST, instance=persona)
         if form.is_valid():
             try:
                 persona = form.save()
@@ -64,7 +64,7 @@ def tecnico_gestion(request, id=None):
     tecnico, modo,extra = modo_gestion(Tecnico,id)
 
     if request.method == 'POST':
-        form = tecnico(request.POST, isinstance=tecnico)
+        form = TecnicoForm(request.POST, instance=tecnico)
         if form.is_valid():
             try:
                 tecnico = form.save()

@@ -40,9 +40,12 @@ class ServicioForm(ModelForm):
         cleaned_data = super().clean()
         kilometraje_actual = cleaned_data.get('kilometraje_act')
         vehiculo = cleaned_data.get('vehiculo')
-
+        
+        if self.instance.pk:  # Es edición
+            return cleaned_data
+    
         if vehiculo and kilometraje_actual is not None:
-            # Asumiendo que Vehiculo tiene un campo 'kilometraje' que se actualiza
+            
             if kilometraje_actual < vehiculo.kilometraje:
                 self.add_error('kilometraje_act', "El kilometraje actual no puede ser menor que el kilometraje registrado del vehículo.")
         return cleaned_data

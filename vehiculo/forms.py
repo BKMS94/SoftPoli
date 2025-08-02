@@ -5,7 +5,7 @@ class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
         fields = ['placa_int','placa_rod', 'vin', 'num_motor', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 
-                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion']
+                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion','valor']
         labels = {'anio': 'Año'}
         widgets = {
             'placa_int': forms.TextInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la Placa'}),
@@ -22,7 +22,7 @@ class VehiculoForm(forms.ModelForm):
             'estado_odo': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
             'funcion': forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),            
             'fecha_adquisicion': forms.DateTimeInput(attrs={'class': 'form-control mb-4 mt-1'}),
-            'valor': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el Año'}),
+            'valor': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe el valor de adquisicion'}),
 
         }
 

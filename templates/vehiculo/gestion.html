@@ -84,7 +84,13 @@ Crear Vehículos
         <div>{{form.fecha_adquisicion.label}}:</div>
         <div>{{form.fecha_adquisicion}}</div>
     </div>
+    <div class="col-md-4 mb-2">
+        <div>{{form.valor.label}}:</div>
+        <div>{{form.valor}}</div>
+    </div>
 </div>
-<input class="btn btn-success" type="submit" value="Crear">
+<button class="btn btn-success" type="submit">
+    {% if modo == 'editar' %}Actualizar{% else %}Guardar{% endif %}
+</button>
 <a class="btn btn-danger" href="{% url 'vehiculo_index'%}">Cancelar</a>
 {% endblock formulario %}
