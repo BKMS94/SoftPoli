@@ -1,7 +1,14 @@
-{% extends "base.html" %}
+{% extends "componentes/modal.html" %}
 
 {% block title %}{{ grado.nombre }}{% endblock title %}
 
-{% block content %}
-    <h1>{{ grado.nombre }}</h1>
-{% endblock content %}
+{% block titlemodal %}{{ grado.nombre }}{% endblock titlemodal %}
+
+{% block contentmodal %}
+
+
+<div>Orden: {{ grado.orden }}</div>
+<div>Nombre: {{ grado.nombre }}</div>
+<div>Abreviatura: {{ grado.abreviatura }}</div>
+
+{% endblock contentmodal %}
