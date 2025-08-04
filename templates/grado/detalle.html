@@ -1,14 +1,14 @@
-{% extends "componentes/modal.html" %}
+{% extends "componentes/botones.html" %}
 
-{% block title %}{{ grado.nombre }}{% endblock title %}
+{% block title %}{{ modelo.nombre }}{% endblock title %}
 
 {% block titlemodal %}{{ grado.nombre }}{% endblock titlemodal %}
 
 {% block contentmodal %}
 
 
-<div>Orden: {{ grado.orden }}</div>
-<div>Nombre: {{ grado.nombre }}</div>
-<div>Abreviatura: {{ grado.abreviatura }}</div>
+<div>Orden: {{ modelo.orden }}</div>
+<div>Nombre: {{ modelo.nombre }}</div>
+<div>Abreviatura: {{ modelo.abreviatura }}</div>
 
 {% endblock contentmodal %}
