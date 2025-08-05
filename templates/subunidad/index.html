@@ -20,7 +20,7 @@
     <td>{{ subunidad.direccion }}</td>
     <td>{{ subunidad.telefono_contacto }}</td>
     <td>{{ subunidad.responsable }}</td>
-    {% include "componentes/botones.html" with modelo=subunidad modelo_id=subunidad.id %}
+    {% include "componentes/botones.html" with modelo=subunidad modelomodal='subunidad' modelo_id=subunidad.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

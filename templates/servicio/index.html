@@ -27,7 +27,7 @@
     <!-- <td>{{ servicio.kilometraje_diff }}</td> -->
     <td>{{ servicio.descripcion }}</td>
     <td>{{ servicio.fecha|date:"d/m/Y" }}</td>
-    {% include "componentes/botones.html" with modelo=servicio modelo_id=servicio.id %}
+    {% include "componentes/botones.html" with model=servicio modelomodal='servicio' modelo_id=servicio.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

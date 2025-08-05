@@ -1,0 +1,42 @@
+<div class="container-fluid">
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información de la Sub Unidad Policial</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-building-fill-gear me-2 text-primary"></i><strong>Nombre de la
+                            Sub Unidad:</strong>
+                    </div>
+                    <span>{{ subunidad.nombre }}</span>
+                </li>
+                {% if subunidad.direccion %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-building-check me-2 text-primary"></i><strong>Dirección:</strong></div>
+                    <span>{{ subunidad.direccion }}</span>
+                </li>
+                {% endif %}
+                {% if subunidad.telefono_contacto %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-building-check me-2 text-primary"></i><strong>Teléfono:</strong></div>
+                    <span>{{ subunidad.telefono_contacto }}</span>
+                </li>
+                {% endif %}
+                {% if subunidad.responsable %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-geo-alt-fill me-2 text-primary"></i><strong>Ubicación:</strong></div>
+                    <span>{{ subunidad.responsable }}</span>
+                </li>
+                {% endif %}
+                {% if subunidad.unidad %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-telephone-fill me-2 text-primary"></i><strong>Unidad:</strong></div>
+                    <span>{{ subunidad.unidad }}</span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>

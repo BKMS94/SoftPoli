@@ -23,7 +23,7 @@
     <td>{{vehiculo.modelo}}</td>
     <td>{{vehiculo.anio}}</td>
     <td>{{vehiculo.kilometraje}}</td>
-    {% include "componentes/botones.html" with modelo=vehiculo modelo_id=vehiculo.id %}
+    {% include "componentes/botones.html" with modelo=vehiculo modelomodal='vehiculo' modelo_id=vehiculo.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

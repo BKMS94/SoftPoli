@@ -19,7 +19,7 @@
     <td>{{ grado.orden }}</td>
     <td>{{ grado.nombre }}</td>
     <td>{{ grado.abreviatura }}</td>
-    {% include "componentes/botones.html" with modelo=grado modelo_id=grado.id %}
+    {% include "componentes/botones.html" with modelo=grado modelomodal='grado' modelo_id=grado.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

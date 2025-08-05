@@ -1,11 +1,30 @@
-{% extends "base.html" %}
+<div class="container-fluid">
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información del Técnico</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-tag-fill me-2 text-primary"></i><strong>Código:</strong></div>
+                    <span>{{ tecnico.codigo }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-person-circle me-2 text-primary"></i><strong>Nombre Completo:</strong></div>
+                    <span>{{ tecnico.nombre }} </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-award-fill me-2 text-primary"></i><strong>Grado Policial:</strong></div>
+                    <span>{{ tecnico.grado }}</span>
+                </li>
+                {% if tecnico.telefono %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-phone-fill me-2 text-primary"></i><strong>Teléfono:</strong></div>
+                    <span>{{ tecnico.telefono }}</span>
+                </li>
+                {% endif %}
 
-{% block title %} {{ tecnico.nombre }} {% endblock title %}
-
-{% block content %}
-    <h2>{{ tecnico.codigo }}</h2>
-    <h2>{{ tecnico.nombre }}</h2>
-    <h2>{{ tecnico.grado }}</h2>
-    <h2>{{ tecnico.telefono }}</h2>
-
-{% endblock content %}
+            </ul>
+        </div>
+    </div>
+</div>

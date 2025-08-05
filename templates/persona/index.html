@@ -11,7 +11,6 @@
 <th>Nombre</th>
 <th>Grado</th>
 <th>Teléfono</th>
-<th>Es Técnico?</th>
 <th>Acciones</th>
 {% endblock Thead %}
 
@@ -22,16 +21,10 @@
     <td>{{persona.nombre}}</td>
     <td>{{persona.grado}}</td>
     <td>{{persona.telefono}}</td>
-    <td>
-        {% if persona.estecnico %}
-        Si
-        {% else %}
-        No
-        {% endif %}</td>
-    {% include "componentes/botones.html" with modelo=persona modelo_id=persona.id %}
+    {% include "componentes/botones.html" with modelo=persona modelomodal='persona' modelo_id=persona.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="6">{% include "componentes/pagination.html" with page=personas %}</td>
+<td colspan="5">{% include "componentes/pagination.html" with page=personas %}</td>
 {% endblock tfoot %}

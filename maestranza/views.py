@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from servicio.models import Servicio, Vehiculo, Persona
+from servicio.models import Servicio, Vehiculo, Persona, Tecnico, Pieza
 from grado.models import  Grado
 from ubicacion.models import  Unidad, SubUnidad
 
@@ -18,7 +18,7 @@ def detalle_objeto_modal_html(request, tipo_objeto, pk):
         context = {}
         
         if tipo_objeto == 'servicio':
-            objeto = get_object_or_404(Servicio, pk=pk)
+            objeto = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), pk=pk)
             template_name = 'servicio/detalle.html'
             context = {'servicio': objeto}
         elif tipo_objeto == 'vehiculo':
@@ -33,10 +33,22 @@ def detalle_objeto_modal_html(request, tipo_objeto, pk):
              objeto = get_object_or_404(Grado, pk=pk)
              template_name = 'grado/detalle.html'
              context = {'grado': objeto}
+        elif tipo_objeto == 'pieza':
+             objeto = get_object_or_404(Pieza, pk=pk)
+             template_name = 'pieza/detalle.html'
+             context = {'pieza': objeto}
         elif tipo_objeto == 'unidad':
              objeto = get_object_or_404(Unidad, pk=pk)
              template_name = 'unidad/detalle.html'
              context = {'unidad': objeto}
+        elif tipo_objeto == 'subunidad':
+             objeto = get_object_or_404(SubUnidad, pk=pk)
+             template_name = 'subunidad/detalle.html'
+             context = {'subunidad': objeto}
+        elif tipo_objeto == 'tecnico':
+             objeto = get_object_or_404(Tecnico, pk=pk)
+             template_name = 'tecnico/detalle.html'
+             context = {'tecnico': objeto}
         
         if template_name and context:
             html_content = render_to_string(template_name, context, request)

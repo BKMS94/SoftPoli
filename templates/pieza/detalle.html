@@ -1,10 +1,30 @@
-{% extends "base.html" %}
-
-{% block title %} {{ pieza.nombre }} {% endblock title %}
-
-{% block content %}
-    <h2>{{ pieza.nombre }}</h2>
-    <h2>{{ pieza.cantidad_stock }}</h2>
-    <h2>{{ pieza.reorder }}</h2>
-
-{% endblock content %}
+<div class="container-fluid">
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información de la Pieza</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-tag-fill me-2 text-primary"></i><strong>ID:</strong></div>
+                    <span>{{ pieza.id }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-gear-fill me-2 text-primary"></i><strong>Nombre:</strong></div>
+                    <span>{{ pieza.nombre }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-box-seam-fill me-2 text-primary"></i><strong>Stock Actual:</strong></div>
+                    <span>{{ pieza.cantidad_stock }} unidades</span>
+                </li>
+                {% if pieza.reorder %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i><strong>Stock Mínimo:</strong>
+                    </div>
+                    <span>{{ pieza.reorder }} unidades</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>

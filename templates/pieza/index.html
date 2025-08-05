@@ -19,7 +19,7 @@
     <td>{{ pieza.nombre}}</td>
     <td>{{pieza.cantidad_stock}}</td>
     <td>{{pieza.reorder}}</td>
-    {% include "componentes/botones.html" with modelo=pieza modelo_id=pieza.id %}
+    {% include "componentes/botones.html" with modelo=pieza modelomodal='pieza' modelo_id=pieza.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

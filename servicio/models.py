@@ -13,9 +13,18 @@ TIPO_MANTENIMIENTO_CHOICES = [
 class Servicio(models.Model):
     fecha = models.DateTimeField(editable=False, auto_now=True)
     descripcion = models.TextField(null=False, blank=False)
-    kilometraje_ant = models.PositiveIntegerField(default=0)
-    kilometraje_act = models.PositiveIntegerField(default=0)
-    kilometraje_diff = models.PositiveIntegerField(default=0)
+    kilometraje_ant = models.DecimalField(max_digits= 18,
+        decimal_places=1,
+        blank=False,
+        null=False,)
+    kilometraje_act = models.DecimalField(max_digits= 18,
+        decimal_places=1,
+        blank=False,
+        null=False,)
+    kilometraje_diff = models.DecimalField(max_digits= 18,
+        decimal_places=1,
+        blank=False,
+        null=False,)
     tipo = models.TextField(choices=TIPO_MANTENIMIENTO_CHOICES, default='Preventivo')
     vehiculo = models.ForeignKey(Vehiculo, on_delete= models.CASCADE)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)

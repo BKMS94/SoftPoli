@@ -1,14 +1,25 @@
-{% extends "componentes/modal.html" %}
-
-{% block title %}{{ modelo.nombre }}{% endblock title %}
-
-{% block titlemodal %}{{ grado.nombre }}{% endblock titlemodal %}
-
-{% block contentmodal %}
-
-
-<div>Orden: {{ modelo.orden }}</div>
-<div>Nombre: {{ modelo.nombre }}</div>
-<div>Abreviatura: {{ modelo.abreviatura }}</div>
-
-{% endblock contentmodal %}
+<div class="container-fluid">
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información del Grado Policial</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                {% if grado.orden %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-sort-numeric-down me-2 text-primary"></i><strong>Jerarquía:</strong></div>
+                    <span>{{ grado.orden }}</span>
+                </li>
+                {% endif %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-award-fill me-2 text-primary"></i><strong>Nombre del Grado:</strong></div>
+                    <span>{{ grado.nombre }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-award-fill me-2 text-primary"></i><strong>Abreviatura del Grado:</strong></div>
+                    <span>{{ grado.abreviatura }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

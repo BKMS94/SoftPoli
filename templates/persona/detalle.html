@@ -1,11 +1,30 @@
-{% extends "base.html" %}
+<div class="container-fluid">
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información de la Persona</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-tag-fill me-2 text-primary"></i><strong>Código:</strong></div>
+                    <span>{{ persona.codigo }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-person-circle me-2 text-primary"></i><strong>Nombre Completo:</strong></div>
+                    <span>{{ persona.nombre }} </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-award-fill me-2 text-primary"></i><strong>Grado Policial:</strong></div>
+                    <span>{{ persona.grado }}</span>
+                </li>
+                {% if persona.telefono %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-phone-fill me-2 text-primary"></i><strong>Teléfono:</strong></div>
+                    <span>{{ persona.telefono }}</span>
+                </li>
+                {% endif %}
 
-{% block title %} {{ persona.nombre }} {% endblock title %}
-
-{% block content %}
-    <h2>{{ persona.codigo }}</h2>
-    <h2>{{ persona.nombre }}</h2>
-    <h2>{{ persona.grado }}</h2>
-    <h2>{{ persona.telefono }}</h2>
-
-{% endblock content %}
+            </ul>
+        </div>
+    </div>
+</div>

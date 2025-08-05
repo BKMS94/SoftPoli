@@ -135,11 +135,8 @@ $(document).ready(function () {
     overlay.addEventListener('click', closeSidebar);
   }
 
+});
 
-
-
-// Este script se encarga de manejar la carga de contenido en el modal de forma genérica
-// utilizando el motor de plantillas de Django para renderizar el HTML.
 document.addEventListener('DOMContentLoaded', function () {
     const detalleModal = document.getElementById('detalleModal');
     
@@ -179,6 +176,4 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
-
 });
