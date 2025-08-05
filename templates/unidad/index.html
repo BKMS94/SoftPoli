@@ -14,7 +14,7 @@
 {% for unidad in unidades %}
 <tr>
     <td>{{ unidad.nombre }}</td>
-    {% include "componentes/botones.html" with modelo=unidad %}
+    {% include "componentes/botones.html" with modelo=unidad modelo_id=unidad.id%}
 </tr>
 {% endfor %}
 {% endblock tbody %}

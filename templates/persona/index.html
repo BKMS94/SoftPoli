@@ -28,7 +28,7 @@
         {% else %}
         No
         {% endif %}</td>
-    {% include "componentes/botones.html" with modelo=persona %}
+    {% include "componentes/botones.html" with modelo=persona modelo_id=persona.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

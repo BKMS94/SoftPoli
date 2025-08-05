@@ -5,26 +5,16 @@
 
 {% block content %}
 
-<div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="detalleModalLabel">Detalle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body" id="detalle-modal-body">
-                <h2>{{ servicio.vehiculo }}</h2>
-                <h2>{{ servicio.tecnico }}</h2>
-                <h2>{{ servicio.persona }}</h2>
-                <h2>{{ servicio.kilometraje_act }}</h2>
-                <h2>{{ servicio.kilometraje_diff }}</h2>
-                <h2>{{ servicio.descripcion }}</h2>
-                <h2>{{ servicio.costo }}</h2>
-                <h2>{{ servicio.fecha }}</h2>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+<ul class="list-group list-group-flush">
+    <li class="list-group-item"><strong>ID:</strong> {{ servicio.id }}</li>
+    <li class="list-group-item"><strong>Vehículo (Placa):</strong> {{ servicio.vehiculo.placa_int }}</li>
+    <li class="list-group-item"><strong>Tipo de Mantenimiento:</strong> {{ servicio.get_tipo_display }}</li>
+    <li class="list-group-item"><strong>Descripción:</strong> {{ servicio.descripcion }}</li>
+    <li class="list-group-item"><strong>Kilometraje al Inicio:</strong> {{ servicio.kilometraje_ant }} km
+    </li>
+    <li class="list-group-item"><strong>Kilometraje Final:</strong> {{ servicio.kilometraje_act }} km</li>
+    <li class="list-group-item"><strong>Diferencia de Kilometraje:</strong> {{ servicio.kilometraje_diff }} km</li>
+    <li class="list-group-item"><strong>Técnico Asignado:</strong> {{ servicio.tecnico.nombre }}</li>
+    <li class="list-group-item"><strong>Fecha de Registro:</strong> {{ servicio.fecha|date:"d/m/Y H:i" }}</li>
+</ul>
 {% endblock content %}

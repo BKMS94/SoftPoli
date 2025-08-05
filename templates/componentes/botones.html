@@ -1,8 +1,11 @@
 {% load static %}
 <td>
     <span>
-        <a class="btn btn-primary" data-bs-target="#modal_detalle" data-bs-toggle="modal"
-            href="{{ modelo.get_detalle_url }}"><img src="{% static 'img/ver.png' %}" alt=" "></a>
+        <button type="button" class="btn btn-primary btn-sm ver-detalle" data-bs-toggle="modal"
+            data-bs-target="#detalleModal" data-type="{{ modelo }}"
+            data-url="{% url 'detalle_objeto_modal_html' tipo_objeto=modelo pk=modelo_id %}">
+            <img src="{% static 'img/ver.png' %}" alt=" ">
+        </button>
         <a class="btn btn-secondary mx-2" href="{{ modelo.get_editar_url }}"><img src="{% static 'img/edit.png' %}"
                 alt=" "></a>
         <a class="btn btn-danger" href="{{ modelo.get_borrar_url }}"

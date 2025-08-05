@@ -2,12 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path('', views.servicio_lista, name='servicio_lista'),
+    path('', views.servicio_lista, name='servicio_lista'),
     path('crear/', views.servicio_form, name='servicio_crear'),
     path('<int:id>/', views.servicio_detalle, name='servicio_detalle'),
     path('editar/<int:id>/', views.servicio_form, name='servicio_editar'),
     path('', views.servicio_lista, name='servicio_lista'),
-    path('<int:pk>/', views.servicio_detalle, name='servicio_detalle'),
     path('borrar/<int:pk>/', views.servicio_borrar, name='servicio_borrar'), 
     path('vehiculo-autocomplete/', views.VehiculoAutocomplete.as_view(), name='vehiculo-autocomplete'),
     path('persona-autocomplete/', views.PersonaAutocomplete.as_view(), name='persona-autocomplete'),

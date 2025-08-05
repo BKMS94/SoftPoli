@@ -22,7 +22,7 @@ class Servicio(models.Model):
     tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Servicio {self.id} - {self.vehiculo.placa}"
+        return f"Servicio {self.id} - {self.vehiculo.placa_int}"
 
     def get_detalle_url(self):
         return reverse('servicio_detalle', args=[self.id])

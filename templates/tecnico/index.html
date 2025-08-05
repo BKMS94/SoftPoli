@@ -21,7 +21,7 @@
     <td>{{tecnico.nombre}}</td>
     <td>{{tecnico.grado}}</td>
     <td>{{tecnico.telefono}}</td>
-    {% include "componentes/botones.html" with modelo=tecnico %}
+    {% include "componentes/botones.html" with modelo=tecnico modelo_id=tecnico.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}

@@ -213,6 +213,11 @@ a.btn > img{
   height: 1.5rem  !important;  
 }
 
+button.btn > img{
+  width: 1.5rem !important;
+  height: 1.5rem  !important;  
+}
+
 .btn {
 
   border-radius: 0.375rem !important;
