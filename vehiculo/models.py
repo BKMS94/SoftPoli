@@ -52,12 +52,12 @@ FUNCION_VEHICULO_CHOICES = [
 
 class Vehiculo(models.Model):
     placa_int = models.CharField(
-        max_length=6,
+        max_length=8,
         unique=True,
         verbose_name="Placa Interna"
     )
     placa_rod = models.CharField(
-        max_length=6,
+        max_length=8,
         unique=True,
         verbose_name="Placa Rodaje"
     )

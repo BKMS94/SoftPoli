@@ -156,12 +156,17 @@ class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 def generar_pdf_servicio(request, id):
-    servicio = Servicio.objects.get(pk=id)
+    servicio = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), pk=id)
+    vehiculo = servicio.vehiculo
+    movimientos_stock = servicio.movimientostock_set.all() 
+    
     html_string = render_to_string(
         'pdf/pdf_servicios.html',
         {
             'servicio': servicio,
-            'logo_url': request.build_absolute_uri('/static/img/logo.png'),
+            'vehiculo': vehiculo,
+            'movimientos_stock': movimientos_stock,
+            'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
             'fecha_actual': timezone.now(),
         }
     )

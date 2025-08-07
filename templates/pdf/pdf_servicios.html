@@ -3,91 +3,177 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos de Referencia - Vehículo {{ vehiculo.placa_int }}</title>
     <style>
+        /* Estilos generales para el documento */
         body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 12px;
-            color: #222;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            line-height: 1.5;
         }
 
+        .page {
+            width: 21cm;
+            /* Ancho de una hoja A4 */
+            height: 29.7cm;
+            /* Alto de una hoja A4 */
+            margin: 0 auto;
+            padding: 2cm;
+            /* Márgenes para el contenido */
+            box-sizing: border-box;
+            /* Incluir padding en el tamaño */
+            position: relative;
+        }
+
+        /* Estilos para impresión y PDF */
+        @page {
+            size: A4;
+            margin: 0;
+            /* Eliminar márgenes por defecto de la página */
+        }
+
+        .page {
+            page-break-after: always;
+            /* Cada div con clase 'page' será una nueva página */
+        }
+
+        .page:last-child {
+            page-break-after: avoid;
+            /* No hay salto de página después de la última página */
+        }
+
+        /* Encabezados */
         .header {
             text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .header img {
-            height: 60px;
-        }
-
-        .title {
-            font-size: 1.3rem;
             font-weight: bold;
-            margin: 0.5rem 0;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: #555;
-        }
-
-
-        .section {
-            margin-bottom: 1.2rem;
+            font-size: 12pt;
+            margin-bottom: 1.5cm;
         }
 
         .section-title {
             font-weight: bold;
-            color: #1B3A1B;
-            border-bottom: 1px solid #C9B037;
-            margin-bottom: 0.5rem;
+            font-size: 11pt;
+            margin-top: 1cm;
+            margin-bottom: 0.5cm;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
+        .vehicle-info,
+        .service-details,
+        .parts-list {
+            margin-bottom: 1cm;
         }
 
-        th,
-        td {
-            border: 1px solid #bbb;
-            padding: 0.3rem 0.5rem;
+        .vehicle-info p,
+        .service-details ul,
+        .parts-list ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            /* Eliminar viñetas por defecto */
         }
 
-        th {
-            background: #f5f5f5;
-        }
-
-        .footer {
-            font-size: 0.9rem;
-            color: #888;
-            text-align: right;
-            margin-top: 2rem;
-        }
-
-        .firma {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .firma span {
+        .vehicle-info strong {
             display: inline-block;
-            border-top: 1px solid #222;
-            padding-top: 0.2rem;
+            width: 150px;
+            /* Ancho fijo para las etiquetas */
+        }
+
+        .service-details ul li::before,
+        .parts-list ul li::before {
+            content: "• ";
+            /* Viñeta personalizada */
+            color: #000;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .footer-signature {
+            position: absolute;
+            bottom: 2cm;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 80%;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 1cm;
+            padding-top: 5px;
+            font-size: 9pt;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <img src="{{ logo_url }}" alt="Logo Institucional">
-        <div class="title">{% block pdf_title %}{% endblock %}</div>
-        <div class="subtitle">{% block pdf_subtitle %}{% endblock %}</div>
+
+    <!-- PÁGINA 1 -->
+    <div class="page">
+        <div class="header">
+            TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO<br>
+            ANEXO "A": DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR
+        </div>
+
+        <div class="section-title">VEHÍCULO 1:</div>
+        <div class="vehicle-info">
+            <p>El presente requerimiento se realiza conforme al Informe Técnico Nro. ___________ de la Camioneta PNP de
+                placa interna {{ vehiculo.placa_int }} de rodaje {{ vehiculo.placa_rod }}, Marca {{ vehiculo.marca }}
+                Modelo {{ vehiculo.modelo }}, Motor Nº {{ vehiculo.num_motor }}, Serie Nro. {{ vehiculo.vin }} Año
+                {{vehiculo.anio }}, combustible {{ vehiculo.tipo_combustible }}, asignado a la COMISARÍA PNP
+                JERUSALÉN Y WICHANZÃO, dicho vehículo policial para mejorar su operatividad requiere mantenimiento
+                correctivo conforme a lo siguiente:</p>
+        </div>
+
+        <div class="section-title">SERVICIO PARA REALIZAR</div>
+        <div class="service-details">
+            {% if servicios_a_realizar %}
+            <ul>
+                {% for servicio_desc in servicios_a_realizar %}
+                <li>{{ servicio_desc }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No se especificaron servicios a realizar.</p>
+            {% endif %}
+        </div>
     </div>
-    {% block pdf_content %}{% endblock %}
-    <div class="footer">
-        Documento generado automáticamente por el sistema - {{ fecha_actual|date:"d/m/Y H:i" }}
+
+    <!-- PÁGINA 2 -->
+    <div class="page">
+        <div class="header">
+            TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO<br>
+            ANEXO "A": DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR
+        </div>
+
+        <div class="section-title">CAMBIO E INSTALACIÓN DE LOS SIGUIENTES REPUESTOS</div>
+        <div class="parts-list">
+            {% if movimientos_stock %}
+            <ul>
+                {% for pieza_desc in movimientos_stock %}
+                <li>{{ pieza_desc.cantidad }} {{ pieza_desc.pieza }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No se especificaron piezas a utilizar.</p>
+            {% endif %}
+        </div>
+
+        <div class="footer-signature">
+            <p>Atentamente,</p>
+            <div class="signature-line">
+                [NOMBRE DEL RESPONSABLE]<br>
+                [CARGO DEL RESPONSABLE]
+            </div>
+        </div>
     </div>
+
 </body>
 
 </html>

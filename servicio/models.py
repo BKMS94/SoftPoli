@@ -41,6 +41,22 @@ class Servicio(models.Model):
     
     def get_borrar_url(self):
         return reverse('servicio_borrar', args=[self.id])
+    
+    
+class Descripcion_Servicio(models.Model):
+    descripcion = models.TextField(null=False, blank=False)
+
+    def __str__(self):
+        return f"Descripcion_Servicio {self.id} - {self.vehiculo.placa_int}"
+
+    def get_detalle_url(self):
+        return reverse('descripcion_Servicio_detalle', args=[self.id])
+    
+    def get_editar_url(self):
+        return reverse('descripcion_Servicio_editar', args=[self.id])
+    
+    def get_borrar_url(self):
+        return reverse('descripcion_Servicio_borrar', args=[self.id])
 
 class MovimientoStock(models.Model):
     pieza = models.ForeignKey(Pieza, on_delete=models.CASCADE)
@@ -52,12 +68,8 @@ class MovimientoStock(models.Model):
     def __str__(self):
         return f"{self.cantidad} x {self.pieza.nombre} en Servicio {self.servicio.id}"
 
-    
-    def get_detalle_url(self):
-        return reverse('movimiento_detalle', args=[self.id])
-    
-    def get_editar_url(self):
-        return reverse('movimiento_editar', args=[self.id])
-    
-    def get_borrar_url(self):
-        return reverse('movimiento_borrar', args=[self.id])
+
+
+class Aaddservicios(models.Model):
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+    descripcion_servicio = models.ForeignKey(Descripcion_Servicio, on_delete=models.CASCADE)
