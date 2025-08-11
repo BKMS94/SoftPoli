@@ -11,9 +11,20 @@
         <a class="btn btn-danger" href="{{ modelo.get_borrar_url }}"
             onclick="return confirm('¿Estás seguro de que deseas borrar este registro?');"><img
                 src="{% static 'img/delete.png' %}" alt=" "></a>
-        <!-- <a href="{#% url 'generar_pdf_servicio' servicio.id %#}" class="btn btn-primary" target="_blank">
+
+        {% if modelomodal == 'servicio' %}
+        {% if modelo.estado != 'FINALIZADO' %}
+
+        <a class="btn btn-success mx-2" href="{{ modelo.get_fin_url }}"><img src="{% static 'img/confirmar.png' %}"
+                alt=" "></a>
+
+
+        {% else %}
+        <a href="{{modelo.get_pdf_url}}" class="btn btn-primary" target="_blank">
             Descargar Orden de Servicio (PDF)
-        </a> -->
+        </a>
+        {% endif %}
+        {% endif %}
     </span>
 </td>
 {% include "componentes/modal.html" with modelo=modelomodal %}

@@ -7,6 +7,7 @@ from maestranza.utils import paginacion, modo_gestion
 from django.forms import inlineformset_factory
 from django.db.models import Q
 from dal import autocomplete
+from datetime import datetime
 # from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from weasyprint import HTML
@@ -22,7 +23,7 @@ def servicio_lista(request):
         Q(vehiculo__placa_int__icontains=search_query) |
         Q(persona__nombre__icontains=search_query) |
         Q(tecnico__nombre__icontains=search_query)
-    ).order_by('-fecha')
+    ).order_by('-fecha_inicio')
     
     servicios = paginacion(request, servicios)
     
@@ -126,6 +127,14 @@ def servicio_borrar(request, id):
     servicio.delete()
     return redirect('servicio_lista')
 
+def finalizar_servicio(request, id):
+    servicio = get_object_or_404(Servicio, id=id)
+    servicio.fecha_inicio = servicio.fecha_inicio
+    servicio.fecha_fin = datetime.now()
+    servicio.estado = 'FINALIZADO'
+    servicio.save()
+    messages.success(request, "Servicio finalizado correctamente.")
+    return redirect('servicio_lista')  
 
 class VehiculoAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -156,7 +165,7 @@ class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 def generar_pdf_servicio(request, id):
-    servicio = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), pk=id)
+    servicio = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), id=id)
     vehiculo = servicio.vehiculo
     movimientos_stock = servicio.movimientostock_set.all() 
     
@@ -172,5 +181,5 @@ def generar_pdf_servicio(request, id):
     )
     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
     response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="servicio_{servicio.id}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="servicio_{servicio.id}_{servicio.fecha_fin.strftime("%Y-%m-%d_%H-%M")}.pdf"'
     return response

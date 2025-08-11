@@ -74,6 +74,16 @@ Crear Servicio
                 {{ form.tipo }}
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.estado.label_tag }}
+                {{ form.estado }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.fecha_fin.label_tag }}
+                {{ form.fecha_fin }}
+            </div>
+        </div>
         <div class="mb-3">
             {{ form.descripcion.label_tag }}
             {{ form.descripcion }}

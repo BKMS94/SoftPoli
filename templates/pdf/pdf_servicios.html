@@ -4,172 +4,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Términos de Referencia - Vehículo {{ vehiculo.placa_int }}</title>
+    <title>Orden de Trabajo - Servicio {{ servicio.id }}</title>
     <style>
-        /* Estilos generales para el documento */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             font-size: 10pt;
             line-height: 1.5;
+            color: #333;
         }
 
         .page {
             width: 21cm;
-            /* Ancho de una hoja A4 */
-            height: 29.7cm;
-            /* Alto de una hoja A4 */
+            /* A4 width */
+            min-height: 29.7cm;
+            /* A4 height */
             margin: 0 auto;
-            padding: 2cm;
-            /* Márgenes para el contenido */
+            padding: 2.5cm 2cm;
+            /* Top/Bottom and Left/Right margins */
             box-sizing: border-box;
-            /* Incluir padding en el tamaño */
             position: relative;
         }
 
-        /* Estilos para impresión y PDF */
+        /* Page break for printing/PDF generation */
         @page {
             size: A4;
             margin: 0;
-            /* Eliminar márgenes por defecto de la página */
         }
 
         .page {
             page-break-after: always;
-            /* Cada div con clase 'page' será una nueva página */
         }
 
         .page:last-child {
             page-break-after: avoid;
-            /* No hay salto de página después de la última página */
         }
 
-        /* Encabezados */
-        .header {
+        /* Header styles */
+        .main-header {
             text-align: center;
+            font-size: 14pt;
             font-weight: bold;
-            font-size: 12pt;
+            margin-bottom: 2cm;
+            text-transform: uppercase;
+        }
+
+        /* Info blocks */
+        .info-block {
             margin-bottom: 1.5cm;
         }
 
-        .section-title {
-            font-weight: bold;
-            font-size: 11pt;
-            margin-top: 1cm;
+        .info-line {
+            display: block;
             margin-bottom: 0.5cm;
-            border-bottom: 1px solid #000;
-            padding-bottom: 3px;
+            /* Space between lines */
+            font-size: 10.5pt;
         }
 
-        .vehicle-info,
-        .service-details,
-        .parts-list {
-            margin-bottom: 1cm;
-        }
-
-        .vehicle-info p,
-        .service-details ul,
-        .parts-list ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            /* Eliminar viñetas por defecto */
-        }
-
-        .vehicle-info strong {
-            display: inline-block;
-            width: 150px;
-            /* Ancho fijo para las etiquetas */
-        }
-
-        .service-details ul li::before,
-        .parts-list ul li::before {
-            content: "• ";
-            /* Viñeta personalizada */
-            color: #000;
+        .info-label {
             font-weight: bold;
             display: inline-block;
-            width: 1em;
-            margin-left: -1em;
+            min-width: 120px;
+            /* Adjust as needed */
+            margin-right: 5px;
         }
 
-        .footer-signature {
-            position: absolute;
-            bottom: 2cm;
-            left: 50%;
-            transform: translateX(-50%);
+        .fill-in-line {
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            display: inline-block;
+            min-width: 200px;
+            /* Minimum width for filled info */
+        }
+
+        .fill-in-line.short {
+            min-width: 80px;
+        }
+
+        .fill-in-line.long {
+            min-width: 300px;
+        }
+
+        /* Description box */
+        .description-box {
+            border: 1px solid #000;
+            padding: 15px;
+            min-height: 120px;
+            /* Adjust as needed */
+            margin-bottom: 1.5cm;
+        }
+
+        .description-box h3 {
+            font-size: 11pt;
+            font-weight: bold;
             text-align: center;
-            width: 80%;
+            margin-top: 0;
+            margin-bottom: 10px;
         }
 
-        .signature-line {
+        .description-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .description-box ul li::before {
+            content: "- ";
+            /* Custom bullet */
+            margin-right: 5px;
+        }
+
+        /* Signatures section */
+        .signatures-section {
+            margin-top: 2cm;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            width: 100%;
+        }
+
+        .signature-block {
+            width: 45%;
+        }
+
+        .signature-line-placeholder {
             border-top: 1px solid #000;
             margin-top: 1cm;
             padding-top: 5px;
             font-size: 9pt;
+        }
+
+        .signature-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .signature-role {
+            font-size: 8pt;
+            margin-top: 5px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- PÁGINA 1 -->
+    <!-- === PÁGINA 1 === -->
     <div class="page">
-        <div class="header">
-            TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO<br>
-            ANEXO "A": DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR
+        <div class="main-header">ORDEN DE TRABAJO</div>
+
+        <div class="info-block">
+            <span>En el servicio de Maestranza PNP De la REGPOL - TRUJILLO, siendo las
+                {{servicio.fecha_inicio|date:"H:i"}} del
+                día {{servicio.fecha_inicio|date:"d"}} de {{servicio.fecha_inicio|date:"D"}} del
+                {{servicio.fecha_inicio|date:"Y"}}, presentes en
+                el servicio de Maestranza se procedió a realizar el siguiente
+                trabajo en el vehículo de <strong>PLACA N°</strong> {{vehiculo.placa_int}}
+                <strong>TIPO DE VEHÍCULO </strong>{{vehiculo.tipo}}
+                <strong>MARCA </strong>{{vehiculo.marca}}
+                <strong>UNIDAD </strong>{{vehiculo.placa_int}}
+                <strong>CONDUCTOR </strong>{{persona.nombre}} </span>
         </div>
 
-        <div class="section-title">VEHÍCULO 1:</div>
-        <div class="vehicle-info">
-            <p>El presente requerimiento se realiza conforme al Informe Técnico Nro. ___________ de la Camioneta PNP de
-                placa interna {{ vehiculo.placa_int }} de rodaje {{ vehiculo.placa_rod }}, Marca {{ vehiculo.marca }}
-                Modelo {{ vehiculo.modelo }}, Motor Nº {{ vehiculo.num_motor }}, Serie Nro. {{ vehiculo.vin }} Año
-                {{vehiculo.anio }}, combustible {{ vehiculo.tipo_combustible }}, asignado a la COMISARÍA PNP
-                JERUSALÉN Y WICHANZÃO, dicho vehículo policial para mejorar su operatividad requiere mantenimiento
-                correctivo conforme a lo siguiente:</p>
-        </div>
-
-        <div class="section-title">SERVICIO PARA REALIZAR</div>
-        <div class="service-details">
-            {% if servicios_a_realizar %}
+        <div class="description-box">
+            <h3>DESCRIPCION DEL TRABAJO</h3>
+            {# Aquí listamos las descripciones de servicio del ServicioDetalle #}
+            {% if servicio.descripcion %}
             <ul>
-                {% for servicio_desc in servicios_a_realizar %}
-                <li>{{ servicio_desc }}</li>
-                {% endfor %}
+                <li>{{ servicio.descripcion }}</li>
             </ul>
             {% else %}
-            <p>No se especificaron servicios a realizar.</p>
+            <p>No se especificaron descripciones para este trabajo.</p>
             {% endif %}
         </div>
-    </div>
-
-    <!-- PÁGINA 2 -->
-    <div class="page">
-        <div class="header">
-            TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO<br>
-            ANEXO "A": DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR
+        <div class="info-block">
+            <span class="info-line">
+                Siendo las {{ servicio.fecha_fin|date:'H:i' }} horas del mismo día se dio por
+                terminada la presente intervinientes en señal de conformidad.
+            </span>
         </div>
 
-        <div class="section-title">CAMBIO E INSTALACIÓN DE LOS SIGUIENTES REPUESTOS</div>
-        <div class="parts-list">
-            {% if movimientos_stock %}
-            <ul>
-                {% for pieza_desc in movimientos_stock %}
-                <li>{{ pieza_desc.cantidad }} {{ pieza_desc.pieza }}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p>No se especificaron piezas a utilizar.</p>
-            {% endif %}
-        </div>
+        <div class="signatures-section">
+            <div class="signature-block">
+                <p class="signature-name">MECÁNICO</p>
 
-        <div class="footer-signature">
-            <p>Atentamente,</p>
-            <div class="signature-line">
-                [NOMBRE DEL RESPONSABLE]<br>
-                [CARGO DEL RESPONSABLE]
+            </div>
+            <div class="signature-block">
+                <p class="signature-name">CONDUCTOR</p>
+
             </div>
         </div>
     </div>

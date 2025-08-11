@@ -11,8 +11,8 @@
 <th>Técnico</th>
 <th>Solicitante</th>
 <th>Km. Actual</th>
-<!-- <th>Km. Diferencia</th> -->
-<th>Descripción</th>
+<th>Estado</th>
+<!-- <th>Descripción</th> -->
 <th>Fecha</th>
 <th>Acciones</th>
 {% endblock Thead %}
@@ -24,10 +24,15 @@
     <td>{{ servicio.tecnico }}</td>
     <td>{{ servicio.persona }}</td>
     <td>{{ servicio.kilometraje_act }}</td>
-    <!-- <td>{{ servicio.kilometraje_diff }}</td> -->
-    <td>{{ servicio.descripcion }}</td>
-    <td>{{ servicio.fecha|date:"d/m/Y" }}</td>
-    {% include "componentes/botones.html" with model=servicio modelomodal='servicio' modelo_id=servicio.id %}
+    <td>{% if servicio.estado != 'FINALIZADO' %}
+        <span class="badge bg-danger">En_proceso</button>
+            {% else %}
+            <span class="badge bg-success">Finalizado</span>
+            {% endif %}
+    </td>
+    <!-- <td>{{ servicio.estado }}</td> -->
+    <td>{{ servicio.fecha_fin|date:"d/m/Y" }}</td>
+    {% include "componentes/botones.html" with modelo=servicio modelomodal='servicio' modelo_id=servicio.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
