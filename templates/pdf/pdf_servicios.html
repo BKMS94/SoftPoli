@@ -156,7 +156,7 @@
         <div class="info-block">
             <span>En el servicio de Maestranza PNP De la REGPOL - TRUJILLO, siendo las
                 {{servicio.fecha_inicio|date:"H:i"}} del
-                día {{servicio.fecha_inicio|date:"d"}} de {{servicio.fecha_inicio|date:"D"}} del
+                día {{servicio.fecha_inicio|date:"d"}} de {{servicio.fecha_inicio|date:"F"}} del
                 {{servicio.fecha_inicio|date:"Y"}}, presentes en
                 el servicio de Maestranza se procedió a realizar el siguiente
                 trabajo en el vehículo de <strong>PLACA N°</strong> {{vehiculo.placa_int}}
@@ -179,7 +179,13 @@
         </div>
         <div class="info-block">
             <span class="info-line">
-                Siendo las {{ servicio.fecha_fin|date:'H:i' }} horas del mismo día se dio por
+                Siendo las {{ servicio.fecha_fin|date:'H:i' }} horas del
+                {% if servicio.fecha_inicio|date:'d' == servicio.fecha_fin|date:'d' %}
+                mismo día
+                {% else %}
+                día {{servicio.fecha_inicio|date:"d"}} de {{servicio.fecha_inicio|date:"F"}} del
+                {{servicio.fecha_inicio|date:"Y"}}
+                {% endif %} se dio por
                 terminada la presente intervinientes en señal de conformidad.
             </span>
         </div>

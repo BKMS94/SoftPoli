@@ -25,9 +25,9 @@
     <td>{{ servicio.persona }}</td>
     <td>{{ servicio.kilometraje_act }}</td>
     <td>{% if servicio.estado != 'FINALIZADO' %}
-        <span class="badge bg-danger">En_proceso</button>
+        <span class="badge bg-danger">{{servicio.estado}}</button>
             {% else %}
-            <span class="badge bg-success">Finalizado</span>
+            <span class="badge bg-success">{{servicio.estado}}</span>
             {% endif %}
     </td>
     <!-- <td>{{ servicio.estado }}</td> -->

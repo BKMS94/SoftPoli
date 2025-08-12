@@ -129,7 +129,6 @@ def servicio_borrar(request, id):
 
 def finalizar_servicio(request, id):
     servicio = get_object_or_404(Servicio, id=id)
-    servicio.fecha_inicio = servicio.fecha_inicio
     servicio.fecha_fin = datetime.now()
     servicio.estado = 'FINALIZADO'
     servicio.save()
@@ -167,6 +166,7 @@ class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
 def generar_pdf_servicio(request, id):
     servicio = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), id=id)
     vehiculo = servicio.vehiculo
+    persona = servicio.persona
     movimientos_stock = servicio.movimientostock_set.all() 
     
     html_string = render_to_string(
@@ -174,6 +174,7 @@ def generar_pdf_servicio(request, id):
         {
             'servicio': servicio,
             'vehiculo': vehiculo,
+            'persona': persona,
             'movimientos_stock': movimientos_stock,
             'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
             'fecha_actual': timezone.now(),

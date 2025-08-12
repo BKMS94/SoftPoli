@@ -3,6 +3,7 @@ from django.urls import reverse
 from vehiculo.models import Vehiculo
 from persona.models import Persona,Tecnico
 from pieza.models import Pieza
+from datetime import datetime
 # Create your models here.
 
 TIPO_MANTENIMIENTO_CHOICES = [
@@ -33,7 +34,7 @@ class Servicio(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete= models.CASCADE)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE)
-    fecha_inicio = models.DateTimeField(editable=False, auto_now=True)
+    fecha_inicio = models.DateTimeField(editable=False, auto_now=False, default= datetime.now())
     fecha_fin = models.DateTimeField(editable=True, null=True, blank=True)
     estado = models.CharField(
         max_length=20,
