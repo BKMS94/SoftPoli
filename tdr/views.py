@@ -36,7 +36,8 @@ def lista_requerimientos(request):
     """
     search_query = request.GET.get('search', '')
     requerimientos = Requerimiento.objects.filter(
-        Q(vehiculo__placa_int__icontains=search_query)
+        Q(vehiculo__placa_int__icontains=search_query) |
+        Q(informe_tecnico_nro__icontains=search_query)
     ).order_by('-fecha_creacion')
 
 
@@ -134,19 +135,12 @@ def requerimiento_form(request, id=None):
     # La plantilla 'requerimientos/gestion.html' es correcta aquí.
     return render(request, 'requerimiento/gestion.html', context)
 
+
 def borrar_requerimiento(request, pk):
-    """
-    Permite eliminar un requerimiento (TDR).
-    """
     requerimiento = get_object_or_404(Requerimiento, pk=pk)
-    if request.method == 'POST':
-        requerimiento.delete()
-        messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
-        return redirect('lista_requerimientos') # Redirige a la lista general
-    context = {
-        'requerimiento': requerimiento
-    }
-    return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
+    requerimiento.delete()
+    messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
+    return redirect('lista_requerimientos')
 
 # --- Vista para Generar Documento PDF del TDR ---
 

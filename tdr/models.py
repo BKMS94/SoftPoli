@@ -26,6 +26,7 @@ class Requerimiento(models.Model):
         verbose_name="Fecha de Creación del TDR"
     )
     informe_tecnico_nro = models.CharField(
+        unique=True,
         max_length=50,
         blank=True,
         null=True,

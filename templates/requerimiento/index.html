@@ -8,10 +8,11 @@
 
 {% block Thead %}
 <th>ID</th>
+<th>Nº Informe</th>
 <th>Vehículo (Placa)</th>
 <th>Fecha Creación</th>
 <th>Responsable</th>
-<th>Nº Informe</th>
+
 <th>Acciones</th>
 {% endblock Thead %}
 
@@ -19,10 +20,10 @@
 {% for requerimiento in requerimientos %}
 <tr>
     <td>{{ requerimiento.id }}</td>
+    <td>{{ requerimiento.informe_tecnico_nro|default:"N/A" }}</td>
     <td>{{ requerimiento.vehiculo.placa_int }}</td>
     <td>{{ requerimiento.fecha_creacion|date:"d/m/Y H:m" }}</td>
     <td>{{ requerimiento.vehiculo.subunidad.nombre }}</td>
-    <td>{{ requerimiento.informe_tecnico_nro|default:"N/A" }}</td>
     {% include "componentes/botones.html" with modelo=requerimiento modelomodal='requerimiento' modelo_id=requerimiento.id %}
 </tr>
 {% endfor %}
