@@ -100,6 +100,12 @@ class UnidadAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Unidad.objects.all().order_by('id')
         if self.q:
-            qs = qs.filter(placa__icontains=self.q)
+            qs = qs.filter(nombre__icontains=self.q)
         return qs
 
+class SubUnidadAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = SubUnidad.objects.all().order_by('id')
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
+        return qs

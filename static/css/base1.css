@@ -209,13 +209,13 @@ body, .sidebar-bs5, .main-content-wrapper-bs5 {
    6. BOTONES
    ========================= */
 a.btn > img{
-  width: 1.5rem !important;
-  height: 1.5rem  !important;  
+  width: 1.3rem !important;
+  height: 1.3rem  !important;  
 }
 
 button.btn > img{
-  width: 1.5rem !important;
-  height: 1.5rem  !important;  
+  width: 1.3rem !important;
+  height: 1.3rem  !important;  
 }
 
 .btn {
@@ -383,4 +383,69 @@ input[type="checkbox"][name$="-DELETE"] {
     border-left-width: 4px;
     margin-bottom: 16px;
   }
+}
+
+/* --- Nuevos estilos añadidos para gestion.html --- */
+
+/* Animación para el botón Agregar (pulso) */
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 var(--bs-success); }
+    70% { box-shadow: 0 0 0 10px rgba(60, 153, 110, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(60, 153, 110, 0); }
+}
+.animated-button-pulse {
+    animation: pulse-green 2s infinite;
+}
+
+/* Animación de entrada para las filas de formset */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animated-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Animación para el botón de eliminar (pequeño zoom) */
+.animated-button-delete {
+    transition: transform 0.2s ease-out;
+}
+.animated-button-delete:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos para los botones principales */
+.animated-button-primary {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.animated-button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(27, 58, 27, 0.3) !important;
+}
+
+.animated-button-secondary {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.animated-button-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(73, 80, 87, 0.3) !important;
+}
+
+/* Ajuste para que los Select2 tengan un padding de texto que se vea mejor */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 0.75rem !important; /* Aumenta el padding izquierdo */
+    line-height: calc(1.5em + 0.75rem + calc(1.5px * 2)) !important; /* Ajusta la altura del texto para que coincida con la del input normal */
+}
+
+/* Ajustes para el placeholder de Select2 */
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #6c757d !important; /* Color gris suave */
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--Accent-color) !important; /* Color de acento para resaltado */
+    color: #222 !important; /* Texto oscuro para contraste */
+}
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: var(--Secondary-color) !important; /* Color secundario para seleccionado */
+    color: #fff !important;
 }

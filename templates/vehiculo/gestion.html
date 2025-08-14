@@ -19,6 +19,7 @@ Crear Vehículos
 
 {% block formulario %}
 {% csrf_token %}
+{{form.media}}
 <div class="row">
     <div class="col-md-4 mb-2">
         <div>{{form.placa_int.label}}:</div>
@@ -89,6 +90,14 @@ Crear Vehículos
         <div>{{form.valor}}</div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-12 mb-2">
+        <div>{{form.subunidad.label}}:</div>
+        <div>{{form.subunidad}}</div>
+    </div>
+</div>
+
 <button class="btn btn-success" type="submit">
     {% if modo == 'editar' %}Actualizar{% else %}Guardar{% endif %}
 </button>

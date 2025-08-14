@@ -14,4 +14,5 @@ urlpatterns = [
     path('unidad/<int:id>/', views.unidad_detalle, name='unidad_detalle'),
     path('unidad/borrar/<int:id>/', views.unidad_borrar, name='unidad_borrar'),
     path('unidad-autocomplete/', views.UnidadAutocomplete.as_view(), name='unidad-autocomplete'),
+    path('subunidad-autocomplete/', views.SubUnidadAutocomplete.as_view(), name='subunidad-autocomplete'),
 ]

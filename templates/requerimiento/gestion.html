@@ -1,0 +1,148 @@
+{% extends 'componentes/formulario.html' %}
+{% load static %}
+{% load widget_tweaks %} 
+
+
+{% block title %}
+    {% if modo == 'crear' %}Crear Requerimiento (TDR){% else %}Editar Requerimiento (TDR){% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4 text-center text-md-start crud-title">
+        {% if modo == 'crear' %}Registrar Nuevo Requerimiento (TDR){% else %}Editar Requerimiento (TDR) #{{ requerimiento.id }}{% endif %}
+    </h1>
+
+    {% if messages %}
+        <div class="alert-container mb-4">
+            <ul class="messages list-unstyled mb-0">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }} alert alert-dismissible fade show rounded-3 shadow-sm"{% endif %} role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="post" id="requerimientoForm" class="p-3 p-md-4 bg-white rounded-lg shadow-sm">
+        {% csrf_token %}
+        {{ form.media }}
+
+        <div class="card mb-3 shadow-lg border-0 rounded-4"> 
+            <div class="card-header bg-success-subtle text-success fw-bold py-3 rounded-top-3"> 
+                <h5 class="mb-0 text-dark-emphasis">Información del Requerimiento</h5>
+            </div>
+            <div class="card-body p-3">
+                <div class="row g-3"> 
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.informe_tecnico_nro.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
+                            {{ form.informe_tecnico_nro.label }}</label>
+                        {{ form.informe_tecnico_nro|add_class:"form-control" }}
+                        {% if form.informe_tecnico_nro.errors %}<ul class="errorlist text-danger small mt-1">{% for error in form.informe_tecnico_nro.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.vehiculo.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">{{ form.vehiculo.label }}</label>
+                        {{ form.vehiculo|add_class:"form-select" }}
+                        {% if form.vehiculo.errors %}<ul class="errorlist text-danger small mt-1">{% for error in form.vehiculo.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card mb-3 shadow-lg border-0 rounded-4">
+            <div class="card-header bg-info-subtle text-info fw-bold py-2 d-flex justify-content-between align-items-center rounded-top-3">
+                <h5 class="mb-0 text-dark-emphasis">Servicios Propuestos</h5>
+                <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-servicio"> 
+                    <img src="{% static 'img/plus.png' %}" alt=" ">
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div id="requerimiento-servicios-formset">
+                    {{ servicio_detalle_formset.management_form }}
+                    {% for formset_form in servicio_detalle_formset %}
+                    <div class="row">
+                            <div class="col-md-11"> 
+                                <label for="{{ formset_form.descripcion_texto.id_for_label }}"
+                                    class="form-label visually-hidden">Descripción</label>
+                                {{ formset_form.descripcion_texto }}
+                                {% if formset_form.descripcion_texto.errors %}<ul class="errorlist text-danger small mt-1">{% for error in formset_form.descripcion_texto.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                                {{ formset_form.detalle }} 
+                            </div>
+                            {# El campo observaciones está comentado en el HTML original del usuario, lo mantengo así #}
+                            <div class="col-md-1 text-end">
+                                {% if formset_form.instance.pk %}
+                                    <div class="form-check form-switch d-inline-block me-2">
+                                        {{ formset_form.DELETE }}
+                                        <label class="form-check-label text-muted"
+                                            for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label> {# Texto más sutil #}
+                                    </div>
+                                {% else %}
+                                    <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete" title="Eliminar fila"><i
+                                            class="bi bi-x-lg"></i>X</button> {# Botón con animación #}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+        </div>
+        </div>
+
+        {# Sección para Piezas Propuestas (RequerimientoPiezaDetalleFormSet) #}
+        <div class="card mb-3 shadow-lg border-0 rounded-4">
+            <div class="card-header bg-warning-subtle text-warning fw-bold py-1 d-flex justify-content-between align-items-center rounded-top-3">
+                <h5 class="mb-0 text-dark-emphasis">Piezas Propuestas</h5>
+                <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-pieza"> 
+                    <img src="{% static 'img/plus.png' %}" alt=" ">
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div id="requerimiento-piezas-formset">
+                    {{ pieza_detalle_formset.management_form }}
+                    {% for formset_form in pieza_detalle_formset %}
+                        <div class="row">
+                            <div class="col-md-7">
+                                <label for="{{ formset_form.pieza.id_for_label }}"
+                                    class="form-label visually-hidden">Pieza</label>
+                                {{ formset_form.pieza|add_class:"form-select" }}
+                                {% if formset_form.pieza.errors %}<ul class="errorlist text-danger small mt-1">{% for error in formset_form.pieza.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ formset_form.cantidad.id_for_label }}"
+                                    class="form-label visually-hidden">Cantidad</label>
+                                {{ formset_form.cantidad|add_class:"form-control" }}
+                                {% if formset_form.cantidad.errors %}<ul class="errorlist text-danger small mt-1">
+                                    {% for error in formset_form.cantidad.errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1 text-end">
+                                {% if formset_form.instance.pk %}
+                                    <div class="form-check form-switch d-inline-block me-2">
+                                        {{ formset_form.DELETE }}
+                                        <label class="form-check-label text-muted"
+                                            for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label> {# Texto más sutil #}
+                                    </div>
+                                {% else %}
+                                    <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete" title="Eliminar fila"><i
+                                            class="bi bi-x-lg"></i>X</button> {# Botón con animación #}
+                                {% endif %}
+                            </div>
+                        </div>   
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {# Botones de acción al final del formulario #}
+        <div class="d-flex justify-content-end gap-3 mt-3"> {# Más espacio y separación entre botones #}
+            <button type="submit" class="btn btn-primary btn-lg animated-button-primary shadow-sm"><i class="bi bi-save me-2"></i>Guardar
+                Requerimiento</button>
+            <a href="{% url 'lista_requerimientos' %}" class="btn btn-secondary btn-lg animated-button-secondary shadow-sm"><i
+                    class="bi bi-x-circle me-2"></i>Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

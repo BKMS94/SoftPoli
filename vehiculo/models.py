@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from ubicacion.models import SubUnidad 
 
 # Define los choices como una lista de tuplas (valor_db, valor_display)
 # Es una buena práctica que el valor de la base de datos sea una clave corta y única.
@@ -25,13 +26,13 @@ TIPOS_VEHICULO_CHOICES = [
 ]
 
 ESTADOS_VEHICULO_CHOICES = [
-    ('ACTIVO', 'ACTIVO'),
+    ('OPERATIVO', 'OPERATIVO'),
     ('INOPERATIVO', 'INOPERATIVO'), 
     ('MANTENIMIENTO', 'MANTENIMIENTO'),
 ]
 
 ESTADOS_ODOMETRO_VEHICULO_CHOICES = [
-    ('ACTIVO', 'ACTIVO'),
+    ('OPERATIVO', 'OPERATIVO'),
     ('INOPERATIVO', 'INOPERATIVO'), 
 ]
 
@@ -97,13 +98,13 @@ class Vehiculo(models.Model):
     estado_vehi = models.CharField(
         max_length=30, 
         choices=ESTADOS_VEHICULO_CHOICES,
-        default='ACTIVO', 
+        default='OPERATIVO', 
         verbose_name='Estado del vehículo'
     )
     estado_odo = models.CharField(
         max_length=30, 
         choices=ESTADOS_ODOMETRO_VEHICULO_CHOICES,
-        default='ACTIVO', 
+        default='OPERATIVO', 
         verbose_name='Estado del odometro'
     )
     fecha_adquisicion = models.DateTimeField(
@@ -121,7 +122,7 @@ class Vehiculo(models.Model):
     funcion = models.CharField(
         max_length=30, 
         choices=FUNCION_VEHICULO_CHOICES,
-        default='ACTIVO', 
+        default='ADMINISTRATIVO', 
         verbose_name='Función policial'
     )
     valor = models.DecimalField(
@@ -130,6 +131,11 @@ class Vehiculo(models.Model):
         blank=True,
         null=True,
         verbose_name="Valor"
+    )
+    subunidad = models.ForeignKey(
+        SubUnidad,
+        on_delete= models.CASCADE,
+        verbose_name= 'Sub Unidad Asignada'
     )
     created = models.DateTimeField(
         auto_now_add=True,

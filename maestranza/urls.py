@@ -27,6 +27,7 @@ urlpatterns = [
     path('piezas/', include('pieza.urls')),
     path('servicios/', include('servicio.urls')),
     path('ubicacion/', include('ubicacion.urls')),
+    path('tdr/', include('tdr.urls')),
     path('api/detalle-html/<str:tipo_objeto>/<str:pk>/', views.detalle_objeto_modal_html, name='detalle_objeto_modal_html'),
 ]
 
