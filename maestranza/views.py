@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from servicio.models import Servicio, Vehiculo, Persona, Tecnico, Pieza
 from grado.models import  Grado
 from ubicacion.models import  Unidad, SubUnidad
+from tdr.models import Requerimiento
 
 def index(request):
     return render(request, 'dashboard.html')
@@ -49,6 +50,10 @@ def detalle_objeto_modal_html(request, tipo_objeto, pk):
              objeto = get_object_or_404(Tecnico, pk=pk)
              template_name = 'tecnico/detalle.html'
              context = {'tecnico': objeto}
+        elif tipo_objeto == 'requerimiento':
+             objeto = get_object_or_404(Requerimiento, pk=pk)
+             template_name = 'requerimiento/detalle.html'
+             context = {'requerimiento': objeto}
         
         if template_name and context:
             html_content = render_to_string(template_name, context, request)

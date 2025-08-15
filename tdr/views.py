@@ -41,9 +41,6 @@ def lista_requerimientos(request):
     ).order_by('-fecha_creacion')
 
 
-
-    # Asumiendo que 'paginacion' es una función que maneja la paginación de QuerySets
-    # Si no tienes esta utilidad, puedes usar Paginator de Django directamente.
     requerimientos = paginacion(request, requerimientos) 
     
     context = {
@@ -58,26 +55,17 @@ def lista_requerimientos(request):
 
 
 def detalle_requerimiento(request, pk):
-    """
-    Muestra los detalles de un requerimiento específico,
-    cargando las relaciones necesarias de forma eficiente.
-    """
-    requerimiento = get_object_or_404(Requerimiento.objects
-                                 .select_related('vehiculo', 'comisaria') # Incluir comisaria
-                                 .prefetch_related('requerimientodescripciondetalle_set__detalle', # Correcto: 'detalle' es el FK
-                                                   'requerimientopiezadetalle_set__pieza'),
-                                 pk=pk)
+    requerimiento = get_object_or_404(Requerimiento, pk=pk)
     context = {
         'requerimiento': requerimiento
     }
-    return render(request, 'requerimientos/detalle_requerimiento.html', context) # Ajustado a requerimientos/detalle_requerimiento.html
+    return render(request, 'requerimiento/detalle.html', context) 
 
-
-def requerimiento_form(request, id=None):
+def requerimiento_form(request, pk=None):
     """
     Permite crear o editar un requerimiento (TDR) y sus detalles.
     """
-    requerimiento, modo, extra = modo_gestion(Requerimiento,id)
+    requerimiento, modo, extra = modo_gestion(Requerimiento,pk)
 
     # Define los Formsets aquí, usando los formularios correctos
     RequerimientoDescripcionDetalleFormSet = inlineformset_factory(
@@ -129,7 +117,7 @@ def requerimiento_form(request, id=None):
         'form': form,
         'servicio_detalle_formset': servicio_detalle_formset,
         'pieza_detalle_formset': pieza_detalle_formset,
-        'requerimiento': requerimiento, # Se pasa la instancia (o None) para el modo
+        'requerimiento': requerimiento, 
         'modo': modo
     }
     # La plantilla 'requerimientos/gestion.html' es correcta aquí.
@@ -155,7 +143,7 @@ def generar_tdr_pdf(request, pk):
                                      pk=pk)
     
     vehiculo = requerimiento.vehiculo
-    comisaria_unidad = requerimiento.comisaria # Objeto Unidad
+    comisaria_unidad = requerimiento.comisaria
 
     # NOTA: Tu modelo 'Requerimiento' actual (según el forms.py) NO tiene los campos:
     # responsable_tdr, unidad_regpol, hora_inicio_trabajo, hora_fin_trabajo.

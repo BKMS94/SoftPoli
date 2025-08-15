@@ -124,11 +124,11 @@
                                     <div class="form-check form-switch d-inline-block me-2">
                                         {{ formset_form.DELETE }}
                                         <label class="form-check-label text-muted"
-                                            for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label> {# Texto más sutil #}
+                                            for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label> 
                                     </div>
                                 {% else %}
                                     <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete" title="Eliminar fila"><i
-                                            class="bi bi-x-lg"></i>X</button> {# Botón con animación #}
+                                            class="bi bi-x-lg"></i>X</button> 
                                 {% endif %}
                             </div>
                         </div>   
@@ -139,8 +139,7 @@
 
         {# Botones de acción al final del formulario #}
         <div class="d-flex justify-content-end gap-3 mt-3"> {# Más espacio y separación entre botones #}
-            <button type="submit" class="btn btn-primary btn-lg animated-button-primary shadow-sm"><i class="bi bi-save me-2"></i>Guardar
-                Requerimiento</button>
+            <button type="submit" class="btn btn-primary btn-lg animated-button-primary shadow-sm">{% if modo == 'editar' %}Actualizar{% else %}Guardar{% endif %}</button>
             <a href="{% url 'lista_requerimientos' %}" class="btn btn-secondary btn-lg animated-button-secondary shadow-sm"><i
                     class="bi bi-x-circle me-2"></i>Cancelar</a>
         </div>
