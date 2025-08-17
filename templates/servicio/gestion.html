@@ -1,4 +1,5 @@
 {% extends "componentes/formulario.html" %}
+{% load static %}
 
 {% block title %}
 {% if modo == 'editar' %}
@@ -147,4 +148,6 @@ Crear Servicio
         </div>
     </div>
 </form>
+
+<script src="{% static 'js/piezas.js' %}"></script>
 {% endblock formulario %}

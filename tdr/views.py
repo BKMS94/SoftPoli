@@ -78,8 +78,8 @@ def requerimiento_form(request, id=None):
 
     if request.method == 'POST':
         form = RequerimientoForm(request.POST, instance=requerimiento)
-        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(request.POST, instance=requerimiento)
-        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(request.POST, instance=requerimiento)
+        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(request.POST, instance=requerimiento, prefix='serviciodetalle') # <<<< ASEGURA QUE ES 'serviciodetalle'
+        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(request.POST, instance=requerimiento, prefix='piezadetalle') # <<<< ASEGURA QUE ES 'piezadetalle'
         
         if form.is_valid() and servicio_detalle_formset.is_valid() and pieza_detalle_formset.is_valid():
             with transaction.atomic():
@@ -97,8 +97,8 @@ def requerimiento_form(request, id=None):
             messages.error(request, f'Error al {"crear" if modo == "crear" else "actualizar"} el requerimiento. Revise los campos.')
     else: 
         form = RequerimientoForm(instance=requerimiento)
-        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(instance=requerimiento)
-        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(instance=requerimiento)
+        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(instance=requerimiento, prefix='serviciodetalle') # <<<< ASEGURA QUE ES 'serviciodetalle'
+        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(instance=requerimiento, prefix='piezadetalle') # <<<< ASEGURA QUE ES 'piezadetalle'
     
     context = {
         'form': form,
