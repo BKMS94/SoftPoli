@@ -13,8 +13,8 @@ urlpatterns = [
     path('<int:id>/generar-pdf/', views.generar_tdr_pdf, name='generar_tdr_pdf'),
 
     # ¡ELIMINADO!: URLs API para autocompletado y creación de Descripciones de Servicio.
-    # path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
-    # path('api/descripciones/crear/', views.crear_descripcion_servicio_api, name='crear_descripcion_servicio_api'),
+    path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
+    path('api/descripciones/crear/', views.crear_descripcion_servicio_api, name='crear_descripcion_servicio_api'),
 
     path('api/piezas/buscar/', views.buscar_piezas_api, name='buscar_piezas_api'),
 
