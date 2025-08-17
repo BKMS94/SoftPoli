@@ -1,7 +1,7 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy 
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
@@ -17,30 +17,22 @@ from io import BytesIO
 
 # Importa los modelos necesarios
 from maestranza.utils import modo_gestion, paginacion
-from .models import Requerimiento, RequerimientoDescripcionDetalle, RequerimientoPiezaDetalle, DescripcionServicio
+# ¡CORREGIDO!: DescripcionServicio ya no se importa aquí
+from .models import Requerimiento, RequerimientoDescripcionDetalle, RequerimientoPiezaDetalle
 from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, RequerimientoDescripcionDetalleForm
 from vehiculo.models import Vehiculo
-from ubicacion.models import SubUnidad # Necesario para Requerimiento.comisaria
+from ubicacion.models import Unidad # Necesario si Unidad se usa en otros modelos, pero ya no en Requerimiento directamente
 from pieza.models import Pieza # Necesario para buscar_piezas_api
-
-# Asumiendo que maestranza.utils existe y contiene paginacion y modo_gestion
-# from maestranza.utils import paginacion,modo_gestion
 
 
 # --- Vistas CRUD para Requerimientos (Funciones) ---
 
-def lista_requerimientos(request):
-    """
-    Muestra una lista de todos los requerimientos (TDRs).
-    Permite búsqueda por placa interna del vehículo.
-    """
+def requerimiento_lista(request):
     search_query = request.GET.get('search', '')
     requerimientos = Requerimiento.objects.filter(
-        Q(vehiculo__placa_int__icontains=search_query) |
-        Q(informe_tecnico_nro__icontains=search_query)
+        Q(vehiculo__placa_int__icontains=search_query)
     ).order_by('-fecha_creacion')
-
-
+    
     requerimientos = paginacion(request, requerimientos) 
     
     context = {
@@ -49,54 +41,50 @@ def lista_requerimientos(request):
         'urlcrear': 'crear_requerimiento', 
         'search_query': search_query
     }
-    # La plantilla 'requerimiento/index.html' debería ser 'requerimientos/lista_requerimientos.html'
-    # para consistencia, pero mantengo la que indicaste.
     return render(request, 'requerimiento/index.html', context)
 
 
-def detalle_requerimiento(request, pk):
-    requerimiento = get_object_or_404(Requerimiento, pk=pk)
+def detalle_requerimiento(request, id):
+    requerimiento = get_object_or_404(Requerimiento.objects
+                                 .select_related('vehiculo') 
+                                 .prefetch_related('detalles_servicio', # ¡CORREGIDO!: ya no hay .detalle
+                                                   'detalles_pieza__pieza'),
+                                 id=id)
     context = {
         'requerimiento': requerimiento
     }
-    return render(request, 'requerimiento/detalle.html', context) 
+    return render(request, 'requerimientos/detalle_requerimiento.html', context)
 
-def requerimiento_form(request, pk=None):
-    """
-    Permite crear o editar un requerimiento (TDR) y sus detalles.
-    """
-    requerimiento, modo, extra = modo_gestion(Requerimiento,pk)
 
-    # Define los Formsets aquí, usando los formularios correctos
+def requerimiento_form(request, id=None):
+    requerimiento, modo, extra = modo_gestion(Requerimiento, id)
+
     RequerimientoDescripcionDetalleFormSet = inlineformset_factory(
         Requerimiento,
         RequerimientoDescripcionDetalle,
         form=RequerimientoDescripcionDetalleForm,
-        extra=extra, # Usa la variable 'extra'
+        extra=extra,
         can_delete=True,
-        # 'detalle' es el ForeignKey, 'observaciones' es el TextField en RequerimientoDescripcionDetalle
-        fields=['detalle'] 
+        fields=['descripcion_propuesta'] # ¡CORREGIDO!: Ahora usa el campo de texto directo
     )
 
     RequerimientoPiezaDetalleFormSet = inlineformset_factory(
         Requerimiento,
         RequerimientoPiezaDetalle,
         form=RequerimientoPiezaDetalleForm,
-        extra=extra, # Un formulario vacío por defecto al crear, 0 al editar
+        extra=extra,
         can_delete=True,
         fields=['pieza', 'cantidad'],
     )
 
     if request.method == 'POST':
         form = RequerimientoForm(request.POST, instance=requerimiento)
-        # Es CRUCIAL que los prefijos aquí ('serviciodetalle', 'piezadetalle')
-        # coincidan con los usados en el template HTML para los formsets.
-        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(request.POST, instance=requerimiento, prefix='serviciodetalle')
-        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(request.POST, instance=requerimiento, prefix='piezadetalle')
+        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(request.POST, instance=requerimiento)
+        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(request.POST, instance=requerimiento)
         
         if form.is_valid() and servicio_detalle_formset.is_valid() and pieza_detalle_formset.is_valid():
             with transaction.atomic():
-                requerimiento = form.save() # Guarda el objeto Requerimiento principal
+                requerimiento = form.save() 
 
                 servicio_detalle_formset.instance = requerimiento
                 servicio_detalle_formset.save()
@@ -105,13 +93,13 @@ def requerimiento_form(request, pk=None):
                 pieza_detalle_formset.save()
             
             messages.success(request, f'Requerimiento (TDR) {"creado" if modo == "crear" else "actualizado"} exitosamente.')
-            return redirect('lista_requerimientos') # Redirige a la lista general
+            return redirect('lista_requerimientos') 
         else:
             messages.error(request, f'Error al {"crear" if modo == "crear" else "actualizar"} el requerimiento. Revise los campos.')
-    else: # GET request
+    else: 
         form = RequerimientoForm(instance=requerimiento)
-        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(instance=requerimiento, prefix='serviciodetalle')
-        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(instance=requerimiento, prefix='piezadetalle')
+        servicio_detalle_formset = RequerimientoDescripcionDetalleFormSet(instance=requerimiento)
+        pieza_detalle_formset = RequerimientoPiezaDetalleFormSet(instance=requerimiento)
     
     context = {
         'form': form,
@@ -120,51 +108,41 @@ def requerimiento_form(request, pk=None):
         'requerimiento': requerimiento, 
         'modo': modo
     }
-    # La plantilla 'requerimientos/gestion.html' es correcta aquí.
     return render(request, 'requerimiento/gestion.html', context)
 
+def borrar_requerimiento(request, id):
+    requerimiento = get_object_or_404(Requerimiento, id=id)
+    if request.method == 'POST':
+        requerimiento.delete()
+        messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
+        return redirect('lista_requerimientos') 
+    context = {
+        'requerimiento': requerimiento
+    }
+    return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
 
-def borrar_requerimiento(request, pk):
-    requerimiento = get_object_or_404(Requerimiento, pk=pk)
-    requerimiento.delete()
-    messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
-    return redirect('lista_requerimientos')
 
-# --- Vista para Generar Documento PDF del TDR ---
-
-def generar_tdr_pdf(request, pk):
-    """
-    Genera el documento PDF "Términos de Referencia" para un requerimiento específico.
-    """
+def generar_tdr_pdf(request, id):
     requerimiento = get_object_or_404(Requerimiento.objects
-                                     .select_related('vehiculo', 'comisaria') # Incluir comisaria en select_related
-                                     .prefetch_related('requerimientodescripciondetalle_set__detalle', # Correcto: 'detalle'
-                                                       'requerimientopiezadetalle_set__pieza'),
-                                     pk=pk)
+                                     .select_related('vehiculo') 
+                                     .prefetch_related('detalles_servicio', # ¡CORREGIDO!: Ya no hay .detalle
+                                                       'detalles_pieza__pieza'),
+                                     id=id)
     
     vehiculo = requerimiento.vehiculo
-    comisaria_unidad = requerimiento.comisaria
 
-    # NOTA: Tu modelo 'Requerimiento' actual (según el forms.py) NO tiene los campos:
-    # responsable_tdr, unidad_regpol, hora_inicio_trabajo, hora_fin_trabajo.
-    # Por lo tanto, se usan placeholders o se asume que estos datos se obtendrán de otra parte.
-    # Si estos campos son necesarios en el PDF, DEBERÍAN ser añadidos al modelo Requerimiento.
-    
     context = {
         'requerimiento': requerimiento,
         'vehiculo': vehiculo,
-        'comisaria_unidad': comisaria_unidad, # Pasamos el objeto Unidad de la comisaría
         
-        # Placeholders o datos estáticos, ya que no están en el modelo Requerimiento actual:
-        'persona': None, # Asumiendo un objeto Persona para el conductor/responsable si lo necesitas
-        'tecnico': None, # Asumiendo un objeto Tecnico si lo necesitas
-        'hora_inicio': 'HH:MM', # Placeholder
-        'hora_fin': 'HH:MM', # Placeholder
-        'unidad_regpol_doc': 'REGPOL - TRUJILLO', # Placeholder o un valor fijo
+        'persona': None, 
+        'tecnico': None, 
+        'hora_inicio': 'HH:MM', 
+        'hora_fin': 'HH:MM', 
+        'unidad_regpol_doc': 'REGPOL - TRUJILLO', 
         
-        # Datos que sí provienen del modelo Requerimiento:
         'informe_tecnico_nro_doc': requerimiento.informe_tecnico_nro or '__________',
-        'comisaria_doc': requerimiento.comisaria.nombre if requerimiento.comisaria else '[COMISARÍA NO ESPECIFICADA]', # Nombre de la Unidad FK
+        # 'comisaria_doc': vehiculo.comisaria.nombre if hasattr(vehiculo, 'comisaria') and vehiculo.comisaria else '[COMISARÍA NO ESPECIFICADA]',
         'fecha_actual': timezone.now(),
         'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
     }
@@ -181,46 +159,16 @@ def generar_tdr_pdf(request, pk):
     response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
     return response
 
-# --- Vistas API para AJAX (autocompletar descripciones de servicio y piezas) ---
-# Estas vistas permanecen como funciones y son reutilizables.
 
-def buscar_descripcion_servicio_api(request):
-    """
-    Vista API para buscar descripciones de servicio existentes (para Select2)
-    desde el catálogo LOCAL de 'requerimientos'.
-    """
-    query = request.GET.get('q', '')
-    if query:
-        # Aquí usa el campo 'descripcion_servicio' del modelo DescripcionServicio local
-        descripciones = DescripcionServicio.objects.filter(descripcion_servicio__icontains=query)[:10]
-        results = [{'id': d.id, 'text': d.descripcion_servicio} for d in descripciones]
-    else:
-        results = []
-    return JsonResponse({'results': results})
+# ¡ELIMINADO!: Las API de búsqueda/creación de DescripcionServicio ya no son necesarias para esta app.
+# Si otras apps las usan, deben tener sus propias implementaciones.
+# def buscar_descripcion_servicio_api(request):
+#     ...
+# def crear_descripcion_servicio_api(request):
+#     ...
 
-def crear_descripcion_servicio_api(request):
-    """
-    Vista API para crear una nueva descripción de servicio si no existe,
-    en el catálogo LOCAL de 'requerimientos'.
-    """
-    if request.method == 'POST':
-        descripcion_texto = request.POST.get('descripcion', '').strip()
-        if descripcion_texto:
-            try:
-                # Aquí usa el campo 'descripcion_servicio' del modelo DescripcionServicio local
-                descripcion_obj, created = DescripcionServicio.objects.get_or_create(
-                    descripcion_servicio__iexact=descripcion_texto,
-                    defaults={'descripcion_servicio': descripcion_texto}
-                )
-                return JsonResponse({'id': descripcion_obj.id, 'text': descripcion_obj.descripcion_servicio, 'created': created})
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Método no permitido o descripción vacía'}, status=400)
 
 def buscar_piezas_api(request):
-    """
-    Vista API para buscar piezas existentes (para Select2).
-    """
     query = request.GET.get('q', '')
     if query:
         piezas = Pieza.objects.filter(nombre__icontains=query)[:10]
@@ -228,3 +176,16 @@ def buscar_piezas_api(request):
     else:
         results = []
     return JsonResponse({'results': results})
+
+
+def detalle_requerimiento_modal(request, id):
+    requerimiento = get_object_or_404(Requerimiento.objects
+                                 .select_related('vehiculo')
+                                 .prefetch_related('detalles_servicio', # ¡CORREGIDO!: Ya no hay .detalle
+                                                   'detalles_pieza__pieza'),
+                                 id=id)
+    
+    context = {
+        'requerimiento': requerimiento,
+    }
+    return render(request, 'requerimientos/detalle_requerimiento_modal.html', context)

@@ -3,17 +3,21 @@ from . import views
 
 urlpatterns = [
     # URLs CRUD para Requerimientos
-    path('', views.lista_requerimientos, name='lista_requerimientos'),
+    path('', views.requerimiento_lista, name='lista_requerimientos'),
     path('crear/', views.requerimiento_form, name='crear_requerimiento'),
-    path('<int:pk>/', views.detalle_requerimiento, name='detalle_requerimiento'),
-    path('<int:pk>/editar/', views.requerimiento_form, name='editar_requerimiento'),
-    path('<int:pk>/borrar/', views.borrar_requerimiento, name='borrar_requerimiento'),
+    path('<int:id>/', views.detalle_requerimiento, name='detalle_requerimiento'),
+    path('<int:id>/editar/', views.requerimiento_form, name='editar_requerimiento'),
+    path('<int:id>/borrar/', views.borrar_requerimiento, name='borrar_requerimiento'),
 
     # URL para generar el PDF del TDR
-    path('<int:pk>/generar-pdf/', views.generar_tdr_pdf, name='generar_tdr_pdf'),
+    path('<int:id>/generar-pdf/', views.generar_tdr_pdf, name='generar_tdr_pdf'),
 
-    # URLs API para autocompletado y creación (si las mueves aquí desde 'servicios')
-    path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
-    path('api/descripciones/crear/', views.crear_descripcion_servicio_api, name='crear_descripcion_servicio_api'),
+    # ¡ELIMINADO!: URLs API para autocompletado y creación de Descripciones de Servicio.
+    # path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
+    # path('api/descripciones/crear/', views.crear_descripcion_servicio_api, name='crear_descripcion_servicio_api'),
+
     path('api/piezas/buscar/', views.buscar_piezas_api, name='buscar_piezas_api'),
+
+    # URL para el detalle del requerimiento en formato de modal (snippet HTML)
+    path('<int:id>/modal-detalle/', views.detalle_requerimiento_modal, name='detalle_requerimiento_modal'),
 ]
