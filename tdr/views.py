@@ -17,8 +17,7 @@ from io import BytesIO
 
 # Importa los modelos necesarios
 from maestranza.utils import modo_gestion, paginacion
-# ¡CORREGIDO!: DescripcionServicio ya no se importa aquí
-from .models import Requerimiento, RequerimientoDescripcionDetalle, RequerimientoPiezaDetalle
+from .models import Requerimiento, RequerimientoDescripcionDetalle, RequerimientoPiezaDetalle, DescripcionServicio # ¡Reintroducido DescripcionServicio!
 from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, RequerimientoDescripcionDetalleForm
 from vehiculo.models import Vehiculo
 from ubicacion.models import Unidad # Necesario si Unidad se usa en otros modelos, pero ya no en Requerimiento directamente
@@ -47,7 +46,7 @@ def requerimiento_lista(request):
 def detalle_requerimiento(request, id):
     requerimiento = get_object_or_404(Requerimiento.objects
                                  .select_related('vehiculo') 
-                                 .prefetch_related('detalles_servicio', # ¡CORREGIDO!: ya no hay .detalle
+                                 .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
                                                    'detalles_pieza__pieza'),
                                  id=id)
     context = {
@@ -65,7 +64,7 @@ def requerimiento_form(request, id=None):
         form=RequerimientoDescripcionDetalleForm,
         extra=extra,
         can_delete=True,
-        fields=['descripcion_propuesta'] # ¡CORREGIDO!: Ahora usa el campo de texto directo
+        fields=['detalle'] # ¡CORREGIDO!: Ahora usa el ForeignKey 'detalle'
     )
 
     RequerimientoPiezaDetalleFormSet = inlineformset_factory(
@@ -110,6 +109,7 @@ def requerimiento_form(request, id=None):
     }
     return render(request, 'requerimiento/gestion.html', context)
 
+
 def borrar_requerimiento(request, id):
     requerimiento = get_object_or_404(Requerimiento, id=id)
     if request.method == 'POST':
@@ -125,7 +125,7 @@ def borrar_requerimiento(request, id):
 def generar_tdr_pdf(request, id):
     requerimiento = get_object_or_404(Requerimiento.objects
                                      .select_related('vehiculo') 
-                                     .prefetch_related('detalles_servicio', # ¡CORREGIDO!: Ya no hay .detalle
+                                     .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
                                                        'detalles_pieza__pieza'),
                                      id=id)
     
@@ -142,7 +142,7 @@ def generar_tdr_pdf(request, id):
         'unidad_regpol_doc': 'REGPOL - TRUJILLO', 
         
         'informe_tecnico_nro_doc': requerimiento.informe_tecnico_nro or '__________',
-        # 'comisaria_doc': vehiculo.comisaria.nombre if hasattr(vehiculo, 'comisaria') and vehiculo.comisaria else '[COMISARÍA NO ESPECIFICADA]',
+        'comisaria_doc': vehiculo.subunidad.nombre if hasattr(vehiculo, 'subunidad') and vehiculo.subunidad else '[SUB UNIDAD NO ESPECIFICADA]',
         'fecha_actual': timezone.now(),
         'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
     }
@@ -160,12 +160,40 @@ def generar_tdr_pdf(request, id):
     return response
 
 
-# ¡ELIMINADO!: Las API de búsqueda/creación de DescripcionServicio ya no son necesarias para esta app.
-# Si otras apps las usan, deben tener sus propias implementaciones.
-# def buscar_descripcion_servicio_api(request):
-#     ...
-# def crear_descripcion_servicio_api(request):
-#     ...
+# ¡REINTRODUCIDO!: API para buscar descripciones de servicio (para Select2)
+def buscar_descripcion_servicio_api(request):
+    """
+    Vista API para buscar descripciones de servicio existentes (para Select2)
+    desde el catálogo LOCAL de 'requerimientos'.
+    """
+    query = request.GET.get('q', '')
+    if query:
+        # Aquí usa el campo 'descripcion_servicio' del modelo DescripcionServicio local
+        descripciones = DescripcionServicio.objects.filter(descripcion_servicio__icontains=query)[:10]
+        results = [{'id': d.id, 'text': d.descripcion_servicio} for d in descripciones]
+    else:
+        results = []
+    return JsonResponse({'results': results})
+
+# ¡REINTRODUCIDO!: API para crear una nueva descripción de servicio
+def crear_descripcion_servicio_api(request):
+    """
+    Vista API para crear una nueva descripción de servicio si no existe,
+    en el catálogo LOCAL de 'requerimientos'.
+    """
+    if request.method == 'POST':
+        descripcion_texto = request.POST.get('descripcion', '').strip()
+        if descripcion_texto:
+            try:
+                # Aquí usa el campo 'descripcion_servicio' del modelo DescripcionServicio local
+                descripcion_obj, created = DescripcionServicio.objects.get_or_create(
+                    descripcion_servicio__iexact=descripcion_texto,
+                    defaults={'descripcion_servicio': descripcion_texto}
+                )
+                return JsonResponse({'id': descripcion_obj.id, 'text': descripcion_obj.descripcion_servicio, 'created': created})
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Método no permitido o descripción vacía'}, status=400)
 
 
 def buscar_piezas_api(request):
@@ -181,7 +209,7 @@ def buscar_piezas_api(request):
 def detalle_requerimiento_modal(request, id):
     requerimiento = get_object_or_404(Requerimiento.objects
                                  .select_related('vehiculo')
-                                 .prefetch_related('detalles_servicio', # ¡CORREGIDO!: Ya no hay .detalle
+                                 .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
                                                    'detalles_pieza__pieza'),
                                  id=id)
     

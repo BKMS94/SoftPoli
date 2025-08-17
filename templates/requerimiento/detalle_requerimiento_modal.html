@@ -1,0 +1,104 @@
+{# Este es un fragmento de HTML que será cargado dentro de un modal. #}
+{# NO es una página HTML completa, por lo que no tiene <html>, <head>, etc. #}
+<div class="container-fluid">
+    <!-- Información principal del Requerimiento -->
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Información del Requerimiento</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-tag-fill me-2 text-primary"></i><strong>ID TDR:</strong></div>
+                    <span>{{ requerimiento.id }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-car-front-fill me-2 text-primary"></i><strong>Vehículo (Placa):</strong></div>
+                    <span>{{ requerimiento.vehiculo.placa_int }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-file-earmark-text-fill me-2 text-primary"></i><strong>Nº Informe Técnico:</strong></div>
+                    <span>{{ requerimiento.informe_tecnico_nro|default:"N/A" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><i class="bi bi-calendar-check-fill me-2 text-primary"></i><strong>Fecha de Creación:</strong></div>
+                    <span>{{ requerimiento.fecha_creacion|date:"d/m/Y H:i" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sección de Servicios Propuestos con scroll y altura máxima, colapsable -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center" 
+             style="cursor: pointer;" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#serviciosCollapse" 
+             aria-expanded="false" 
+             aria-controls="serviciosCollapse">
+            <h5 class="mb-0">Servicios Propuestos</h5>
+            <div class="d-flex align-items-center">
+                {% if requerimiento.detalles_servicio.all %}
+                    <span class="badge bg-secondary me-2">{{ requerimiento.detalles_servicio.count }} servicios</span>
+                {% endif %}
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+        <div class="collapse show" id="serviciosCollapse">
+            <div class="card-body" style="max-height: 200px; overflow-y: auto;">
+                {% if requerimiento.detalles_servicio.all %}
+                    <ul class="list-group list-group-flush">
+                        {% for servicio_detalle in requerimiento.detalles_servicio.all %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-wrench-adjustable-fill me-2 text-success"></i>
+                                <span class="me-auto">
+                                    {# ¡CORREGIDO!: Ahora accede a la descripción a través del ForeignKey 'detalle' #}
+                                    {{ servicio_detalle.detalle.descripcion_servicio|default:"[Descripción no disponible]" }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center mb-0">No se propusieron servicios en este TDR.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Piezas Propuestas con scroll y altura máxima, colapsable -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center" 
+             style="cursor: pointer;" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#piezasCollapse" 
+             aria-expanded="false" 
+             aria-controls="piezasCollapse">
+            <h5 class="mb-0">Piezas Propuestas</h5>
+            <div class="d-flex align-items-center">
+                {% if requerimiento.detalles_pieza.all %}
+                    <span class="badge bg-secondary me-2">{{ requerimiento.detalles_pieza.count }} piezas</span>
+                {% endif %}
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+        <div class="collapse show" id="piezasCollapse">
+            <div class="card-body" style="max-height: 200px; overflow-y: auto;">
+                {% if requerimiento.detalles_pieza.all %}
+                    <ul class="list-group list-group-flush">
+                        {% for pieza_detalle in requerimiento.detalles_pieza.all %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-gear-fill me-2 text-warning"></i>
+                                <span class="me-auto">
+                                    {{ pieza_detalle.cantidad }} x {{ pieza_detalle.pieza.nombre }} 
+                                    {% if pieza_detalle.pieza.numero_parte %}({{ pieza_detalle.pieza.numero_parte }}){% endif %}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center mb-0">No se propusieron piezas en este TDR.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -26,8 +26,7 @@
 
     <form method="post" id="requerimientoForm" class="p-3 p-md-4 bg-white rounded-lg shadow-sm">
         {% csrf_token %}
-        {{ form.media }}
-
+        {{ from.media}}
         {# Campos del formulario principal de Requerimiento #}
         <div class="card mb-5 shadow-lg border-0 rounded-4">
             <div class="card-header bg-success-subtle text-success fw-bold py-3 rounded-top-4">
@@ -37,13 +36,13 @@
                 <div class="row g-3">
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.vehiculo.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">{{ form.vehiculo.label }}</label>
-                        {{ form.vehiculo}}
+                        {{ form.vehiculo|add_class:"form-control" }}
                         {% if form.vehiculo.errors %}<ul class="errorlist text-danger small mt-1">{% for error in form.vehiculo.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.informe_tecnico_nro.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
                             {{ form.informe_tecnico_nro.label }}</label>
-                        {{ form.informe_tecnico_nro }}
+                        {{ form.informe_tecnico_nro|add_class:"form-control" }}
                         {% if form.informe_tecnico_nro.errors %}<ul class="errorlist text-danger small mt-1">{% for error in form.informe_tecnico_nro.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
                     </div>
                 </div>
@@ -69,11 +68,13 @@
                                 {{ hidden_field }}
                             {% endfor %}
                             <div class="col-md-10">
-                                {# ¡CORREGIDO!: Ahora renderiza el campo descripcion_propuesta directamente #}
-                                <label for="{{ formset_form.descripcion_propuesta.id_for_label }}"
+                                {# ¡CORREGIDO!: Input de texto para la descripción (Select2) #}
+                                <label for="{{ formset_form.descripcion_texto.id_for_label }}"
                                     class="form-label visually-hidden">Descripción</label>
-                                {{ formset_form.descripcion_propuesta }}
-                                {% if formset_form.descripcion_propuesta.errors %}<ul class="errorlist text-danger small mt-1">{% for error in formset_form.descripcion_propuesta.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                                {{ formset_form.descripcion_texto }}
+                                {% if formset_form.descripcion_texto.errors %}<ul class="errorlist text-danger small mt-1">{% for error in formset_form.descripcion_texto.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                                {# Campo oculto para el ForeignKey 'detalle' #}
+                                {{ formset_form.detalle }}
                             </div>
                             <div class="col-md-2 text-end">
                                 {% if formset_form.instance.pk %}
@@ -114,13 +115,13 @@
                             <div class="col-md-6">
                                 <label for="{{ formset_form.pieza.id_for_label }}"
                                     class="form-label visually-hidden">Pieza</label>
-                                {{ formset_form.pieza}}
+                                {{ formset_form.pieza|add_class:"form-control" }}
                                 {% if formset_form.pieza.errors %}<ul class="errorlist text-danger small mt-1">{% for error in formset_form.pieza.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
                             </div>
                             <div class="col-md-4">
                                 <label for="{{ formset_form.cantidad.id_for_label }}"
                                     class="form-label visually-hidden">Cantidad</label>
-                                {{ formset_form.cantidad }}
+                                {{ formset_form.cantidad|add_class:"form-control" }}
                                 {% if formset_form.cantidad.errors %}<ul class="errorlist text-danger small mt-1">
                                     {% for error in formset_form.cantidad.errors %}
                                     <li>{{ error }}</li>
@@ -154,18 +155,17 @@
                     class="bi bi-x-circle me-2"></i>Cancelar</a>
         </div>
     </form>
-{% endblock %}
 
-{% block extra_js %}
-    {# Incluye jQuery y Select2 desde CDN - necesarios para el JS de Piezas #}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    {# Incluye jQuery y Select2 desde CDN - necesarios para el JS de Piezas y ahora Descripciones #}
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // URLs de la API de Django que se pasan a las funciones JS en base.js
+            // URLs de la API de Django que se pasan a las funciones JS
             const urls = {
+                buscarDescripciones: "{% url 'buscar_descripcion_servicio_api' %}",
+                crearDescripciones: "{% url 'crear_descripcion_servicio_api' %}",
                 buscarPiezas: "{% url 'buscar_piezas_api' %}",
                 csrfToken: '{{ csrf_token }}'
             };
@@ -176,35 +176,247 @@
                 vehiculoSelect.select2();
             }
 
-            // Inicializar Select2 para los campos de Pieza existentes al cargar la página
-            document.querySelectorAll('select[name$="-pieza"]').forEach(select => {
-                window.initializeSelect2Pieza(select, urls.buscarPiezas);
+            // --- Funciones de inicialización de Select2 para formsets ---
+
+            // Función para inicializar Select2 para Descripciones de Servicio (con tags para crear nuevos)
+            function initializeSelect2Descripcion(element) {
+                $(element).select2({
+                    tags: true, // Permite crear nuevas opciones
+                    tokenSeparators: [',', ' '],
+                    minimumInputLength: 2,
+                    placeholder: 'Escribe o selecciona una descripción...',
+                    ajax: {
+                        url: urls.buscarDescripciones,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results
+                            };
+                        },
+                        cache: true
+                    },
+                    createTag: function(params) {
+                        const term = params.term.trim();
+                        if (term === '') {
+                            return null;
+                        }
+                        return {
+                            id: term, // Usamos el texto como ID temporal
+                            text: term,
+                            newTag: true // Marcamos que es una nueva etiqueta
+                        };
+                    }
+                }).on('select2:select', function (e) {
+                    const data = e.params.data;
+                    const hiddenInput = $(this).closest('.formset-row').find('input[name$="-detalle"]'); // Campo oculto 'detalle'
+                    const textInput = $(this); // El propio elemento Select2
+
+                    if (data.newTag) {
+                        // Si es una nueva etiqueta, la creamos vía AJAX
+                        $.ajax({
+                            url: urls.crearDescripciones,
+                            method: 'POST',
+                            data: {
+                                descripcion: data.text,
+                                csrfmiddlewaretoken: urls.csrfToken
+                            },
+                            success: function(response) {
+                                hiddenInput.val(response.id); // Asignar el ID real de la DB
+                                textInput.val(response.text).trigger('change'); // Actualizar Select2 con el texto real
+                                textInput.attr('data-descripcion-id', response.id); // Guardar el ID en el data-attribute
+                            },
+                            error: function(xhr) {
+                                console.error("Error al crear descripción:", xhr.responseText);
+                                hiddenInput.val('');
+                                textInput.val('').trigger('change');
+                                alert('Error al crear la descripción. Intente de nuevo o use una existente.'); // Usar alert solo para depuración
+                            }
+                        });
+                    } else {
+                        // Si es una opción existente, simplemente asignamos su ID
+                        hiddenInput.val(data.id);
+                        textInput.attr('data-descripcion-id', data.id);
+                    }
+                }).on('select2:unselect', function (e) {
+                    // Limpiar el campo oculto si se deselecciona
+                    $(this).closest('.formset-row').find('input[name$="-detalle"]').val('');
+                    $(this).attr('data-descripcion-id', '');
+                });
+
+                // Si el campo ya tiene un valor inicial (en edición), Select2 necesita ser inicializado con ese valor
+                if ($(element).attr('data-descripcion-id')) {
+                    const initialId = $(element).attr('data-descripcion-id');
+                    const initialText = $(element).val();
+                    if (initialId && initialText) {
+                        const option = new Option(initialText, initialId, true, true);
+                        $(element).append(option).trigger('change');
+                    }
+                }
+            }
+
+            // Función para inicializar Select2 para Piezas (solo búsqueda)
+            window.initializeSelect2Pieza = function(element) {
+                $(element).select2({
+                    placeholder: 'Selecciona una pieza...',
+                    allowClear: true,
+                    minimumInputLength: 2,
+                    ajax: {
+                        url: urls.buscarPiezas,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            };
+
+            // Inicializar Select2 para los campos de descripción existentes al cargar la página
+            document.querySelectorAll('.descripcion-servicio-input').forEach(input => {
+                initializeSelect2Descripcion(input);
             });
 
-            // Leer los prefijos dinámicos generados por Django para los formsets
-            // Estos son los 'related_name' en minúsculas del ForeignKey o el nombre del modelo
-            // relacionado en minúsculas seguido de '_set'
-            const servicioFormsetPrefix = '{{ servicio_detalle_formset.prefix }}'; // Acceder al prefijo real
-            const piezaFormsetPrefix = '{{ pieza_detalle_formset.prefix }}'; // Acceder al prefijo real
+            // Inicializar Select2 para los campos de Pieza existentes al cargar la página
+            document.querySelectorAll('select[name$="-pieza"]').forEach(select => {
+                window.initializeSelect2Pieza(select);
+            });
+
+
+            // --- Lógica de Formsets (añadir/eliminar filas) ---
+            window.setupFormset = function(formsetId, addBtnId, emptyFormTemplateId, prefix, initCallback = null) {
+                const formsetContainer = document.getElementById(formsetId);
+                const addBtn = document.getElementById(addBtnId);
+                const totalFormsInput = document.querySelector(`#${formsetId} input[name$="-TOTAL_FORMS"]`);
+
+                function updateElementIndex(el, prefix, ndx) {
+                    const idRegex = new RegExp(`(${prefix}-(\\d){1}-)`);
+                    const nameRegex = new RegExp(`(${prefix}-(\\d){1}-)`);
+                    
+                    if (el.id) {
+                        el.id = el.id.replace(idRegex, `${prefix}-${ndx}-`);
+                    }
+                    if (el.name) {
+                        el.name = el.name.replace(nameRegex, `${prefix}-${ndx}-`);
+                    }
+                    if (el.hasAttribute('data-select2-id')) {
+                        el.setAttribute('data-select2-id', el.getAttribute('data-select2-id').replace(idRegex, `${prefix}-${ndx}-`));
+                    }
+                }
+
+                addBtn.addEventListener('click', function() {
+                    const currentForms = parseInt(totalFormsInput.value);
+                    const newFormIndex = currentForms;
+                    const emptyFormHtml = document.getElementById(emptyFormTemplateId).innerHTML.replace(/__prefix__/g, newFormIndex);
+                    
+                    const newRow = document.createElement('div');
+                    newRow.className = 'formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in';
+                    newRow.innerHTML = emptyFormHtml;
+                    formsetContainer.appendChild(newRow);
+
+                    totalFormsInput.value = currentForms + 1;
+
+                    // Si hay un callback de inicialización (ej. para Select2), lo llamamos
+                    if (initCallback) {
+                        newRow.querySelectorAll('[name]').forEach(el => {
+                            // Buscar solo los elementos que necesitan Select2.
+                            // Esto asume que el input de Select2 tiene una clase específica como 'descripcion-servicio-input'
+                            // o que el select de piezas es el que necesita Select2.
+                            if (el.classList.contains('descripcion-servicio-input') || el.name.endsWith('-pieza')) {
+                                initCallback(el);
+                            }
+                        });
+                    }
+
+                    const removeBtn = newRow.querySelector('.remove-formset-row');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', function() {
+                            // Si el botón está asociado a un formulario preexistente (edición), marcar para eliminar
+                            const deleteInput = newRow.querySelector('input[name$="-DELETE"]');
+                            if (deleteInput) {
+                                deleteInput.checked = true;
+                                newRow.style.display = 'none'; // Ocultar visualmente
+                            } else {
+                                // Si es un formulario recién añadido (creación), simplemente eliminar
+                                newRow.remove();
+                            }
+                            updateFormsetIndexes(formsetContainer, prefix);
+                            totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+                        });
+                    }
+                });
+
+                function updateFormsetIndexes(container, currentPrefix) {
+                    let index = 0;
+                    container.querySelectorAll('.formset-row').forEach(row => {
+                        // Solo procesar filas que no están marcadas para eliminación
+                        const deleteInput = row.querySelector('input[name$="-DELETE"]');
+                        if (!deleteInput || !deleteInput.checked) {
+                            row.querySelectorAll('input, select, textarea').forEach(el => {
+                                updateElementIndex(el, currentPrefix, index);
+                            });
+                            row.querySelectorAll('label').forEach(label => {
+                                const forAttr = label.getAttribute('for');
+                                if (forAttr) {
+                                    label.setAttribute('for', forAttr.replace(new RegExp(`(${currentPrefix}-(\\d){1}-)`), `${currentPrefix}-${index}-`));
+                                }
+                            });
+                            index++;
+                        }
+                    });
+                }
+                
+                // Configurar botones de eliminar para filas existentes al cargar la página
+                formsetContainer.querySelectorAll('.formset-row .remove-formset-row').forEach(removeBtn => {
+                    removeBtn.addEventListener('click', function() {
+                        const row = removeBtn.closest('.formset-row');
+                        const deleteInput = row.querySelector('input[name$="-DELETE"]');
+                        if (deleteInput) {
+                            deleteInput.checked = true;
+                            row.style.display = 'none'; // Ocultar visualmente
+                        } else {
+                            row.remove();
+                        }
+                        updateFormsetIndexes(formsetContainer, prefix);
+                        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+                    });
+                });
+            };
             
-            // Configurar los formsets, llamando a la función global de base.js
-            // Para el formset de servicios, ya no hay Select2, así que pasamos null para el callback
-            window.setupFormset('requerimiento-servicios-formset', 'add-requerimiento-servicio', 'empty-requerimiento-servicio-form', servicioFormsetPrefix, null, null, null, null);
-            // Para el formset de piezas, sí se usa Select2
-            window.setupFormset('requerimiento-piezas-formset', 'add-requerimiento-pieza', 'empty-requerimiento-pieza-form', piezaFormsetPrefix, window.initializeSelect2Pieza, urls.buscarPiezas);
+            // Leer los prefijos dinámicos generados por Django para los formsets
+            const servicioFormsetPrefix = '{{ servicio_detalle_formset.prefix }}';
+            const piezaFormsetPrefix = '{{ pieza_detalle_formset.prefix }}';
+            
+            // Configurar los formsets, pasando los callbacks de inicialización
+            window.setupFormset('requerimiento-servicios-formset', 'add-requerimiento-servicio', 'empty-requerimiento-servicio-form', servicioFormsetPrefix, initializeSelect2Descripcion);
+            window.setupFormset('requerimiento-piezas-formset', 'add-requerimiento-pieza', 'empty-requerimiento-pieza-form', piezaFormsetPrefix, window.initializeSelect2Pieza);
         });
     </script>
 
     {# Plantilla vacía para nuevas filas de RequerimientoDescripcionDetalle #}
-    {# '__prefix__' es un placeholder que Django reemplaza con el índice de la fila #}
     <template id="empty-requerimiento-servicio-form">
         <div class="col-md-10">
-            {# ¡CORREGIDO!: Template para el campo descripcion_propuesta como textarea #}
-            <label for="id_serviciodetalle-__prefix__-descripcion_propuesta"
+            {# ¡CORREGIDO!: Template para el campo descripcion_texto como input de texto #}
+            <label for="id_serviciodetalle-__prefix__-descripcion_texto"
                 class="form-label visually-hidden">Descripción</label>
-            <textarea name="serviciodetalle-__prefix__-descripcion_propuesta"
-                id="id_serviciodetalle-__prefix__-descripcion_propuesta" class="form-control"
-                placeholder="Escribe la descripción del servicio propuesto..." rows="2"></textarea>
+            <input type="text" name="serviciodetalle-__prefix__-descripcion_texto"
+                id="id_serviciodetalle-__prefix__-descripcion_texto" class="form-control descripcion-servicio-input"
+                placeholder="Escribe o selecciona una descripción..." data-descripcion-id="">
+            {# Campo oculto para el ForeignKey 'detalle' #}
+            <input type="hidden" name="serviciodetalle-__prefix__-detalle" id="id_serviciodetalle-__prefix__-detalle">
         </div>
         <div class="col-md-2 text-end">
             <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete" title="Eliminar fila"><i
@@ -216,7 +428,7 @@
     <template id="empty-requerimiento-pieza-form">
         <div class="col-md-6">
             <label for="id_piezadetalle-__prefix__-pieza" class="form-label visually-hidden">Pieza</label>
-            <select name="piezadetalle-__prefix__-pieza" id="id_piezadetalle-__prefix__-pieza" class="form-select"></select>
+            <select name="piezadetalle-__prefix__-pieza" id="id_piezadetalle-__prefix__-pieza" class="form-control"></select>
         </div>
         <div class="col-md-4">
             <label for="id_piezadetalle-__prefix__-cantidad" class="form-label visually-hidden">Cantidad</label>

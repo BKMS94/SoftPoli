@@ -2,14 +2,31 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import UniqueConstraint
-from django.db.models.functions import Lower # Importar Lower para unicidad case-insensitive
-
-
-# ¡ELIMINADO!: El modelo DescripcionServicio ha sido removido completamente.
-# No será usado para los servicios del TDR ni se asume su uso en otras apps desde aquí.
+from django.db.models.functions import Lower
 
 from vehiculo.models import Vehiculo
 from pieza.models import Pieza
+
+
+class DescripcionServicio(models.Model):
+    """
+    Modelo para almacenar descripciones de servicios únicas y predefinidas,
+    actuando como un catálogo.
+    """
+    descripcion_servicio = models.TextField(
+        unique=True,
+        verbose_name="Descripción del Servicio"
+    )
+
+    class Meta:
+        verbose_name = "Descripción de Servicio (Catálogo)"
+        verbose_name_plural = "Descripciones de Servicio (Catálogo)"
+        ordering = ['id']
+        # Para unicidad case-insensitive en PostgreSQL (si se usa):
+        # constraints = [UniqueConstraint(Lower('descripcion_servicio'), name='uniq_desc_servicio_ci')]
+
+    def __str__(self):
+        return self.descripcion_servicio
 
 
 class Requerimiento(models.Model):
@@ -32,7 +49,16 @@ class Requerimiento(models.Model):
         verbose_name="Nº Informe Técnico"
     )
 
-    # Piezas Propuestas se mantiene igual
+    # Reestablecemos el ManyToManyField si queremos poder acceder a las descripciones
+    # directamente desde Requerimiento. Si no, se puede omitir.
+    # Si lo mantienes, asegúrate de que 'through' apunte correctamente.
+    servicios_propuestos = models.ManyToManyField(
+        DescripcionServicio,
+        through='RequerimientoDescripcionDetalle',
+        related_name='requerimientos_asociados_servicio',
+        verbose_name="Servicios Propuestos en TDR"
+    )
+
     piezas_propuestas = models.ManyToManyField(
         Pieza,
         through='RequerimientoPiezaDetalle',
@@ -60,16 +86,23 @@ class Requerimiento(models.Model):
 
 
 class RequerimientoDescripcionDetalle(models.Model):
+    """
+    Modelo intermedio para conectar un Requerimiento con las descripciones de servicio.
+    Ahora, 'detalle' es un ForeignKey al modelo DescripcionServicio.
+    """
     requerimiento = models.ForeignKey(
         Requerimiento,
         on_delete=models.CASCADE,
         related_name='detalles_servicio',
         verbose_name="Requerimiento Asociado"
     )
-    descripcion_propuesta = models.TextField(
-        verbose_name="Descripción del Servicio Propuesto",
-        blank=False,
-        null=False
+    # ¡CORREGIDO!: 'detalle' es un ForeignKey a DescripcionServicio
+    detalle = models.ForeignKey(
+        DescripcionServicio,
+        on_delete=models.SET_NULL, # Permite que el detalle sea NULL si la DescripcionServicio se borra
+        null=True, blank=True, # Puede ser nulo en DB y formularios
+        related_name='en_requerimientos_detalle', # Nombre relacionado más específico
+        verbose_name="Descripción del Servicio Propuesto"
     )
 
     class Meta:
@@ -77,14 +110,18 @@ class RequerimientoDescripcionDetalle(models.Model):
         verbose_name_plural = "Detalles de Servicios del Requerimiento"
         ordering = ['id']
         constraints = [
+            # ¡NUEVO!: Restricción de unicidad para la combinación de requerimiento y detalle
+            # Asegura que una descripción de servicio específica solo aparezca una vez por requerimiento.
             UniqueConstraint(
-                fields=['requerimiento', 'descripcion_propuesta'],
-                name='uniq_req_desc'
+                fields=['requerimiento', 'detalle'],
+                name='uniq_req_detalle'
             )
         ]
 
     def __str__(self):
-        return f"{self.descripcion_propuesta} para Requerimiento {self.requerimiento.id}"
+        # Acceso seguro a la descripción del detalle
+        desc_text = self.detalle.descripcion_servicio if self.detalle else "N/A (Descripción eliminada)"
+        return f"{desc_text} para Requerimiento {self.requerimiento.id}"
 
 
 class RequerimientoPiezaDetalle(models.Model):
