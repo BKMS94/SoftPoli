@@ -1,73 +1,92 @@
+// --- Lógica para formset de piezas en Servicios ---
 document.addEventListener("DOMContentLoaded", function () {
-    // ==================== SERVICIOS ====================
-    const addServicioBtn = document.getElementById("add-requerimiento-servicio");
-    const servicioFormsetContainer = document.getElementById("requerimiento-servicios-formset");
-    const emptyFormServicio = document.querySelector(".empty-form-servicio .formset-row");
-    const totalFormsServicio = document.querySelector("#id_serviciodetalle-TOTAL_FORMS");
+    const addBtnMovimiento = document.getElementById("add-movimiento-btn");
+    const tableMovimientos = document.getElementById("movimientos-table");
+    const emptyRowMovimiento = document.getElementById("empty-form-row");
+    const totalFormsMovimiento = document.querySelector('input[name$="-TOTAL_FORMS"]');
 
-    if (addServicioBtn && servicioFormsetContainer && emptyFormServicio && totalFormsServicio) {
-        addServicioBtn.addEventListener("click", function (e) {
-            e.preventDefault();
+    if (!addBtnMovimiento || !tableMovimientos || !emptyRowMovimiento || !totalFormsMovimiento) {
+        return; // si falta algo, no ejecutar
+    }
 
-            const formIndex = parseInt(totalFormsServicio.value, 10);
-            const newFormHtml = emptyFormServicio.outerHTML.replace(/__prefix__/g, formIndex);
+    // 👉 Añadir nueva fila de pieza
+    addBtnMovimiento.addEventListener("click", function (e) {
+        e.preventDefault();
+        const formIdx = parseInt(totalFormsMovimiento.value);
+        let newRowHtml = emptyRowMovimiento.innerHTML.replace(/__prefix__/g, formIdx);
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = newRowHtml;
+        newRow.removeAttribute("id");
+        newRow.style.display = "";
+        tableMovimientos.querySelector("tbody").appendChild(newRow);
+        totalFormsMovimiento.value = formIdx + 1;
+        attachRemoveEvents();
+        setTimeout(actualizarStockEnFilas, 100);
+    });
 
-            servicioFormsetContainer.insertAdjacentHTML("beforeend", newFormHtml);
-            totalFormsServicio.value = formIndex + 1;
-        });
-
-        servicioFormsetContainer.addEventListener("click", function (e) {
-            if (e.target.closest(".remove-formset-row")) {
+    // 👉 Eliminar fila de pieza
+    function attachRemoveEvents() {
+        tableMovimientos.querySelectorAll(".remove-row").forEach(function (btn) {
+            btn.onclick = function (e) {
                 e.preventDefault();
-                const row = e.target.closest(".formset-row");
-                const deleteInput = row.querySelector("input[type='checkbox'][name$='-DELETE']");
+                if (!confirm("¿Estás seguro de eliminar esta pieza?")) return;
+                let row = btn.closest("tr");
+                let checkbox = row.querySelector('input[type=checkbox][name$="-DELETE"]');
+                if (checkbox) checkbox.checked = true; // marcar para eliminar en backend
+                row.style.display = "none"; // ocultar en frontend
+            };
+        });
+    }
 
-                if (deleteInput) {
-                    // Caso: fila proveniente de BD
-                    deleteInput.checked = true;
-                    row.style.display = "none";
-                } else {
-                    // Caso: fila nueva -> eliminar nodo completo
-                    row.remove();
-                    totalFormsServicio.value = parseInt(totalFormsServicio.value, 10) - 1;
+    // 👉 Actualizar stock cuando se selecciona pieza
+    function actualizarStockEnFilas() {
+        document.querySelectorAll("#movimientos-table tbody tr").forEach(function (row) {
+            const selectPieza = row.querySelector("select");
+            const stockSpan = row.querySelector(".stock-info");
+            if (selectPieza && stockSpan) {
+                selectPieza.onchange = function () {
+                    const piezaId = this.value;
+                    if (piezaId) {
+                        fetch(`/piezas/stock/${piezaId}/`)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                stockSpan.textContent = "(Stock: " + data.stock + ")";
+                            })
+                            .catch(() => {
+                                stockSpan.textContent = "(Stock: -)";
+                            });
+                    } else {
+                        stockSpan.textContent = "(Stock: -)";
+                    }
+                };
+                if (selectPieza.value) {
+                    selectPieza.dispatchEvent(new Event("change")); // refrescar stock si ya está seleccionada
                 }
             }
         });
     }
 
-    // ==================== PIEZAS ====================
-    const addPiezaBtn = document.getElementById("add-requerimiento-pieza");
-    const piezaFormsetContainer = document.getElementById("requerimiento-piezas-formset");
-    const emptyFormPieza = document.querySelector(".empty-form-pieza .formset-row");
-    const totalFormsPieza = document.querySelector("#id_piezadetalle-TOTAL_FORMS");
-
-    if (addPiezaBtn && piezaFormsetContainer && emptyFormPieza && totalFormsPieza) {
-        addPiezaBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            const formIndex = parseInt(totalFormsPieza.value, 10);
-            const newFormHtml = emptyFormPieza.outerHTML.replace(/__prefix__/g, formIndex);
-
-            piezaFormsetContainer.insertAdjacentHTML("beforeend", newFormHtml);
-            totalFormsPieza.value = formIndex + 1;
-        });
-
-        piezaFormsetContainer.addEventListener("click", function (e) {
-            if (e.target.closest(".remove-formset-row")) {
-                e.preventDefault();
-                const row = e.target.closest(".formset-row");
-                const deleteInput = row.querySelector("input[type='checkbox'][name$='-DELETE']");
-
-                if (deleteInput) {
-                    // Caso: fila proveniente de BD
-                    deleteInput.checked = true;
-                    row.style.display = "none";
-                } else {
-                    // Caso: fila nueva -> eliminar nodo completo
-                    row.remove();
-                    totalFormsPieza.value = parseInt(totalFormsPieza.value, 10) - 1;
-                }
-            }
-        });
-    }
+    // Inicializar eventos en filas existentes
+    attachRemoveEvents();
+    actualizarStockEnFilas();
 });
+
+// --- Inicializar Select2 para piezas ---
+window.initializeSelect2Pieza = function (element, searchUrl) {
+    $(element).select2({
+        minimumInputLength: 2,
+        placeholder: "Busca o selecciona una pieza...",
+        ajax: {
+            url: searchUrl,
+            dataType: "json",
+            delay: 250,
+            data: function (params) {
+                return { q: params.term };
+            },
+            processResults: function (data) {
+                return { results: data.results };
+            },
+            cache: true,
+        },
+    });
+};

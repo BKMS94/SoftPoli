@@ -183,8 +183,8 @@
                 {% if servicio.fecha_inicio|date:'d' == servicio.fecha_fin|date:'d' %}
                 mismo día
                 {% else %}
-                día {{servicio.fecha_inicio|date:"d"}} de {{servicio.fecha_inicio|date:"F"}} del
-                {{servicio.fecha_inicio|date:"Y"}}
+                día {{servicio.fecha_fin|date:"d"}} de {{servicio.fecha_inicio|date:"F"}} del
+                {{servicio.fecha_fin|date:"Y"}}
                 {% endif %} se dio por
                 terminada la presente intervinientes en señal de conformidad.
             </span>

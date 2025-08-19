@@ -39,7 +39,7 @@ class RequerimientoDescripcionDetalleForm(forms.ModelForm):
                          # la validación fuerte se hace en clean()
         label="Descripción del Servicio",
         widget=forms.TextInput(attrs={
-            'class': 'form-control descripcion-servicio-input', # Clase para JS
+            'class': 'form-control descripcion-servicio-input descripcion-servicio-select', # Clase para JS
             'placeholder': 'Escribe o selecciona una descripción...',
             'data-descripcion-id': '' # Para guardar el ID de la descripción seleccionada por JS
         })
@@ -118,7 +118,7 @@ class RequerimientoPiezaDetalleForm(forms.ModelForm):
         model = RequerimientoPiezaDetalle
         fields = ['pieza', 'cantidad']
         widgets = {
-            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete', attrs={'class': 'form-select'}), # Usar Select2 para Piezas
+            'pieza': autocomplete.ModelSelect2(url='pieza-autocomplete', attrs={'class': 'form-control'}), # Usar Select2 para Piezas
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'placeholder': 'Cantidad'}),
         }
         labels = {

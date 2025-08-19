@@ -1,5 +1,5 @@
 {% extends 'componentes/formulario.html' %}
-{% load widget_tweaks %} {# Para usar el filtro add_class #}
+{% load widget_tweaks %}
 {% load static %}
 
 {% block title %}
@@ -7,188 +7,149 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="mb-4 text-center text-md-start crud-title">
-        {% if modo == 'crear' %}
-            Registrar Nuevo Requerimiento (TDR)
-        {% else %}
-            Editar Requerimiento (TDR) #{{ requerimiento.id }}
-        {% endif %}
-    </h1>
-
-    {# Mensajes flash #}
-    {% if messages %}
-        <div class="alert-container mb-4">
-            <ul class="messages list-unstyled mb-0">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }} alert alert-dismissible fade show rounded-3 shadow-sm"{% endif %} role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+<h1 class="mb-4 text-center text-md-start crud-title">
+    {% if modo == 'crear' %}
+        Registrar Nuevo Requerimiento (TDR)
+    {% else %}
+        Editar Requerimiento (TDR) #{{ requerimiento.id }}
     {% endif %}
+</h1>
 
-    <form method="post" id="requerimientoForm" class="p-3 p-md-4 bg-white rounded-lg shadow-sm">
-        {% csrf_token %}
-        {{ form.media }}
+<form method="post" id="requerimientoForm" class="p-3 p-md-4 bg-white rounded-lg shadow-sm" autocomplete="off">
+    {% csrf_token %}
+    {{ form.media }}
 
-        <!-- ================== INFO GENERAL ================== -->
-        <div class="card mb-5 shadow-lg border-0 rounded-4">
-            <div class="card-header bg-success-subtle text-success fw-bold py-3 rounded-top-4">
-                <h4 class="mb-0 text-dark-emphasis">Información del Requerimiento</h4>
-            </div>
-            <div class="card-body p-4">
-                <div class="row g-3">
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.vehiculo.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
-                            {{ form.vehiculo.label }}
-                        </label>
-                        {{ form.vehiculo|add_class:"form-control" }}
-                        {% if form.vehiculo.errors %}
-                            <ul class="errorlist text-danger small mt-1">
-                                {% for error in form.vehiculo.errors %}<li>{{ error }}</li>{% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.informe_tecnico_nro.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
-                            {{ form.informe_tecnico_nro.label }}
-                        </label>
-                        {{ form.informe_tecnico_nro|add_class:"form-control" }}
-                        {% if form.informe_tecnico_nro.errors %}
-                            <ul class="errorlist text-danger small mt-1">
-                                {% for error in form.informe_tecnico_nro.errors %}<li>{{ error }}</li>{% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
+    <!-- ================== INFO GENERAL ================== -->
+    <div class="card mb-5 shadow-lg border-0 rounded-4">
+        <div class="card-header bg-success-subtle text-success fw-bold py-3 rounded-top-4">
+            <h4 class="mb-0 text-dark-emphasis">Información del Requerimiento</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.vehiculo.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
+                        {{ form.vehiculo.label }}
+                    </label>
+                    {{ form.vehiculo|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.informe_tecnico_nro.id_for_label }}" class="form-label fw-bold text-secondary-emphasis">
+                        {{ form.informe_tecnico_nro.label }}
+                    </label>
+                    {{ form.informe_tecnico_nro|add_class:"form-control" }}
                 </div>
             </div>
         </div>
+    </div>
 
-        <hr class="my-5 border-2 border-primary opacity-50">
+    <hr class="my-5 border-2 border-primary opacity-50">
 
-        <!-- ================== SERVICIOS PROPUESTOS ================== -->
-        <div class="card mb-5 shadow-lg border-0 rounded-4">
-            <div class="card-header bg-info-subtle text-info fw-bold py-3 d-flex justify-content-between align-items-center rounded-top-4">
-                <h4 class="mb-0 text-dark-emphasis">Servicios Propuestos</h4>
-                <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-servicio">
-                    <i class="bi bi-plus-circle me-2"></i>Agregar Servicio
-                </button>
-            </div>
-            <div class="card-body p-4">
-                <div id="requerimiento-servicios-formset">
-                    {{ servicio_detalle_formset.management_form }}
-                    {% for formset_form in servicio_detalle_formset %}
-                        <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in">
-                            {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
-                            <div class="col-md-10">
-                                {{ formset_form.descripcion_texto }}
-                                {{ formset_form.detalle }} {# oculto #}
-                            </div>
-                            <div class="col-md-2 text-end">
-                                {% if formset_form.instance.pk %}
-                                    <div class="form-check form-switch d-inline-block me-2">
-                                        {{ formset_form.DELETE }}
-                                        <label class="form-check-label text-muted" for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label>
-                                    </div>
-                                {% else %}
-                                    <button type="button" class="btn btn-danger btn-sm remove-formset-row" title="Eliminar fila">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- plantilla oculta -->
-                <div class="empty-form-servicio d-none">
-                    <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle">
-                        {% for hidden_field in servicio_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
-                        <div class="col-md-10">
-                            {{ servicio_detalle_formset.empty_form.descripcion_texto }}
-                            {{ servicio_detalle_formset.empty_form.detalle }}
+    <!-- ================== SERVICIOS PROPUESTOS ================== -->
+    <div class="card mb-5 shadow-lg border-0 rounded-4">
+        <div class="card-header bg-info-subtle text-info fw-bold py-3 d-flex justify-content-between align-items-center rounded-top-4">
+            <h4 class="mb-0 text-dark-emphasis">Servicios Propuestos</h4>
+            <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-servicio">
+                <img src="{% static 'img/plus.png' %}" alt=" ">
+            </button>
+        </div>
+        <div class="card-body p-4">
+            <div id="requerimiento-servicios-formset">
+                {{ servicio_detalle_formset.management_form }}
+                {% for formset_form in servicio_detalle_formset %}
+                    <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in">
+                        {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
+                        <div class="col-md-10 position-relative">
+                            {{ formset_form.descripcion_texto }}
+                            {{ formset_form.detalle }}
                         </div>
                         <div class="col-md-2 text-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-formset-row">
-                                <i class="bi bi-x-lg"></i>
+                            <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
+                                <img src="{% static 'img/delete.png' %}" alt=" ">
                             </button>
                         </div>
                     </div>
+                {% endfor %}
+            </div>
+
+            <!-- plantilla oculta -->
+            <div class="empty-form-servicio d-none">
+                <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle">
+                    {% for hidden_field in servicio_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
+                    <div class="col-md-10 position-relative">
+                        {{ servicio_detalle_formset.empty_form.descripcion_texto }}
+                        {{ servicio_detalle_formset.empty_form.detalle }}
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
+                            <img src="{% static 'img/delete.png' %}" alt=" ">
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <hr class="my-5 border-2 border-primary opacity-50">
+    <hr class="my-5 border-2 border-primary opacity-50">
 
-        <!-- ================== PIEZAS PROPUESTAS ================== -->
-        <div class="card mb-5 shadow-lg border-0 rounded-4">
-            <div class="card-header bg-warning-subtle text-warning fw-bold py-3 d-flex justify-content-between align-items-center rounded-top-4">
-                <h4 class="mb-0 text-dark-emphasis">Piezas Propuestas</h4>
-                <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-pieza">
-                    <i class="bi bi-plus-circle me-2"></i>Agregar Pieza
-                </button>
-            </div>
-            <div class="card-body p-4">
-                <div id="requerimiento-piezas-formset">
-                    {{ pieza_detalle_formset.management_form }}
-                    {% for formset_form in pieza_detalle_formset %}
-                        <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in">
-                            {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
-                            <div class="col-md-6">
-                                {{ formset_form.pieza|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ formset_form.cantidad|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-2 text-end">
-                                {% if formset_form.instance.pk %}
-                                    <div class="form-check form-switch d-inline-block me-2">
-                                        {{ formset_form.DELETE }}
-                                        <label class="form-check-label text-muted" for="{{ formset_form.DELETE.id_for_label }}">Eliminar</label>
-                                    </div>
-                                {% else %}
-                                    <button type="button" class="btn btn-danger btn-sm remove-formset-row" title="Eliminar fila">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- plantilla oculta -->
-                <div class="empty-form-pieza d-none">
-                    <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle">
-                        {% for hidden_field in pieza_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
+    <!-- ================== PIEZAS PROPUESTAS ================== -->
+    <div class="card mb-5 shadow-lg border-0 rounded-4">
+        <div class="card-header bg-warning-subtle text-warning fw-bold py-3 d-flex justify-content-between align-items-center rounded-top-4">
+            <h4 class="mb-0 text-dark-emphasis">Piezas Propuestas</h4>
+            <button type="button" class="btn btn-success btn-sm animated-button-pulse" id="add-requerimiento-pieza">
+                <img src="{% static 'img/plus.png' %}" alt=" ">
+            </button>
+        </div>
+        <div class="card-body p-4">
+            <div id="requerimiento-piezas-formset">
+                {{ pieza_detalle_formset.management_form }}
+                {% for formset_form in pieza_detalle_formset %}
+                    <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in">
+                        {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
                         <div class="col-md-6">
-                            {{ pieza_detalle_formset.empty_form.pieza|add_class:"form-control" }}
+                            {{ formset_form.pieza|add_class:"form-control" }}
                         </div>
                         <div class="col-md-4">
-                            {{ pieza_detalle_formset.empty_form.cantidad|add_class:"form-control" }}
+                            {{ formset_form.cantidad|add_class:"form-control" }}
                         </div>
                         <div class="col-md-2 text-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-formset-row">
-                                <i class="bi bi-x-lg"></i>
+                            <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
+                                <img src="{% static 'img/delete.png' %}" alt=" ">
                             </button>
                         </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- plantilla oculta -->
+            <div class="empty-form-pieza d-none">
+                <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle">
+                    {% for hidden_field in pieza_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
+                    <div class="col-md-6">
+                        {{ pieza_detalle_formset.empty_form.pieza|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ pieza_detalle_formset.empty_form.cantidad|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
+                            <img src="{% static 'img/delete.png' %}" alt=" ">
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- ================== BOTONES ================== -->
-        <div class="d-flex justify-content-end gap-3 mt-5">
-            <button type="submit" class="btn btn-primary btn-lg animated-button-primary shadow-sm">
-                <i class="bi bi-save me-2"></i>Guardar Requerimiento
-            </button>
-            <a href="{% url 'lista_requerimientos' %}" class="btn btn-secondary btn-lg animated-button-secondary shadow-sm">
-                <i class="bi bi-x-circle me-2"></i>Cancelar
-            </a>
-        </div>
-    </form>
+    <!-- ================== BOTONES ================== -->
+    <div class="d-flex justify-content-end gap-3 mt-5">
+        <button type="submit" class="btn btn-primary btn-lg animated-button-primary shadow-sm">
+            <i class="bi bi-save me-2"></i>Guardar Requerimiento
+        </button>
+        <a href="{% url 'lista_requerimientos' %}" class="btn btn-secondary btn-lg animated-button-secondary shadow-sm">
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+        </a>
+    </div>
+</form>
 
-<script src="{% static 'js/servicios.js' %}"></script>
-
+<script src="{% static 'js/requerimientos.js' %}"></script>
 {% endblock %}

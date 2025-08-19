@@ -44,15 +44,12 @@ def requerimiento_lista(request):
 
 
 def detalle_requerimiento(request, id):
-    requerimiento = get_object_or_404(Requerimiento.objects
-                                 .select_related('vehiculo') 
-                                 .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
-                                                   'detalles_pieza__pieza'),
-                                 id=id)
+    requerimiento =get_object_or_404(Requerimiento, id=id)
     context = {
         'requerimiento': requerimiento
     }
-    return render(request, 'requerimientos/detalle_requerimiento.html', context)
+    return render(request, 'requerimiento/detalle.html', context)
+
 
 
 def requerimiento_form(request, id=None):
