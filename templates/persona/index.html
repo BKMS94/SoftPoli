@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestion Personas{% endblock title %}
 
@@ -21,10 +21,10 @@
     <td>{{persona.nombre}}</td>
     <td>{{persona.grado}}</td>
     <td>{{persona.telefono}}</td>
-    {% include "componentes/botones.html" with modelo=persona modelomodal='persona' modelo_id=persona.id %}
+    {% include "includes/botones.html" with modelo=persona modelomodal='persona' modelo_id=persona.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="5">{% include "componentes/pagination.html" with page=personas %}</td>
+<td colspan="5">{% include "includes/pagination.html" with page=personas %}</td>
 {% endblock tfoot %}

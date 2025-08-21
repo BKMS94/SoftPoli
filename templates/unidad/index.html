@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestión Unidad{% endblock title %}
 
@@ -14,10 +14,10 @@
 {% for unidad in unidades %}
 <tr>
     <td>{{ unidad.nombre }}</td>
-    {% include "componentes/botones.html" with modelo=unidad modelomodal='unidad' modelo_id=unidad.id%}
+    {% include "includes/botones.html" with modelo=unidad modelomodal='unidad' modelo_id=unidad.id%}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="2">{% include "componentes/pagination.html" with page=unidades %}</td>
+<td colspan="2">{% include "includes/pagination.html" with page=unidades %}</td>
 {% endblock tfoot %}

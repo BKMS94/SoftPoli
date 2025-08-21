@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestión Sub Unidad{% endblock title %}
 
@@ -20,10 +20,10 @@
     <td>{{ subunidad.direccion }}</td>
     <td>{{ subunidad.telefono_contacto }}</td>
     <td>{{ subunidad.responsable }}</td>
-    {% include "componentes/botones.html" with modelo=subunidad modelomodal='subunidad' modelo_id=subunidad.id %}
+    {% include "includes/botones.html" with modelo=subunidad modelomodal='subunidad' modelo_id=subunidad.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="5">{% include "componentes/pagination.html" with page=subunidades %}</td>
+<td colspan="5">{% include "includes/pagination.html" with page=subunidades %}</td>
 {% endblock tfoot %}

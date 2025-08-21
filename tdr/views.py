@@ -1,3 +1,4 @@
+import os
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -7,8 +8,9 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-
+from django.conf import settings
 # Para PDF (WeasyPrint)
+from fpdf import FPDF
 from weasyprint import HTML
 
 # Para Word (python-docx) - Comentado ya que no está implementado en este scope
@@ -119,42 +121,35 @@ def borrar_requerimiento(request, id):
     return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
 
 
-def generar_tdr_pdf(request, id):
-    requerimiento = get_object_or_404(Requerimiento.objects
-                                     .select_related('vehiculo') 
-                                     .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
-                                                       'detalles_pieza__pieza'),
-                                     id=id)
+# def generar_tdr_pdf(request, id):
+#     requerimiento = get_object_or_404(Requerimiento.objects
+#                                      .select_related('vehiculo') # Carga el vehículo relacionado directamente
+#                                      .prefetch_related('detalles_servicio', # Prefetch todos los RequerimientoDescripcionDetalle (servicios)
+#                                                        'detalles_pieza__pieza'), # Prefetch todos los RequerimientoPiezaDetalle (piezas) y sus objetos Pieza
+#                                      pk=id) # Usa 'id' como la clave primaria para la búsqueda
     
-    vehiculo = requerimiento.vehiculo
+#     vehiculo = requerimiento.vehiculo
 
-    context = {
-        'requerimiento': requerimiento,
-        'vehiculo': vehiculo,
-        
-        'persona': None, 
-        'tecnico': None, 
-        'hora_inicio': 'HH:MM', 
-        'hora_fin': 'HH:MM', 
-        'unidad_regpol_doc': 'REGPOL - TRUJILLO', 
-        
-        'informe_tecnico_nro_doc': requerimiento.informe_tecnico_nro or '__________',
-        'comisaria_doc': vehiculo.subunidad.nombre if hasattr(vehiculo, 'subunidad') and vehiculo.subunidad else '[SUB UNIDAD NO ESPECIFICADA]',
-        'fecha_actual': timezone.now(),
-        'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
-    }
+#     context = {
+#         'requerimiento': requerimiento,
+#         'vehiculo': vehiculo,   
+#         'informe_tecnico_nro_doc': requerimiento.informe_tecnico_nro or '__________',
+#         'comisaria_doc': vehiculo.subunidad.nombre if hasattr(vehiculo, 'subunidad') and vehiculo.subunidad else '[SUB UNIDAD NO ESPECIFICADA]',
+#         'fecha_actual': timezone.now(),
+#         'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
+#     }
     
-    html_string = render_to_string(
-        'requerimientos/tdr_vehiculo_pdf.html',
-        context,
-        request=request
-    )
+#     html_string = render_to_string(
+#         'pdf/pdf_requerimientos.html',
+#         context,
+#         request=request
+#     )
     
-    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+#     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
 
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
-    return response
+#     response = HttpResponse(pdf_file, content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
+#     return response
 
 
 # ¡REINTRODUCIDO!: API para buscar descripciones de servicio (para Select2)
@@ -214,3 +209,156 @@ def detalle_requerimiento_modal(request, id):
         'requerimiento': requerimiento,
     }
     return render(request, 'requerimientos/detalle_requerimiento_modal.html', context)
+
+
+
+
+
+class TDRPDF(FPDF):
+    def __init__(self):
+        super().__init__()
+        # Configurar márgenes: izquierdo=55mm, superior=15mm, derecho=15mm
+        self.set_margins(left=55, top=15, right=15)
+        self.set_auto_page_break(auto=True, margin=15)  # Margen inferior de 50mm
+    
+    def header(self):
+        # HEADER - No afectado por el margen izquierdo de 55mm
+        # Guardar posición actual
+        original_x = self.get_x()
+        original_y = self.get_y() + 26
+        
+        # Temporalmente resetear margen izquierdo para header centrado
+        self.set_left_margin(15)
+        self.set_x(15)  # Posicionar en el margen estándar
+        
+        if self.page_no() == 1:
+            self.set_font("Arial", "B", 14)
+            self.cell(0, 10, "TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO", 0, 1, 'C')
+            self.set_font("Arial", "B", 12)
+            self.cell(0, 10, "ANEXO 'A': DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR", 0, 1, 'C')
+            self.ln(4)
+        else:
+            self.set_font("Arial", "B", 14)
+            self.cell(0, 10, "TÉRMINOS DE REFERENCIA PARA SERVICIO DE MANTENIMIENTO", 0, 1, 'C')
+            self.set_font("Arial", "B", 12)
+            self.cell(0, 10, "ANEXO 'A': DESCRIPCIÓN Y CANTIDAD DEL SERVICIO A CONTRATAR", 0, 1, 'C')
+            self.ln(5)
+        
+        try:
+            # sello_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'sello.png')
+            sello_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'sello.jpg')
+            # Posición relativa: 10mm desde izquierda, 20mm desde top
+            self.image(sello_path, x=10, y=150, w=25, h=25)
+        except Exception as e:
+            self.set_xy(10, 150)
+            self.set_font("Arial", "B", 10)
+            self.cell(20, 20, "[SELLO]", 1, 0, 'C')
+            print(f"Error al cargar el sello: {e}")
+
+
+        # Restaurar margen izquierdo a 55mm y posición original
+        self.set_left_margin(55)
+        self.set_x(original_x)
+        self.set_y(original_y)
+
+    
+    def footer(self):
+        # FOOTER con sello agrandado a la derecha
+        # Guardar posición Y actual
+        original_y = self.get_y()
+        
+        # Posicionar a 35mm del fondo (dentro del margen inferior de 50mm)
+        self.set_y(-25)
+        
+        # PRIMERA FILA: Información institucional a la izquierda
+        self.set_font("Arial", "", 9)
+        self.set_x(55)  # Alineado al margen izquierdo de 55mm
+        
+        # Posicionar el sello a la derecha (6.3cm ancho, 3.6cm alto)
+        try:
+            firma_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'firma.png')
+            # Posición: x=130mm (para alinear a la derecha), y=posición actual
+            self.image(firma_path, x=130, y=self.get_y(), w=40, h=15)  # 6.3cm x 3.6cm
+            self.set_xy(180, -15)
+            self.set_fill_color(0, 0, 0)     # Negro (RGB)
+            self.set_text_color(255, 255, 255)  # Blanco
+            self.set_font("Arial", "B", 12)  # Fuente en negrita
+            self.cell(5, 5, f'{self.page_no()}', border=1, ln=0, align='C', fill=True)
+        except Exception as e:
+            # Texto alternativo si no se encuentra la imagen
+            self.set_x(130)
+            self.set_font("Arial", "B", 10)
+            self.cell(63, 36, "[Firma]", 1, 0, 'C')
+            print(f"Error al cargar la Firma: {e}")
+        
+        self.set_text_color(0, 0, 0)     # Texto negro
+        self.set_fill_color(255, 255, 255)  # Fondo blanco
+        
+        # Restaurar posición Y original
+        self.set_y(original_y)
+
+def generar_tdr_pdf(request, id):
+    requerimiento = Requerimiento.objects.get(id=id)
+    
+    pdf = TDRPDF()
+    pdf.add_page()
+    
+    # CONTENIDO PRINCIPAL (con margen izquierdo de 55mm)
+    if pdf.page_no() == 1:
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "VEHÍCULO 1:", 0, 1)
+        
+        pdf.set_font("Arial", "", 11)
+        texto_vehiculo = (
+            f"El presente requerimiento se realiza conforme al Informe Técnico Nro. "
+            f"{requerimiento.informe_tecnico_nro}-REGPOL LL/UNIADM-AREABAST-A.M. de la Camioneta PNP de placa interna "
+            f"{requerimiento.vehiculo.placa_int} placa de rodaje {requerimiento.vehiculo.placa_rod}, "
+            f"Marca {requerimiento.vehiculo.marca}, Modelo {requerimiento.vehiculo.modelo}, "
+            f"Motor N° {requerimiento.vehiculo.num_motor}, Serie Nro. {requerimiento.vehiculo.vin}, "
+            f"Año {requerimiento.vehiculo.anio}, combustible {requerimiento.vehiculo.get_tipo_combustible_display()}, "
+            f"asignado a la {requerimiento.vehiculo.subunidad.nombre}, dicho vehículo policial "
+            f"para mejorar su operatividad requiere mantenimiento correctivo conforme a lo siguiente:"
+        )
+        
+        pdf.multi_cell(0, 5, texto_vehiculo)
+        pdf.ln(5)
+        
+        # Servicios
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "SERVICIO PARA REALIZAR", 0, 1)
+        pdf.set_font("Arial", "", 11)
+        
+        
+        for servicio in requerimiento.detalles_servicio.all():
+            x = pdf.get_x()
+            y = pdf.get_y()
+
+            pdf.multi_cell(5, 6, "-", align="C")
+            pdf.set_xy(x + 5, y)
+
+            pdf.multi_cell(130, 6, servicio.detalle.descripcion_servicio )
+            pdf.ln(0)
+        
+        pdf.ln(5)
+
+        # Repuestos
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "CAMBIO E INSTALACIÓN DE LOS SIGUIENTES REPUESTOS", 0, 1)
+    
+    # Lista de repuestos
+    pdf.set_font("Arial", "", 11)
+    for repuesto in requerimiento.detalles_pieza.all():
+        # Verificar si necesita nueva página (considerando margen inferior de 50mm)
+        if pdf.get_y() > 260:
+            pdf.add_page()
+        x = pdf.get_x()
+        y = pdf.get_y()
+
+        pdf.multi_cell(3, 5, "-", align="C")
+        pdf.set_xy(x + 5, y)
+        pdf.multi_cell(120, 5, f"{repuesto.cantidad} {repuesto.pieza.nombre}" )
+
+    # Generar respuesta PDF
+    response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
+    return response

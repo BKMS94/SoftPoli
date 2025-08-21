@@ -83,6 +83,9 @@ class Requerimiento(models.Model):
 
     def get_borrar_url(self):
         return reverse('borrar_requerimiento', args=[self.id])
+    
+    def get_pdf_url(self):
+        return reverse('generar_tdr_pdf', args=[self.id])
 
 
 class RequerimientoDescripcionDetalle(models.Model):

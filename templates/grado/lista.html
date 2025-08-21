@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestión Grados{% endblock title %}
 
@@ -19,10 +19,10 @@
     <td>{{ grado.orden }}</td>
     <td>{{ grado.nombre }}</td>
     <td>{{ grado.abreviatura }}</td>
-    {% include "componentes/botones.html" with modelo=grado modelomodal='grado' modelo_id=grado.id %}
+    {% include "includes/botones.html" with modelo=grado modelomodal='grado' modelo_id=grado.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="4">{% include "componentes/pagination.html" with page=grados %}</td>
+<td colspan="4">{% include "includes/pagination.html" with page=grados %}</td>
 {% endblock tfoot %}

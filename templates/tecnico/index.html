@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestión Técnico{% endblock title %}
 
@@ -21,10 +21,10 @@
     <td>{{tecnico.nombre}}</td>
     <td>{{tecnico.grado}}</td>
     <td>{{tecnico.telefono}}</td>
-    {% include "componentes/botones.html" with modelo=tecnico modelomodal='tecnico' modelo_id=tecnico.id %}
+    {% include "includes/botones.html" with modelo=tecnico modelomodal='tecnico' modelo_id=tecnico.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="5">{% include "componentes/pagination.html" with page=tecnicos %}</td>
+<td colspan="5">{% include "includes/pagination.html" with page=tecnicos %}</td>
 {% endblock tfoot %}

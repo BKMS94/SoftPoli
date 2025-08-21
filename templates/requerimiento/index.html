@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestion requerimientos{% endblock title %}
 
@@ -24,10 +24,10 @@
     <td>{{ requerimiento.vehiculo.placa_int }}</td>
     <td>{{ requerimiento.fecha_creacion|date:"d/m/Y H:m" }}</td>
     <td>{{ requerimiento.vehiculo.subunidad.nombre }}</td>
-    {% include "componentes/botones.html" with modelo=requerimiento modelomodal='requerimiento' modelo_id=requerimiento.id %}
+    {% include "includes/botones.html" with modelo=requerimiento modelomodal='requerimiento' modelo_id=requerimiento.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="6">{% include "componentes/pagination.html" with page=requerimientos %}</td>
+<td colspan="6">{% include "includes/pagination.html" with page=requerimientos %}</td>
 {% endblock tfoot %}

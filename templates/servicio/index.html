@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestión Servicios{% endblock title %}
 
@@ -32,11 +32,11 @@
     </td>
     <!-- <td>{{ servicio.estado }}</td> -->
     <td>{{ servicio.fecha_fin|date:"d/m/Y" }}</td>
-    {% include "componentes/botones.html" with modelo=servicio modelomodal='servicio' modelo_id=servicio.id %}
+    {% include "includes/botones.html" with modelo=servicio modelomodal='servicio' modelo_id=servicio.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="7">{% include "componentes/pagination.html" with page=servicios %}</td>
+<td colspan="7">{% include "includes/pagination.html" with page=servicios %}</td>
 
 {% endblock tfoot %}

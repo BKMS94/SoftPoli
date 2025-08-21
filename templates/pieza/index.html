@@ -1,4 +1,4 @@
-{% extends "componentes/tablas.html" %}
+{% extends "components/tablas.html" %}
 
 {% block title %}Gestor de Piezas{% endblock title %}
 
@@ -19,10 +19,10 @@
     <td>{{ pieza.nombre}}</td>
     <td>{{pieza.cantidad_stock}}</td>
     <td>{{pieza.reorder}}</td>
-    {% include "componentes/botones.html" with modelo=pieza modelomodal='pieza' modelo_id=pieza.id %}
+    {% include "includes/botones.html" with modelo=pieza modelomodal='pieza' modelo_id=pieza.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="4">{% include "componentes/pagination.html" with page=piezas %}</td>
+<td colspan="4">{% include "includes/pagination.html" with page=piezas %}</td>
 {% endblock tfoot %}
