@@ -53,7 +53,7 @@
                                 <i class="bi bi-wrench-adjustable-fill me-2 text-success"></i>
                                 <span class="me-auto">
                                     {# ¡CORREGIDO!: Ahora accede a la descripción a través del ForeignKey 'detalle' #}
-                                    {{ servicio_detalle.detalle.descripcion_servicio|default:"[Descripción no disponible]" }}
+                                    {{ servicio_detalle.detalle_servicio.descripcion_servicio|default:"[Descripción no disponible]" }}
                                 </span>
                             </li>
                         {% endfor %}
@@ -89,7 +89,7 @@
                             <li class="list-group-item d-flex align-items-center">
                                 <i class="bi bi-gear-fill me-2 text-warning"></i>
                                 <span class="me-auto">
-                                    {{ pieza_detalle.cantidad }} x {{ pieza_detalle.pieza.nombre }} 
+                                    {{ pieza_detalle.cantidad }} x {{ pieza_detalle.detalle_pieza.descripcion_pieza }} 
                                     {% if pieza_detalle.pieza.numero_parte %}({{ pieza_detalle.pieza.numero_parte }}){% endif %}
                                 </span>
                             </li>

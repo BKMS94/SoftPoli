@@ -15,8 +15,8 @@ urlpatterns = [
     # ¡ELIMINADO!: URLs API para autocompletado y creación de Descripciones de Servicio.
     path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
     path('api/descripciones/crear/', views.crear_descripcion_servicio_api, name='crear_descripcion_servicio_api'),
-
     path('api/piezas/buscar/', views.buscar_piezas_api, name='buscar_piezas_api'),
+    path('api/piezas/crear/', views.crear_piezas_api, name='crear_piezas_api'),
 
     # URL para el detalle del requerimiento en formato de modal (snippet HTML)
     path('<int:id>/modal-detalle/', views.detalle_requerimiento_modal, name='detalle_requerimiento_modal'),

@@ -12,20 +12,17 @@
             onclick="return confirm('¿Estás seguro de que deseas borrar este registro?');"><img
                 src="{% static 'img/delete.png' %}" alt=" "></a>
 
-        {% if modelomodal == 'servicio' and modelo.estado != 'FINALIZADO'%}
+        {% if modelomodal == 'servicio' and modelo.estado != 'FINALIZADO' %}
             <a class="btn btn-success mx-2" href="{{ modelo.get_fin_url }}"><img src="{% static 'img/confirmar.png' %}"
                     alt=" "></a>
-        {% else %}
-            <a href="{{modelo.get_pdf_url}}" class="btn btn-primary" target="_blank">
+        {% elif modelomodal == 'servicio' and modelo.estado == 'FINALIZADO' or modelomodal == 'requerimiento' %}
+            <a href="{{modelo.get_pdf_url}}" class="btn btn-primary" >
                 <img src="{% static 'img/exportar.png' %}" alt=" ">
             </a>
+ 
         {% endif %}
 
 
-        {% if modelo.modelomodal == 'requerimiento' %}
-        <a class="btn btn-success mx-2" href="{{ modelo.get_pdf_url }}"><img src="{% static 'img/exportar.png' %}"
-                alt=" "></a>
-        {% endif %}
     </span>
 </td>
 {% include "includes/modal.html" with modelo=modelomodal %}

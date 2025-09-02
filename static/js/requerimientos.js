@@ -63,30 +63,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const newRow = servicioFormsetContainer.lastElementChild;
             const input = newRow.querySelector(".descripcion-servicio-input");
-            const hiddenInput = newRow.querySelector("input[name$='detalle']");
+            const hiddenInput = newRow.querySelector("input[name$='detalle_servicio']");
             if (input && hiddenInput) activarAutocompletado(input, hiddenInput);
 
             totalFormsServicio.value = formIndex + 1;
         });
 
-        servicioFormsetContainer.addEventListener("click", function (e) {
-            if (e.target.closest(".remove-formset-row")) {
-                e.preventDefault();
-                const row = e.target.closest(".formset-row");
-                const deleteInput = row.querySelector("input[type='checkbox'][name$='-DELETE']");
-                if (deleteInput) {
-                    deleteInput.checked = true;
-                    row.style.display = "none";
-                } else {
-                    row.remove();
-                    totalFormsServicio.value = parseInt(totalFormsServicio.value, 10) - 1;
-                }
-            }
-        });
-
         // Inicializar los existentes
         document.querySelectorAll(".descripcion-servicio-input").forEach(input => {
-            const hiddenInput = input.parentElement.querySelector("input[name$='detalle']");
+            const hiddenInput = input.parentElement.querySelector("input[name$='detalle_servicio']");
             if (hiddenInput) activarAutocompletado(input, hiddenInput);
         });
     }
@@ -97,12 +82,72 @@ document.addEventListener("DOMContentLoaded", function () {
     const emptyFormPieza = document.querySelector(".empty-form-pieza .formset-row");
     const totalFormsPieza = document.querySelector("#id_piezadetalle-TOTAL_FORMS");
 
+    function activarAutocompletadoPieza(input, hiddenInput) {
+        let datalist = document.createElement("datalist");
+        datalist.id = "dl-pieza-" + Math.random().toString(36).substring(2, 9);
+        input.setAttribute("list", datalist.id);
+        input.insertAdjacentElement("afterend", datalist);
+
+        input.addEventListener("input", async function () {
+            const query = this.value.trim();
+            if (query.length < 2) return;
+            try {
+                const resp = await fetch(`/tdr/api/piezas/buscar/?q=${encodeURIComponent(query)}`);
+                const data = await resp.json();
+                datalist.innerHTML = "";
+                data.results.forEach(opt => {
+                    let option = document.createElement("option");
+                    option.value = opt.text;
+                    option.dataset.id = opt.id;
+                    datalist.appendChild(option);
+                });
+            } catch (err) {
+                console.error("Error buscando piezas:", err);
+            }
+        });
+
+        input.addEventListener("change", async function () {
+            const selectedOption = Array.from(datalist.options).find(o => o.value === this.value);
+            if (selectedOption) {
+                hiddenInput.value = selectedOption.dataset.id;
+            } else {
+                try {
+                    const resp = await fetch(`/tdr/api/piezas/crear/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": csrfToken
+                        },
+                        body: `pieza=${encodeURIComponent(this.value)}`
+                    });
+                    const data = await resp.json();
+                    if (data.id) hiddenInput.value = data.id;
+                } catch (err) {
+                    console.error("Error creando pieza:", err);
+                }
+            }
+        });
+    }
+
+    // Inicializar los existentes PIEZAS
+    document.querySelectorAll(".descripcion-pieza-input").forEach(input => {
+        const hiddenInput = input.parentElement.querySelector("input[name$='detalle_pieza']");
+        if (hiddenInput) activarAutocompletadoPieza(input, hiddenInput);
+    });
+
+    // Al agregar nueva fila PIEZA
     if (addPiezaBtn && piezaFormsetContainer && emptyFormPieza && totalFormsPieza) {
         addPiezaBtn.addEventListener("click", function (e) {
             e.preventDefault();
             const formIndex = parseInt(totalFormsPieza.value, 10);
             const newFormHtml = emptyFormPieza.outerHTML.replace(/__prefix__/g, formIndex);
             piezaFormsetContainer.insertAdjacentHTML("beforeend", newFormHtml);
+
+            const newRow = piezaFormsetContainer.lastElementChild;
+            const input = newRow.querySelector(".descripcion-pieza-input");
+            const hiddenInput = newRow.querySelector("input[name$='detalle_pieza']");
+            if (input && hiddenInput) activarAutocompletadoPieza(input, hiddenInput);
+
             totalFormsPieza.value = formIndex + 1;
         });
 
@@ -123,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-// ==================== LIMPIAR CAMPOS ====================
+    // ==================== LIMPIAR CAMPOS ====================
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("clear-input")) {
             const input = e.target.closest(".position-relative").querySelector("input, select, textarea");

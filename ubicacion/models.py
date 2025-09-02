@@ -40,7 +40,6 @@ class SubUnidad(models.Model):
     )
     telefono_contacto = models.PositiveIntegerField(
         default=000000000,
-        max_length=9,
         blank=True,
         null=True
     )

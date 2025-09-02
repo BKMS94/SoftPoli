@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.conf import settings
 # Para PDF (WeasyPrint)
 from fpdf import FPDF
-from weasyprint import HTML
+# from weasyprint import HTML
 
 # Para Word (python-docx) - Comentado ya que no está implementado en este scope
 # from docx import Document
@@ -23,7 +23,7 @@ from .models import Requerimiento, RequerimientoDescripcionDetalle, Requerimient
 from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, RequerimientoDescripcionDetalleForm
 from vehiculo.models import Vehiculo
 from ubicacion.models import Unidad # Necesario si Unidad se usa en otros modelos, pero ya no en Requerimiento directamente
-from pieza.models import Pieza # Necesario para buscar_piezas_api
+from pieza.models import PiezaTDR # Necesario para buscar_piezas_api
 
 
 # --- Vistas CRUD para Requerimientos (Funciones) ---
@@ -63,7 +63,7 @@ def requerimiento_form(request, id=None):
         form=RequerimientoDescripcionDetalleForm,
         extra=extra,
         can_delete=True,
-        fields=['detalle'] # ¡CORREGIDO!: Ahora usa el ForeignKey 'detalle'
+        fields=['detalle_servicio'] # ¡CORREGIDO!: Ahora usa el ForeignKey 'detalle'
     )
 
     RequerimientoPiezaDetalleFormSet = inlineformset_factory(
@@ -72,7 +72,7 @@ def requerimiento_form(request, id=None):
         form=RequerimientoPiezaDetalleForm,
         extra=extra,
         can_delete=True,
-        fields=['pieza', 'cantidad'],
+        fields=['detalle_pieza', 'cantidad'],
     )
 
     if request.method == 'POST':
@@ -121,37 +121,6 @@ def borrar_requerimiento(request, id):
     return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
 
 
-# def generar_tdr_pdf(request, id):
-#     requerimiento = get_object_or_404(Requerimiento.objects
-#                                      .select_related('vehiculo') # Carga el vehículo relacionado directamente
-#                                      .prefetch_related('detalles_servicio', # Prefetch todos los RequerimientoDescripcionDetalle (servicios)
-#                                                        'detalles_pieza__pieza'), # Prefetch todos los RequerimientoPiezaDetalle (piezas) y sus objetos Pieza
-#                                      pk=id) # Usa 'id' como la clave primaria para la búsqueda
-    
-#     vehiculo = requerimiento.vehiculo
-
-#     context = {
-#         'requerimiento': requerimiento,
-#         'vehiculo': vehiculo,   
-#         'informe_tecnico_nro_doc': requerimiento.informe_tecnico_nro or '__________',
-#         'comisaria_doc': vehiculo.subunidad.nombre if hasattr(vehiculo, 'subunidad') and vehiculo.subunidad else '[SUB UNIDAD NO ESPECIFICADA]',
-#         'fecha_actual': timezone.now(),
-#         'logo_url': request.build_absolute_uri('/static/img/sello-pnp.png'),
-#     }
-    
-#     html_string = render_to_string(
-#         'pdf/pdf_requerimientos.html',
-#         context,
-#         request=request
-#     )
-    
-#     pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
-
-#     response = HttpResponse(pdf_file, content_type='application/pdf')
-#     response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
-#     return response
-
-
 # ¡REINTRODUCIDO!: API para buscar descripciones de servicio (para Select2)
 def buscar_descripcion_servicio_api(request):
     """
@@ -191,12 +160,25 @@ def crear_descripcion_servicio_api(request):
 def buscar_piezas_api(request):
     query = request.GET.get('q', '')
     if query:
-        piezas = Pieza.objects.filter(nombre__icontains=query)[:10]
-        results = [{'id': p.id, 'text': f"{p.nombre} (Stock: {p.stock_actual})"} for p in piezas]
+        piezas = PiezaTDR.objects.filter(descripcion_pieza__icontains=query)[:10]
+        results = [{'id': p.id, 'text': p.descripcion_pieza} for p in piezas]
     else:
         results = []
     return JsonResponse({'results': results})
 
+def crear_piezas_api(request):
+    if request.method == 'POST':
+        descripcion_pieza = request.POST.get('pieza', '').strip()
+        if descripcion_pieza:
+            try:
+                descripcion_obj, created = PiezaTDR.objects.get_or_create(
+                    descripcion_pieza__iexact=descripcion_pieza,
+                    defaults={'descripcion_pieza': descripcion_pieza}
+                )
+                return JsonResponse({'id': descripcion_obj.id, 'text': descripcion_obj.descripcion_pieza, 'created': created})
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Método no permitido o pieza vacía'}, status=400)
 
 def detalle_requerimiento_modal(request, id):
     requerimiento = get_object_or_404(Requerimiento.objects
@@ -336,7 +318,7 @@ def generar_tdr_pdf(request, id):
             pdf.multi_cell(5, 6, "-", align="C")
             pdf.set_xy(x + 5, y)
 
-            pdf.multi_cell(130, 6, servicio.detalle.descripcion_servicio )
+            pdf.multi_cell(130, 6, servicio.detalle_servicio.descripcion_servicio )
             pdf.ln(0)
         
         pdf.ln(5)
@@ -356,7 +338,7 @@ def generar_tdr_pdf(request, id):
 
         pdf.multi_cell(3, 5, "-", align="C")
         pdf.set_xy(x + 5, y)
-        pdf.multi_cell(120, 5, f"{repuesto.cantidad} {repuesto.pieza.nombre}" )
+        pdf.multi_cell(120, 5, f"{repuesto.cantidad} {repuesto.detalle_pieza.descripcion_pieza}" )
 
     # Generar respuesta PDF
     response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')

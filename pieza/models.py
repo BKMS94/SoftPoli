@@ -46,3 +46,11 @@ class Pieza(models.Model):
         self.save()
 
 
+class PiezaTDR(models.Model):
+    descripcion_pieza = models.CharField(
+        unique=True,
+        verbose_name= 'Nombre Pieza'
+    )
+
+    def __str__(self):
+        return self.descripcion_pieza

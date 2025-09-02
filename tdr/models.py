@@ -5,7 +5,7 @@ from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 
 from vehiculo.models import Vehiculo
-from pieza.models import Pieza
+from pieza.models import PiezaTDR
 
 
 class DescripcionServicio(models.Model):
@@ -60,7 +60,7 @@ class Requerimiento(models.Model):
     )
 
     piezas_propuestas = models.ManyToManyField(
-        Pieza,
+        PiezaTDR,
         through='RequerimientoPiezaDetalle',
         related_name='en_requerimientos',
         verbose_name="Piezas Propuestas en TDR"
@@ -100,7 +100,7 @@ class RequerimientoDescripcionDetalle(models.Model):
         verbose_name="Requerimiento Asociado"
     )
     # ¡CORREGIDO!: 'detalle' es un ForeignKey a DescripcionServicio
-    detalle = models.ForeignKey(
+    detalle_servicio = models.ForeignKey(
         DescripcionServicio,
         on_delete=models.SET_NULL, # Permite que el detalle sea NULL si la DescripcionServicio se borra
         null=True, blank=True, # Puede ser nulo en DB y formularios
@@ -116,7 +116,7 @@ class RequerimientoDescripcionDetalle(models.Model):
             # ¡NUEVO!: Restricción de unicidad para la combinación de requerimiento y detalle
             # Asegura que una descripción de servicio específica solo aparezca una vez por requerimiento.
             UniqueConstraint(
-                fields=['requerimiento', 'detalle'],
+                fields=['requerimiento', 'detalle_servicio'],
                 name='uniq_req_detalle'
             )
         ]
@@ -134,12 +134,14 @@ class RequerimientoPiezaDetalle(models.Model):
         related_name='detalles_pieza',
         verbose_name="Requerimiento Asociado"
     )
-    pieza = models.ForeignKey(
-        Pieza,
-        on_delete=models.CASCADE,
+    detalle_pieza = models.ForeignKey(
+        PiezaTDR,
+        on_delete=models.SET_NULL,
         related_name='en_requerimientos_piezas',
-        verbose_name="Pieza Propuesta"
+        verbose_name="Pieza Propuesta",
+        null=True, blank=True # Puede ser nulo en DB y formularios
     )
+
     cantidad = models.PositiveIntegerField(verbose_name="Cantidad Propuesta")
 
     class Meta:
@@ -147,8 +149,8 @@ class RequerimientoPiezaDetalle(models.Model):
         verbose_name_plural = "Detalles de Piezas del Requerimiento"
         ordering = ['id']
         constraints = [
-            UniqueConstraint(fields=['requerimiento', 'pieza'], name='uniq_req_pieza')
+            UniqueConstraint(fields=['requerimiento', 'detalle_pieza'], name='uniq_req_pieza')
         ]
 
     def __str__(self):
-        return f"{self.cantidad} x {self.pieza.nombre} para TDR {self.requerimiento.id}"
+        return f"{self.cantidad} x {self.detalle_pieza.nombre} para TDR {self.requerimiento.id}"

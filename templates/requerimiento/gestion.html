@@ -59,7 +59,7 @@
                         {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
                         <div class="col-md-10 position-relative">
                             {{ formset_form.descripcion_texto }}
-                            {{ formset_form.detalle }}
+                            {{ formset_form.detalle_servicio }}
                         </div>
                         <div class="col-md-2 text-end">
                             <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
@@ -76,7 +76,7 @@
                     {% for hidden_field in servicio_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
                     <div class="col-md-10 position-relative">
                         {{ servicio_detalle_formset.empty_form.descripcion_texto }}
-                        {{ servicio_detalle_formset.empty_form.detalle }}
+                        {{ servicio_detalle_formset.empty_form.detalle_servicio }}
                     </div>
                     <div class="col-md-2 text-end">
                         <button type="button" class="btn btn-danger btn-sm remove-formset-row animated-button-delete">
@@ -104,7 +104,8 @@
                     <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle animated-fade-in">
                         {% for hidden_field in formset_form.hidden_fields %}{{ hidden_field }}{% endfor %}
                         <div class="col-md-6">
-                            {{ formset_form.pieza|add_class:"form-control" }}
+                            {{ formset_form.descripcion_pieza_texto|add_class:"form-control" }}
+                            {{ formset_form.detalle_pieza }}
                         </div>
                         <div class="col-md-4">
                             {{ formset_form.cantidad|add_class:"form-control" }}
@@ -123,7 +124,8 @@
                 <div class="formset-row row g-2 mb-3 align-items-center p-3 border rounded-3 bg-light-subtle">
                     {% for hidden_field in pieza_detalle_formset.empty_form.hidden_fields %}{{ hidden_field }}{% endfor %}
                     <div class="col-md-6">
-                        {{ pieza_detalle_formset.empty_form.pieza|add_class:"form-control" }}
+                        {{ pieza_detalle_formset.empty_form.descripcion_pieza_texto|add_class:"form-control" }}
+                        {{ pieza_detalle_formset.empty_form.detalle_pieza }}
                     </div>
                     <div class="col-md-4">
                         {{ pieza_detalle_formset.empty_form.cantidad|add_class:"form-control" }}
