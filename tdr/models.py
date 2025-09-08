@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
+from django.contrib.auth import get_user_model
 
 from vehiculo.models import Vehiculo
 from pieza.models import PiezaTDR
@@ -154,3 +155,13 @@ class RequerimientoPiezaDetalle(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.detalle_pieza.nombre} para TDR {self.requerimiento.id}"
+
+
+class ConsolidadoTDR(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
+    tdrs = models.ManyToManyField(Requerimiento, related_name='consolidados')
+    start_page = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"Consolidado #{self.id} ({self.fecha:%d/%m/%Y %H:%M})"

@@ -11,6 +11,8 @@ urlpatterns = [
 
     # URL para generar el PDF del TDR
     path('<int:id>/generar-pdf/', views.generar_tdr_pdf, name='generar_tdr_pdf'),
+    path('consolidado/', views.consolidado_tdr_seleccion, name='consolidado_tdr_seleccion'),
+    path('consolidado-pdf/', views.generar_consolidado_tdr_pdf, name='generar_consolidado_tdr_pdf'),
 
     # ¡ELIMINADO!: URLs API para autocompletado y creación de Descripciones de Servicio.
     path('api/descripciones/buscar/', views.buscar_descripcion_servicio_api, name='buscar_descripcion_servicio_api'),
@@ -20,4 +22,7 @@ urlpatterns = [
 
     # URL para el detalle del requerimiento en formato de modal (snippet HTML)
     path('<int:id>/modal-detalle/', views.detalle_requerimiento_modal, name='detalle_requerimiento_modal'),
+
+    # Nueva URL para la lista de consolidados
+    path('consolidados/', views.lista_consolidados, name='lista_consolidados'),
 ]

@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+    Consolidar TDRs en PDF
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Consolidar TDRs en PDF</h1>
+
+<form id="consolidadoForm" method="get" action="{% url 'generar_consolidado_tdr_pdf' %}">
+    <div class="card mb-4">
+        <div class="card-header bg-info-subtle fw-bold">
+            Selecciona los TDRs que deseas consolidar:
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Vehículo</th>
+                            <th>Informe Técnico</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tdr in requerimientos %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="ids" value="{{ tdr.id }}">
+                            </td>
+                            <td>{{ tdr.id }}</td>
+                            <td>{{ tdr.vehiculo }}</td>
+                            <td>{{ tdr.informe_tecnico_nro }}</td>
+                            <td>{{ tdr.fecha_creacion|date:"d/m/Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3">
+                <label for="start_page" class="form-label">Número inicial de pie de página:</label>
+                <input type="number" name="start_page" id="start_page" class="form-control" value="1" min="1" style="max-width: 120px;">
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-file-earmark-pdf"></i> Generar PDF Consolidado
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

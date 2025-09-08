@@ -1,0 +1,42 @@
+{% extends "components/tablas.html" %}
+
+{% block title %}Gestion requerimientos{% endblock title %}
+
+
+{% block titabla %}Gestión requerimientos{% endblock titabla %}
+
+
+{% block Thead %}
+<th>ID</th>
+<th>Fecha</th>
+<th>Usuario</th>
+<th>TDRs incluidos</th>
+<th>Número inicial de página</th>
+
+<th>Acciones</th>
+{% endblock Thead %}
+
+{% block tbody %}
+{% for consolidado in consolidados %}
+<tr>
+    <td>{{ consolidado.id }}</td>
+    <td>{{ consolidado.fecha|date:"d/m/Y H:i" }}</td>
+    <td>{{ consolidado.usuario|default:"-" }}</td>
+    <td>
+        {% for tdr in consolidado.tdrs.all %}
+            <span class="badge bg-info">#{{ tdr.id }}</span>
+        {% empty %}
+            <span class="text-muted">Ninguno</span>
+        {% endfor %}
+    </td>
+    <td>{{ consolidado.start_page }}</td>
+</tr>
+{% empty %}
+<tr>
+    {% include "includes/botones.html" with modelo=consolidado modelomodal='consolidado' modelo_id=consolidado.id %}
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% block tfoot %}
+<td colspan="6">{% include "includes/pagination.html" with page=consolidados %}</td>
+{% endblock tfoot %}

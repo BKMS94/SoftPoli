@@ -16,6 +16,7 @@ from fpdf import FPDF
 # Para Word (python-docx) - Comentado ya que no está implementado en este scope
 # from docx import Document
 from io import BytesIO
+from django.core.paginator import Paginator
 
 # Importa los modelos necesarios
 from maestranza.utils import modo_gestion, paginacion
@@ -24,6 +25,7 @@ from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, Requerimien
 from vehiculo.models import Vehiculo
 from ubicacion.models import Unidad # Necesario si Unidad se usa en otros modelos, pero ya no en Requerimiento directamente
 from pieza.models import PiezaTDR # Necesario para buscar_piezas_api
+from .models import ConsolidadoTDR
 
 
 # --- Vistas CRUD para Requerimientos (Funciones) ---
@@ -338,9 +340,131 @@ def generar_tdr_pdf(request, id):
 
         pdf.multi_cell(3, 5, "-", align="C")
         pdf.set_xy(x + 5, y)
-        pdf.multi_cell(120, 5, f"{repuesto.cantidad} {repuesto.detalle_pieza.descripcion_pieza}" )
+        # SOLUCIÓN: Verifica que detalle_pieza no sea None
+        if repuesto.detalle_pieza:
+            pieza_texto = repuesto.detalle_pieza.descripcion_pieza
+        else:
+            pieza_texto = "[Pieza eliminada]"
+        pdf.multi_cell(120, 5, f"{repuesto.cantidad} {pieza_texto}" )
 
     # Generar respuesta PDF
     response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
     return response
+
+def generar_consolidado_tdr_pdf(request):
+    """
+    Recibe una lista de IDs de TDRs por GET o POST (ej: ?ids=1,2,3)
+    y genera un PDF consolidado con todos los TDRs seleccionados.
+    Permite elegir el número inicial de pie de página con ?start_page=5
+    """
+    import re
+
+    # Obtener IDs y número de página inicial
+    ids_list = request.GET.getlist('ids') or request.POST.getlist('ids')
+    start_page = int(request.GET.get('start_page', '1') or request.POST.get('start_page', '1'))
+
+    ids = [int(i) for i in ids_list if str(i).isdigit()]
+    if not ids:
+        return HttpResponse("No se seleccionaron TDRs válidos.", status=400)
+
+    requerimientos = Requerimiento.objects.filter(id__in=ids).select_related('vehiculo', 'vehiculo__subunidad').prefetch_related(
+        'detalles_servicio__detalle_servicio',
+        'detalles_pieza__detalle_pieza'
+    ).order_by('id')
+
+    consolidado = ConsolidadoTDR.objects.create(
+        usuario=request.user if request.user.is_authenticated else None,
+        start_page=start_page
+    )
+    consolidado.tdrs.set(requerimientos)
+
+    pdf = TDRPDF()
+    pdf.add_page()
+    pdf.page_no_override = start_page - 1
+
+    def page_no_custom(self):
+        return self.page_no_override + super(TDRPDF, self).page_no()
+    pdf.page_no = page_no_custom.__get__(pdf, TDRPDF)
+
+    vehiculo_num = 1
+    for requerimiento in requerimientos:
+        # Si el contenido se acerca al final de la página, agrega una nueva página
+        if pdf.get_y() > 220:  # Puedes ajustar este valor según tu formato
+            pdf.add_page()
+
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, f"VEHÍCULO {vehiculo_num}:", 0, 1)
+
+        pdf.set_font("Arial", "", 11)
+        texto_vehiculo = (
+            f"El presente requerimiento se realiza conforme al Informe Técnico Nro. "
+            f"{requerimiento.informe_tecnico_nro}-REGPOL LL/UNIADM-AREABAST-A.M. de la Camioneta PNP de placa interna "
+            f"{requerimiento.vehiculo.placa_int} placa de rodaje {requerimiento.vehiculo.placa_rod}, "
+            f"Marca {requerimiento.vehiculo.marca}, Modelo {requerimiento.vehiculo.modelo}, "
+            f"Motor N° {requerimiento.vehiculo.num_motor}, Serie Nro. {requerimiento.vehiculo.vin}, "
+            f"Año {requerimiento.vehiculo.anio}, combustible {requerimiento.vehiculo.get_tipo_combustible_display()}, "
+            f"asignado a la {requerimiento.vehiculo.subunidad.nombre}, dicho vehículo policial "
+            f"para mejorar su operatividad requiere mantenimiento correctivo conforme a lo siguiente:"
+        )
+        pdf.multi_cell(0, 5, texto_vehiculo)
+        pdf.ln(5)
+
+        # Servicios
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "SERVICIO PARA REALIZAR", 0, 1)
+        pdf.set_font("Arial", "", 11)
+        for servicio in requerimiento.detalles_servicio.all():
+            if pdf.get_y() > 260:
+                pdf.add_page()
+            x = pdf.get_x()
+            y = pdf.get_y()
+            pdf.multi_cell(5, 6, "-", align="C")
+            pdf.set_xy(x + 5, y)
+            if servicio.detalle_servicio:
+                pdf.multi_cell(130, 6, servicio.detalle_servicio.descripcion_servicio)
+            else:
+                pdf.multi_cell(130, 6, "[Servicio eliminado]")
+            pdf.ln(0)
+        pdf.ln(5)
+
+        # Repuestos
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(0, 10, "CAMBIO E INSTALACIÓN DE LOS SIGUIENTES REPUESTOS", 0, 1)
+        pdf.set_font("Arial", "", 11)
+        for repuesto in requerimiento.detalles_pieza.all():
+            if pdf.get_y() > 260:
+                pdf.add_page()
+            x = pdf.get_x()
+            y = pdf.get_y()
+            pdf.multi_cell(3, 5, "-", align="C")
+            pdf.set_xy(x + 5, y)
+            if repuesto.detalle_pieza:
+                pieza_texto = repuesto.detalle_pieza.descripcion_pieza
+            else:
+                pieza_texto = "[Pieza eliminada]"
+            pdf.multi_cell(120, 5, f"{repuesto.cantidad} {pieza_texto}")
+        pdf.ln(10)  # Espacio entre TDRs
+
+        vehiculo_num += 1
+
+    response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="tdr_consolidado.pdf"'
+    return response
+
+def consolidado_tdr_seleccion(request):
+    requerimientos = Requerimiento.objects.all().select_related('vehiculo').order_by('-fecha_creacion')
+    paginator = Paginator(requerimientos, 20)
+    page = request.GET.get('page')
+    requerimientos_page = paginator.get_page(page)
+    return render(request, 'requerimiento/consolidado.html', {
+        'requerimientos': requerimientos_page,
+    })
+
+def lista_consolidados(request):
+    consolidados = ConsolidadoTDR.objects.all().order_by('-fecha')
+    return render(request, 'requerimiento/lista_consolidados.html', {
+        'consolidados': consolidados,
+        'urlindex': 'lista_requerimientos', 
+        'urlcrear': 'crear_requerimiento', 
+    })
