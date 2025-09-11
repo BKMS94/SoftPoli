@@ -6,13 +6,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
-# Para PDF (WeasyPrint)
 from fpdf import FPDF
-# from weasyprint import HTML
-
-# Para Word (python-docx) - Comentado ya que no está implementado en este scope
-# from docx import Document
-from django.core.paginator import Paginator
 
 # Importa los modelos necesarios
 from maestranza.utils import modo_gestion, paginacion
@@ -20,10 +14,10 @@ from .models import Requerimiento, RequerimientoDescripcionDetalle, Requerimient
 from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, RequerimientoDescripcionDetalleForm
 from pieza.models import PiezaTDR # Necesario para buscar_piezas_api
 from .models import ConsolidadoTDR
-
+from django.contrib.auth.decorators import login_required
 
 # --- Vistas CRUD para Requerimientos (Funciones) ---
-
+@login_required
 def requerimiento_lista(request):
     search_query = request.GET.get('search', '')
     requerimientos = Requerimiento.objects.filter(
@@ -40,7 +34,7 @@ def requerimiento_lista(request):
     }
     return render(request, 'requerimiento/index.html', context)
 
-
+@login_required
 def detalle_requerimiento(request, id):
     requerimiento =get_object_or_404(Requerimiento, id=id)
     context = {
@@ -48,8 +42,7 @@ def detalle_requerimiento(request, id):
     }
     return render(request, 'requerimiento/detalle.html', context)
 
-
-
+@login_required
 def requerimiento_form(request, id=None):
     requerimiento, modo, extra = modo_gestion(Requerimiento, id)
 
@@ -104,20 +97,17 @@ def requerimiento_form(request, id=None):
     }
     return render(request, 'requerimiento/gestion.html', context)
 
-
+@login_required
 def borrar_requerimiento(request, id):
     requerimiento = get_object_or_404(Requerimiento, id=id)
     # if request.method == 'POST':
     requerimiento.delete()
     messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
     return redirect('lista_requerimientos') 
-    # context = {
-    #     'requerimiento': requerimiento
-    # }
-    # return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
 
 
 # ¡REINTRODUCIDO!: API para buscar descripciones de servicio (para Select2)
+@login_required
 def buscar_descripcion_servicio_api(request):
     """
     Vista API para buscar descripciones de servicio existentes (para Select2)
@@ -133,6 +123,7 @@ def buscar_descripcion_servicio_api(request):
     return JsonResponse({'results': results})
 
 # ¡REINTRODUCIDO!: API para crear una nueva descripción de servicio
+@login_required
 def crear_descripcion_servicio_api(request):
     """
     Vista API para crear una nueva descripción de servicio si no existe,
@@ -152,7 +143,7 @@ def crear_descripcion_servicio_api(request):
                 return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido o descripción vacía'}, status=400)
 
-
+@login_required
 def buscar_piezas_api(request):
     query = request.GET.get('q', '')
     if query:
@@ -162,6 +153,7 @@ def buscar_piezas_api(request):
         results = []
     return JsonResponse({'results': results})
 
+@login_required
 def crear_piezas_api(request):
     if request.method == 'POST':
         descripcion_pieza = request.POST.get('pieza', '').strip()
@@ -262,6 +254,7 @@ class TDRPDF(FPDF):
         # Restaurar posición Y original
         self.set_y(original_y)
 
+@login_required
 def generar_tdr_pdf(request, id):
     requerimiento = Requerimiento.objects.get(id=id)
     
@@ -333,31 +326,25 @@ def generar_tdr_pdf(request, id):
     response['Content-Disposition'] = f'attachment; filename="tdr_vehiculo_{requerimiento.id}.pdf"'
     return response
 
+@login_required
 def generar_consolidado_tdr_pdf(request):
-    """
-    Recibe una lista de IDs de TDRs por GET o POST (ej: ?ids=1,2,3)
-    y genera un PDF consolidado con todos los TDRs seleccionados.
-    Permite elegir el número inicial de pie de página con ?start_page=5
-    """
-
-    # Obtener IDs y número de página inicial
-    ids_list = request.GET.getlist('ids') or request.POST.getlist('ids')
+    ids_list = request.GET.getlist('ids')
+    ids_list = ids_list[0].split(',')
     start_page = int(request.GET.get('start_page', '1') or request.POST.get('start_page', '1'))
-
     ids = [int(i) for i in ids_list if str(i).isdigit()]
     if not ids:
-        return HttpResponse("No se seleccionaron TDRs válidos.", status=400)
-
+        messages.error(request, "No se seleccionaron TDRs válidos.")
+        return redirect('lista_consolidados')
     requerimientos = Requerimiento.objects.filter(id__in=ids).select_related('vehiculo', 'vehiculo__subunidad').prefetch_related(
         'detalles_servicio__detalle_servicio',
         'detalles_pieza__detalle_pieza'
     ).order_by('id')
 
-    consolidado = ConsolidadoTDR.objects.create(
-        usuario=request.user if request.user.is_authenticated else None,
-        start_page=start_page
-    )
-    consolidado.tdrs.set(requerimientos)
+    # Solo crear el registro si viene del formulario de selección (POST o no existe un consolidado igual)
+    if request.method == "POST" or not ConsolidadoTDR.objects.filter(start_page=start_page, tdrs__in=requerimientos).exists():
+        consolidado = ConsolidadoTDR.objects.create(start_page=start_page)
+        consolidado.tdrs.set(requerimientos)
+    # Si es GET y ya existe, no crear nada
 
     pdf = TDRPDF()
     pdf.add_page()
@@ -432,15 +419,16 @@ def generar_consolidado_tdr_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="tdr_consolidado.pdf"'
     return response
 
+@login_required
 def consolidado_tdr_seleccion(request):
-    requerimientos = Requerimiento.objects.all().select_related('vehiculo').order_by('-fecha_creacion')
-    paginator = Paginator(requerimientos, 20)
-    page = request.GET.get('page')
-    requerimientos_page = paginator.get_page(page)
+    # Solo TDRs que no están en ningún consolidado
+    requerimientos = Requerimiento.objects.filter(consolidados=None).select_related('vehiculo').order_by('-fecha_creacion')
+    requerimientos = paginacion(request, requerimientos)
     return render(request, 'requerimiento/consolidado.html', {
-        'requerimientos': requerimientos_page,
+        'requerimientos': requerimientos,
     })
 
+@login_required
 def lista_consolidados(request):
     search = request.GET.get('search', '').strip()
     consolidados = ConsolidadoTDR.objects.all().order_by('-fecha')
@@ -455,8 +443,26 @@ def lista_consolidados(request):
         'urlcrear': 'consolidado_tdr_seleccion', 
     })
 
+@login_required
 def consolidado_tdr_borrar(request, id):
     consolidado = get_object_or_404(ConsolidadoTDR, id=id)
     consolidado.delete()
     messages.success(request, "Consolidado eliminado correctamente.")
     return redirect('lista_consolidados')
+
+@login_required
+def crear_consolidado_tdr(request):
+    if request.method == "POST":
+        ids_list = request.POST.getlist('ids')
+        start_page = int(request.POST.get('start_page', '1'))
+        ids = [int(i) for i in ids_list if str(i).isdigit()]
+        if not ids:
+            messages.error(request, "No se seleccionaron TDRs válidos.")
+            return redirect('consolidado_tdr_seleccion')
+        requerimientos = Requerimiento.objects.filter(id__in=ids)
+        consolidado = ConsolidadoTDR.objects.create(start_page=start_page)
+        consolidado.tdrs.set(requerimientos)
+        messages.success(request, "Consolidado creado correctamente.")
+        return redirect('lista_consolidados')
+    else:
+        return redirect('consolidado_tdr_seleccion')

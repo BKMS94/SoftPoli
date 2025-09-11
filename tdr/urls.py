@@ -24,6 +24,7 @@ urlpatterns = [
 
     # Nueva URL para la lista de consolidados
     path('consolidados/', views.lista_consolidados, name='lista_consolidados'),
-    path('consolidados/crear', views.consolidado_tdr_seleccion, name='consolidado_tdr_seleccion'),
+    path('consolidados/generar', views.consolidado_tdr_seleccion, name='consolidado_tdr_seleccion'),
     path('consolidados/<int:id>/borrar', views.consolidado_tdr_borrar, name='consolidado_tdr_borrar'),
+    path('consolidado-crear/', views.crear_consolidado_tdr, name='crear_consolidado_tdr'),
 ]

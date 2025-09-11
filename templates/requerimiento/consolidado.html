@@ -5,10 +5,11 @@
     Consolidar TDRs en PDF
 {% endblock %}
 
-{% block formulario %}
+{% block form %}
 <h1 class="mb-4">Consolidar TDRs en PDF</h1>
 
-<form id="consolidadoForm" method="get" action="{% url 'generar_consolidado_tdr_pdf' %}">
+<form id="consolidadoForm" method="post" action="{% url 'crear_consolidado_tdr' %}">
+    {% csrf_token %}
     <div class="card mb-4">
         <div class="card-header bg-info-subtle fw-bold">
             Selecciona los TDRs que deseas consolidar:

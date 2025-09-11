@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory
 from django.db.models import Q
 from dal import autocomplete
 from datetime import datetime
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.http import HttpResponse
@@ -16,7 +16,7 @@ from django.utils import timezone
 
 # Vistas para Servicio
 
-# @login_required
+@login_required
 def servicio_lista(request):
     search_query = request.GET.get('search', '')
     servicios = Servicio.objects.filter(
@@ -35,7 +35,7 @@ def servicio_lista(request):
     }
     return render(request, 'servicio/index.html', context)
 
-# @login_required
+@login_required
 def servicio_form(request, id=None):
    
     servicio, modo, extra = modo_gestion(Servicio,id)
@@ -115,18 +115,19 @@ def servicio_form(request, id=None):
     }
     return render(request, 'servicio/gestion.html', context)
 
-# @login_required
+@login_required
 def servicio_detalle(request, id):
     servicio = get_object_or_404(Servicio, id=id)
     context = {'servicio': servicio}
     return render(request, 'servicio/detalle.html', context)
 
-# @login_required
+@login_required
 def servicio_borrar(request, id):
     servicio = get_object_or_404(Servicio, id=id)
     servicio.delete()
     return redirect('servicio_lista')
 
+@login_required
 def finalizar_servicio(request, id):
     servicio = get_object_or_404(Servicio, id=id)
     servicio.fecha_fin = datetime.now()
@@ -136,6 +137,7 @@ def finalizar_servicio(request, id):
     return redirect('servicio_lista')  
 
 class VehiculoAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = Vehiculo.objects.all().order_by('id')
         if self.q:
@@ -143,6 +145,7 @@ class VehiculoAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class PersonaAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = Persona.objects.all().order_by('id')
         if self.q:
@@ -150,6 +153,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class PiezaAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = Pieza.objects.all().order_by('id')
         if self.q:
@@ -157,12 +161,14 @@ class PiezaAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = Tecnico.objects.all().order_by('id')
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
         return qs
 
+@login_required
 def generar_pdf_servicio(request, id):
     servicio = get_object_or_404(Servicio.objects.prefetch_related('movimientostock_set__pieza'), id=id)
     vehiculo = servicio.vehiculo

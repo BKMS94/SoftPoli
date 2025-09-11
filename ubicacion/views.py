@@ -4,8 +4,10 @@ from maestranza.utils import paginacion, modo_gestion
 from django.contrib import messages
 from .forms import UnidadForm, SubunidadForm
 from dal import autocomplete
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def unidad_lista(request):
     unidades = Unidad.objects.filter(
         nombre__icontains= request.GET.get('search', '')). order_by('id')
@@ -17,7 +19,7 @@ def unidad_lista(request):
     }
     return render(request, 'unidad/index.html', context)
 
-
+@login_required
 def unidad_gestion(request, id=None):
     unidades, modo, extra = modo_gestion(Unidad,id)
 
@@ -40,18 +42,19 @@ def unidad_gestion(request, id=None):
     }
     return render(request, 'unidad/gestion.html', context)
     
+@login_required
 def unidad_detalle(request, id):
     unidad = get_object_or_404(Unidad, id=id)
     context = {'unidad': unidad}
     return render(request, 'unidad/detalle.html', context)
 
+@login_required
 def unidad_borrar(request, id):
     unidad = get_object_or_404(Unidad, id=id)
     unidad.delete()
     return redirect('unidad_index')
 
-
-
+@login_required
 def subunidad_lista(request):
     subunidades = SubUnidad.objects.filter(
         nombre__icontains= request.GET.get('search', '')). order_by('id')
@@ -63,7 +66,7 @@ def subunidad_lista(request):
     }
     return render(request, 'subunidad/index.html', context)
 
-
+@login_required
 def subunidad_gestion(request, id=None):
     subunidades, modo, extra = modo_gestion(SubUnidad,id)
 
@@ -85,25 +88,31 @@ def subunidad_gestion(request, id=None):
         'extra': extra
     }
     return render(request, 'subunidad/gestion.html', context)
-    
+
+@login_required  
 def subunidad_detalle(request, id):
     subunidad = get_object_or_404(SubUnidad, id=id)
     context = {'subunidad': subunidad}
     return render(request, 'subunidad/detalle.html', context)
 
+@login_required
 def subunidad_borrar(request, id):
     subunidad = get_object_or_404(SubUnidad, id=id)
     subunidad.delete()
     return redirect('subunidad_index')
 
+
 class UnidadAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = Unidad.objects.all().order_by('id')
         if self.q:
             qs = qs.filter(nombre__icontains=self.q)
         return qs
+    
 
 class SubUnidadAutocomplete(autocomplete.Select2QuerySetView):
+    @login_required
     def get_queryset(self):
         qs = SubUnidad.objects.all().order_by('id')
         if self.q:

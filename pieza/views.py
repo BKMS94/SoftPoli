@@ -4,7 +4,9 @@ from .forms import PiezaForm
 from django.contrib import messages
 from maestranza.utils import modo_gestion, paginacion
 from django.http import JsonResponse, Http404
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def pieza_lista(request):
     piezas = Pieza.objects.filter(
         nombre__icontains=request.GET.get('search', '')
@@ -19,7 +21,7 @@ def pieza_lista(request):
     }
     return render(request, 'pieza/index.html', context)
 
-
+@login_required
 def pieza_gestion(request, id=None):
     pieza, modo, extra = modo_gestion(Pieza,id)
 
@@ -42,19 +44,20 @@ def pieza_gestion(request, id=None):
     }
     return render(request, 'pieza/gestion.html', context)
 
-
+@login_required
 def pieza_detalle(request, id):
     pieza = get_object_or_404(Pieza, id=id)
     context = {'pieza': pieza}
     return render(request, 'pieza/detalle.html', context)
 
-
+@login_required
 def pieza_borrar(request, id):
     pieza = get_object_or_404(Pieza, id=id)
     pieza.delete()
     messages.success(request, "Pieza eliminada correctamente.")
     return redirect('pieza_index')
 
+@login_required
 def pieza_stock(request, pieza_id):
     try:
         pieza = Pieza.objects.get(pk=pieza_id)

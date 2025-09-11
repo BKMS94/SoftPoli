@@ -1,15 +1,19 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from servicio.models import Servicio, Vehiculo, Persona, Tecnico, Pieza
 from grado.models import  Grado
 from ubicacion.models import  Unidad, SubUnidad
 from tdr.models import Requerimiento
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def index(request):
     return render(request, 'dashboard.html')
 
-
+@login_required
 def detalle_objeto_modal_html(request, tipo_objeto, pk):
     """
     Vista genérica que renderiza el HTML del modal para cualquier objeto.
@@ -63,3 +67,17 @@ def detalle_objeto_modal_html(request, tipo_objeto, pk):
     
     except Exception as e:
         return HttpResponse(f'Error al cargar los detalles: {e}', status=500)
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')  # Cambia por tu vista principal
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            messages.error(request, 'Usuario o contraseña incorrectos.')
+    return render(request, 'registration/login.html')

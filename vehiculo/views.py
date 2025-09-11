@@ -1,13 +1,14 @@
-
 from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from maestranza.utils import paginacion,modo_gestion
 from .models import Vehiculo
 from .forms import VehiculoForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@login_required
 def vehiculo_lista(request):
     vehiculos = Vehiculo.objects.filter(placa_int__icontains= request.GET.get('search', '')).order_by('id') 
     vehiculos = paginacion(request,vehiculos)
@@ -17,6 +18,7 @@ def vehiculo_lista(request):
     return render(request, 'vehiculo/index.html', context)
 
 
+@login_required
 def vehiculo_gestion(request, id=None):
     vehiculos, modo, extra = modo_gestion(Vehiculo,id)
 
@@ -40,17 +42,20 @@ def vehiculo_gestion(request, id=None):
     return render(request, 'vehiculo/gestion.html', context)
 
 
+@login_required
 def vehiculo_detalle(request,id):
     vehiculo = get_object_or_404(Vehiculo, id=id)
     context = {'vehiculo':vehiculo}
     return render(request, 'vehiculo/detalle.html', context)
 
 
+@login_required
 def vehiculo_borrar(request,id):
     vehiculo = get_object_or_404(Vehiculo, id=id)
     vehiculo.delete()
     return redirect('vehiculo_index')
 
+@login_required
 def vehiculo_kilometraje(request, id):
     try:
         vehiculo = get_object_or_404(Vehiculo, id=id)

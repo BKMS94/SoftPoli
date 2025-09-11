@@ -25,6 +25,12 @@
  
         {% endif %}
 
+        {% if modelomodal == 'consolidado' %}
+            <a href="{% url 'generar_consolidado_tdr_pdf' %}?ids={% for tdr in modelo.tdrs.all %}{{ tdr.id }}{% if not forloop.last %},{% endif %}{% endfor %}&start_page={{ modelo.start_page }}"
+               class="btn btn-primary" title="Descargar PDF consolidado" target="_blank">
+                <img src="{% static 'img/exportar.png' %}" alt=" ">
+            </a>
+        {% endif %}
 
     </span>
 </td>

@@ -20,11 +20,11 @@
           Gestores
         </a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="{% url 'vehiculo_index' %}">Vehículos</a></li>
-          <li><a class="dropdown-item" href="{% url 'persona_index' %}">Personas</a></li>
-          <li><a class="dropdown-item" href="{% url 'tecnico_index' %}">Técnicos</a></li>
-          <li><a class="dropdown-item" href="{% url 'pieza_index' %}">Piezas</a></li>
           <li><a class="dropdown-item" href="{% url 'grado_lista' %}">Grados</a></li>
+          <li><a class="dropdown-item" href="{% url 'persona_index' %}">Personas</a></li>
+          <li><a class="dropdown-item" href="{% url 'pieza_index' %}">Piezas</a></li>
+          <li><a class="dropdown-item" href="{% url 'tecnico_index' %}">Técnicos</a></li>
+          <li><a class="dropdown-item" href="{% url 'vehiculo_index' %}">Vehículos</a></li>
         </ul>
       </li>
 
@@ -37,17 +37,28 @@
           <li><a class="dropdown-item" href="{% url 'subunidad_index' %}">Sub Unidades</a></li>
         </ul>
       </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Reportes
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'lista_consolidados' %}">Consolidados TDR</a></li>
+        </ul>
+      </li>
       <li class="nav-item"><a class="nav-link" href="{% url 'lista_requerimientos' %}">TDR</a></li>
       <!-- </ul> -->
       <!-- <ul class="navbar-nav flex-column"> -->
       <li class="nav-item"><a class="nav-link" href="{% url 'consolidado_tdr_seleccion' %}">Ajustes</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'lista_consolidados' %}">Consolidados TDR</a></li>
     </ul>
   </div>
   <div class="sidebar-footer-bs5 text-center">
     <strong>Admin</strong><br />
-    <small>Gerente</small>
+    <small>Gerente</small><br />
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-link p-0 m-0 align-baseline">Cerrar sesión</button>
+    </form>
   </div>
 
 

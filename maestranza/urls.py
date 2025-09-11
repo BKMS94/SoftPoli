@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 import maestranza.views as views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.login_view, name='login'),
+    path('index/', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('vehiculos/', include('vehiculo.urls')),
     path('personas/',  include('persona.urls')),
@@ -29,5 +31,6 @@ urlpatterns = [
     path('ubicacion/', include('ubicacion.urls')),
     path('tdr/', include('tdr.urls')),
     path('api/detalle-html/<str:tipo_objeto>/<str:pk>/', views.detalle_objeto_modal_html, name='detalle_objeto_modal_html'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]
 
