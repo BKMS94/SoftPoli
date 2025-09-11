@@ -2,12 +2,9 @@ import os
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse_lazy 
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.template.loader import render_to_string
-from django.utils import timezone
 from django.conf import settings
 # Para PDF (WeasyPrint)
 from fpdf import FPDF
@@ -15,15 +12,12 @@ from fpdf import FPDF
 
 # Para Word (python-docx) - Comentado ya que no está implementado en este scope
 # from docx import Document
-from io import BytesIO
 from django.core.paginator import Paginator
 
 # Importa los modelos necesarios
 from maestranza.utils import modo_gestion, paginacion
 from .models import Requerimiento, RequerimientoDescripcionDetalle, RequerimientoPiezaDetalle, DescripcionServicio # ¡Reintroducido DescripcionServicio!
 from .forms import RequerimientoForm, RequerimientoPiezaDetalleForm, RequerimientoDescripcionDetalleForm
-from vehiculo.models import Vehiculo
-from ubicacion.models import Unidad # Necesario si Unidad se usa en otros modelos, pero ya no en Requerimiento directamente
 from pieza.models import PiezaTDR # Necesario para buscar_piezas_api
 from .models import ConsolidadoTDR
 
@@ -113,14 +107,14 @@ def requerimiento_form(request, id=None):
 
 def borrar_requerimiento(request, id):
     requerimiento = get_object_or_404(Requerimiento, id=id)
-    if request.method == 'POST':
-        requerimiento.delete()
-        messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
-        return redirect('lista_requerimientos') 
-    context = {
-        'requerimiento': requerimiento
-    }
-    return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
+    # if request.method == 'POST':
+    requerimiento.delete()
+    messages.success(request, 'Requerimiento (TDR) eliminado exitosamente.')
+    return redirect('lista_requerimientos') 
+    # context = {
+    #     'requerimiento': requerimiento
+    # }
+    # return render(request, 'requerimientos/requerimiento_confirm_delete.html', context)
 
 
 # ¡REINTRODUCIDO!: API para buscar descripciones de servicio (para Select2)
@@ -181,19 +175,6 @@ def crear_piezas_api(request):
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido o pieza vacía'}, status=400)
-
-def detalle_requerimiento_modal(request, id):
-    requerimiento = get_object_or_404(Requerimiento.objects
-                                 .select_related('vehiculo')
-                                 .prefetch_related('detalles_servicio__detalle', # ¡CORREGIDO!: Accede via .detalle
-                                                   'detalles_pieza__pieza'),
-                                 id=id)
-    
-    context = {
-        'requerimiento': requerimiento,
-    }
-    return render(request, 'requerimientos/detalle_requerimiento_modal.html', context)
-
 
 
 
@@ -358,7 +339,6 @@ def generar_consolidado_tdr_pdf(request):
     y genera un PDF consolidado con todos los TDRs seleccionados.
     Permite elegir el número inicial de pie de página con ?start_page=5
     """
-    import re
 
     # Obtener IDs y número de página inicial
     ids_list = request.GET.getlist('ids') or request.POST.getlist('ids')
@@ -449,7 +429,7 @@ def generar_consolidado_tdr_pdf(request):
         vehiculo_num += 1
 
     response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="tdr_consolidado.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="tdr_consolidado.pdf"'
     return response
 
 def consolidado_tdr_seleccion(request):
@@ -462,9 +442,21 @@ def consolidado_tdr_seleccion(request):
     })
 
 def lista_consolidados(request):
+    search = request.GET.get('search', '').strip()
     consolidados = ConsolidadoTDR.objects.all().order_by('-fecha')
+    if search:
+        consolidados = consolidados.filter(
+            tdrs__informe_tecnico_nro__icontains=search
+        ).distinct()
+    consolidados = paginacion(request, consolidados)
     return render(request, 'requerimiento/lista_consolidados.html', {
         'consolidados': consolidados,
-        'urlindex': 'lista_requerimientos', 
-        'urlcrear': 'crear_requerimiento', 
+        'urlindex': 'lista_consolidados', 
+        'urlcrear': 'consolidado_tdr_seleccion', 
     })
+
+def consolidado_tdr_borrar(request, id):
+    consolidado = get_object_or_404(ConsolidadoTDR, id=id)
+    consolidado.delete()
+    messages.success(request, "Consolidado eliminado correctamente.")
+    return redirect('lista_consolidados')

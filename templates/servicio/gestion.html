@@ -1,5 +1,6 @@
 {% extends "components/formulario.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}
 {% if modo == 'editar' %}
@@ -82,7 +83,11 @@ Crear Servicio
             </div>
             <div class="col-md-6 mb-3">
                 {{ form.fecha_fin.label_tag }}
+                {% if modo == 'editar' %}
                 {{ form.fecha_fin }}
+                {% else %}
+                {{ form.fecha_fin|attr:"readonly" }}
+                {% endif %}
             </div>
         </div>
         <div class="mb-3">

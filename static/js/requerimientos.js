@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // === CSRF Token para peticiones POST ===
     const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
     // ==================== SERVICIOS ====================
+    // --- Variables para el formset de servicios ---
     const addServicioBtn = document.getElementById("add-requerimiento-servicio");
     const servicioFormsetContainer = document.getElementById("requerimiento-servicios-formset");
     const emptyFormServicio = document.querySelector(".empty-form-servicio .formset-row");
     const totalFormsServicio = document.querySelector("#id_serviciodetalle-TOTAL_FORMS");
 
+    // --- Autocompletado para servicios ---
     function activarAutocompletado(input, hiddenInput) {
         let datalist = document.createElement("datalist");
         datalist.id = "dl-" + Math.random().toString(36).substring(2, 9);
         input.setAttribute("list", datalist.id);
         input.insertAdjacentElement("afterend", datalist);
 
+        // Buscar servicios existentes
         input.addEventListener("input", async function () {
             const query = this.value.trim();
             if (query.length < 2) return;
@@ -31,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Crear servicio si no existe
         input.addEventListener("change", async function () {
             const selectedOption = Array.from(datalist.options).find(o => o.value === this.value);
             if (selectedOption) {
@@ -54,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // --- Añadir nueva fila de servicio ---
     if (addServicioBtn && servicioFormsetContainer && emptyFormServicio && totalFormsServicio) {
         addServicioBtn.addEventListener("click", function (e) {
             e.preventDefault();
@@ -69,25 +75,46 @@ document.addEventListener("DOMContentLoaded", function () {
             totalFormsServicio.value = formIndex + 1;
         });
 
-        // Inicializar los existentes
+        // Inicializar autocompletado en filas existentes
         document.querySelectorAll(".descripcion-servicio-input").forEach(input => {
             const hiddenInput = input.parentElement.querySelector("input[name$='detalle_servicio']");
             if (hiddenInput) activarAutocompletado(input, hiddenInput);
         });
     }
 
+    // --- Eliminar fila de servicio ---
+    if (servicioFormsetContainer) {
+        servicioFormsetContainer.addEventListener("click", function (e) {
+            if (e.target.closest(".remove-formset-row")) {
+                e.preventDefault();
+                const row = e.target.closest(".formset-row");
+                const deleteInput = row.querySelector("input[type='checkbox'][name$='-DELETE']");
+                if (deleteInput) {
+                    deleteInput.checked = true;
+                    row.style.display = "none";
+                } else {
+                    row.remove();
+                    totalFormsServicio.value = parseInt(totalFormsServicio.value, 10) - 1;
+                }
+            }
+        });
+    }
+
     // ==================== PIEZAS ====================
+    // --- Variables para el formset de piezas ---
     const addPiezaBtn = document.getElementById("add-requerimiento-pieza");
     const piezaFormsetContainer = document.getElementById("requerimiento-piezas-formset");
     const emptyFormPieza = document.querySelector(".empty-form-pieza .formset-row");
     const totalFormsPieza = document.querySelector("#id_piezadetalle-TOTAL_FORMS");
 
+    // --- Autocompletado para piezas ---
     function activarAutocompletadoPieza(input, hiddenInput) {
         let datalist = document.createElement("datalist");
         datalist.id = "dl-pieza-" + Math.random().toString(36).substring(2, 9);
         input.setAttribute("list", datalist.id);
         input.insertAdjacentElement("afterend", datalist);
 
+        // Buscar piezas existentes
         input.addEventListener("input", async function () {
             const query = this.value.trim();
             if (query.length < 2) return;
@@ -106,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Crear pieza si no existe
         input.addEventListener("change", async function () {
             const selectedOption = Array.from(datalist.options).find(o => o.value === this.value);
             if (selectedOption) {
@@ -129,13 +157,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Inicializar los existentes PIEZAS
+    // --- Inicializar autocompletado en filas existentes de piezas ---
     document.querySelectorAll(".descripcion-pieza-input").forEach(input => {
         const hiddenInput = input.parentElement.querySelector("input[name$='detalle_pieza']");
         if (hiddenInput) activarAutocompletadoPieza(input, hiddenInput);
     });
 
-    // Al agregar nueva fila PIEZA
+    // --- Añadir nueva fila de pieza ---
     if (addPiezaBtn && piezaFormsetContainer && emptyFormPieza && totalFormsPieza) {
         addPiezaBtn.addEventListener("click", function (e) {
             e.preventDefault();
@@ -151,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
             totalFormsPieza.value = formIndex + 1;
         });
 
+        // --- Eliminar fila de pieza ---
         piezaFormsetContainer.addEventListener("click", function (e) {
             if (e.target.closest(".remove-formset-row")) {
                 e.preventDefault();
@@ -167,8 +196,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
     // ==================== LIMPIAR CAMPOS ====================
+    // Permite limpiar cualquier input, select o textarea con el botón .clear-input
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("clear-input")) {
             const input = e.target.closest(".position-relative").querySelector("input, select, textarea");

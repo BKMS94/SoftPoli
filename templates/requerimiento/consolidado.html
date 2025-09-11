@@ -1,11 +1,11 @@
-{% extends 'base/base.html' %}
+{% extends "components/formulario.html" %}
 {% load static %}
 
 {% block title %}
     Consolidar TDRs en PDF
 {% endblock %}
 
-{% block content %}
+{% block formulario %}
 <h1 class="mb-4">Consolidar TDRs en PDF</h1>
 
 <form id="consolidadoForm" method="get" action="{% url 'generar_consolidado_tdr_pdf' %}">
@@ -49,6 +49,7 @@
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-file-earmark-pdf"></i> Generar PDF Consolidado
             </button>
+            <a class="btn btn-danger ms-4" href="{% url 'lista_consolidados' %}">Cancelar</a>
         </div>
     </div>
 </form>

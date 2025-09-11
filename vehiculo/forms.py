@@ -22,7 +22,10 @@ class VehiculoForm(forms.ModelForm):
             'estado_vehi': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
             'estado_odo': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
             'funcion': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),            
-            'fecha_adquisicion': forms.DateTimeInput(attrs={'class': 'form-control mb-3 mt-1'}),
+            'fecha_adquisicion': forms.DateInput(
+                attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'La fecha fin se llena al finalizar el servicio'},
+                format='%Y-%m-%d'
+            ),
             'subunidad': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-select mb-3 mt-1'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe el valor de adquisicion'}),
 

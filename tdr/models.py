@@ -159,9 +159,11 @@ class RequerimientoPiezaDetalle(models.Model):
 
 class ConsolidadoTDR(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
-    usuario = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     tdrs = models.ManyToManyField(Requerimiento, related_name='consolidados')
     start_page = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         return f"Consolidado #{self.id} ({self.fecha:%d/%m/%Y %H:%M})"
+    
+    def get_borrar_url(self):
+        return reverse('consolidado_tdr_borrar', args=[self.id])
