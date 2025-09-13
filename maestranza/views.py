@@ -2,8 +2,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from servicio.models import Servicio, Vehiculo, Persona, Tecnico, Pieza
 from grado.models import  Grado
+from persona.models import Persona, Tecnico
 from ubicacion.models import  Unidad, SubUnidad
 from tdr.models import Requerimiento
 from django.contrib import messages
@@ -12,27 +12,19 @@ from django.utils import timezone
 from vehiculo.models import Vehiculo
 from servicio.models import Servicio
 from pieza.models import Pieza
-from tdr.models import Requerimiento
-from django.db.models import Count
+from django.db.models import Count, Min
+from django.db import models
 from datetime import timedelta
 
 @login_required
 def index(request):
-   # Indicadores
+    # Indicadores
     total_vehiculos = Vehiculo.objects.count()
-    vehiculos_en_servicio = Vehiculo.objects.filter(estado_vehi='OPERATIVO').count()
+    vehiculos_operativos = Vehiculo.objects.filter(estado_vehi='OPERATIVO').count()
     servicios_en_proceso = Servicio.objects.filter(estado='EN PROCESO').count()
-    mantenimientos_pendientes = Servicio.objects.filter(estado='PENDIENTE').count()
-    piezas_bajo_stock = Pieza.objects.filter(cantidad_stock__lte=5).count()
-
-    # Servicios por estado para gráfico de barras
-    servicios_estado = Servicio.objects.values('estado').annotate(total=Count('id'))
-    servicios_labels = []
-    servicios_data = []
-    for estado in ['EN PROCESO', 'FINALIZADO']:
-        servicios_labels.append(estado.capitalize())
-        total = next((item['total'] for item in servicios_estado if item['estado'] == estado), 0)
-        servicios_data.append(total)
+    tdrs_generados = Requerimiento.objects.count()
+    piezas_bajo_stock_list = Pieza.objects.filter(cantidad_stock__lte=models.F('reorder')).order_by('cantidad_stock', 'nombre')
+    piezas_bajo_stock = piezas_bajo_stock_list.count()
 
     # Vehículos por estado para gráfico de pastel
     vehiculos_estado = Vehiculo.objects.values('estado_vehi').annotate(total=Count('id'))
@@ -43,31 +35,31 @@ def index(request):
         total = next((item['total'] for item in vehiculos_estado if item['estado_vehi'] == estado), 0)
         vehiculos_data.append(total)
 
-    # TDRs generados por mes (últimos 12 meses)
+    # Servicios finalizados por mes (últimos 12 meses)
     hoy = timezone.now().date()
-    meses = []
-    tdrs_por_mes = []
+    servicios_por_mes_labels = []
+    servicios_por_mes_data = []
     for i in range(11, -1, -1):
         mes = (hoy.replace(day=1) - timedelta(days=30*i))
-        meses.append(mes.strftime('%b %Y'))
-        tdrs_count = Requerimiento.objects.filter(
-            fecha_creacion__year=mes.year,
-            fecha_creacion__month=mes.month
+        servicios_por_mes_labels.append(mes.strftime('%b %Y'))
+        count = Servicio.objects.filter(
+            estado='FINALIZADO',
+            fecha_fin__year=mes.year,
+            fecha_fin__month=mes.month
         ).count()
-        tdrs_por_mes.append(tdrs_count)
+        servicios_por_mes_data.append(count)
 
     context = {
         'total_vehiculos': total_vehiculos,
-        'vehiculos_en_servicio': vehiculos_en_servicio,
+        'vehiculos_operativos': vehiculos_operativos,
         'servicios_en_proceso': servicios_en_proceso,
-        'mantenimientos_pendientes': mantenimientos_pendientes,
+        'tdrs_generados': tdrs_generados,
         'piezas_bajo_stock': piezas_bajo_stock,
-        'servicios_labels': servicios_labels,
-        'servicios_data': servicios_data,
+        'piezas_bajo_stock_list': piezas_bajo_stock_list,
         'vehiculos_labels': vehiculos_labels,
         'vehiculos_data': vehiculos_data,
-        'meses': meses,
-        'tdrs_por_mes': tdrs_por_mes,
+        'servicios_por_mes_labels': servicios_por_mes_labels,
+        'servicios_por_mes_data': servicios_por_mes_data,
     }
     return render(request, 'dashboard.html', context)
 

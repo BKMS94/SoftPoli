@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Evento Select2: selecciona vehículo y busca kilometraje
     vehiculoSelect.on('select2:select', function (e) {
         const vehiculoId = e.params.data.id;
-        fetch(`/vehiculo/kilometraje/${vehiculoId}/`)
+        fetch(`/vehiculos/kilometraje/${vehiculoId}/`)
             .then(response => response.json())
             .then(data => {
                 kilometrajeAnteriorInput.val(data.kilometraje);

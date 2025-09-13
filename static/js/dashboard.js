@@ -1,53 +1,16 @@
-const dashboardData = {
-    servicios_labels: JSON.parse(document.getElementById('servicios_labels').textContent),
-    servicios_data: JSON.parse(document.getElementById('servicios_data').textContent),
-    vehiculos_labels: JSON.parse(document.getElementById('vehiculos_labels').textContent),
-    vehiculos_data: JSON.parse(document.getElementById('vehiculos_data').textContent),
-    meses: JSON.parse(document.getElementById('meses').textContent),
-    tdrs_por_mes: JSON.parse(document.getElementById('tdrs_por_mes').textContent),
-};
+const serviciosPorMesLabels = JSON.parse(document.getElementById('servicios_por_mes_labels').textContent);
+const serviciosPorMesData = JSON.parse(document.getElementById('servicios_por_mes_data').textContent);
+const vehiculosLabels = JSON.parse(document.getElementById('vehiculos_labels').textContent);
+const vehiculosData = JSON.parse(document.getElementById('vehiculos_data').textContent);
 
-// Servicios por Estado (Bar)
-new Chart(document.getElementById('serviciosBar'), {
-    type: 'bar',
-    data: {
-        labels: dashboardData.servicios_labels,
-        datasets: [{
-            label: 'Servicios',
-            data: dashboardData.servicios_data,
-            backgroundColor: ['#ffc107', '#0d6efd', '#198754'],
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-    }
-});
-
-// Vehículos por Estado (Pie)
-new Chart(document.getElementById('vehiculosPie'), {
-    type: 'pie',
-    data: {
-        labels: dashboardData.vehiculos_labels,
-        datasets: [{
-            data: dashboardData.vehiculos_data,
-            backgroundColor: ['#198754', '#dc3545', '#ffc107'],
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-    }
-});
-
-// TDRs por Mes (Line)
-new Chart(document.getElementById('tdrsLine'), {
+// Gráfico lineal de servicios finalizados por mes
+new Chart(document.getElementById('serviciosLine'), {
     type: 'line',
     data: {
-        labels: dashboardData.meses,
+        labels: serviciosPorMesLabels,
         datasets: [{
-            label: 'TDRs',
-            data: dashboardData.tdrs_por_mes,
+            label: 'Servicios Finalizados',
+            data: serviciosPorMesData,
             borderColor: '#0d6efd',
             backgroundColor: 'rgba(13,110,253,0.1)',
             fill: true,
@@ -57,5 +20,21 @@ new Chart(document.getElementById('tdrsLine'), {
     options: {
         responsive: true,
         plugins: { legend: { display: false } }
+    }
+});
+
+// Gráfico de pastel de vehículos por estado
+new Chart(document.getElementById('vehiculosPie'), {
+    type: 'pie',
+    data: {
+        labels: vehiculosLabels,
+        datasets: [{
+            data: vehiculosData,
+            backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
     }
 });
