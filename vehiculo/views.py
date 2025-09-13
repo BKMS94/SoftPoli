@@ -55,7 +55,7 @@ def vehiculo_borrar(request,id):
     vehiculo.delete()
     return redirect('vehiculo_index')
 
-@login_required
+# @login_required
 def vehiculo_kilometraje(request, id):
     try:
         vehiculo = get_object_or_404(Vehiculo, id=id)

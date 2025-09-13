@@ -57,7 +57,7 @@ def pieza_borrar(request, id):
     messages.success(request, "Pieza eliminada correctamente.")
     return redirect('pieza_index')
 
-@login_required
+# @login_required
 def pieza_stock(request, pieza_id):
     try:
         pieza = Pieza.objects.get(pk=pieza_id)

@@ -8,10 +8,69 @@ from ubicacion.models import  Unidad, SubUnidad
 from tdr.models import Requerimiento
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from vehiculo.models import Vehiculo
+from servicio.models import Servicio
+from pieza.models import Pieza
+from tdr.models import Requerimiento
+from django.db.models import Count
+from datetime import timedelta
 
 @login_required
 def index(request):
-    return render(request, 'dashboard.html')
+   # Indicadores
+    total_vehiculos = Vehiculo.objects.count()
+    vehiculos_en_servicio = Vehiculo.objects.filter(estado_vehi='OPERATIVO').count()
+    servicios_en_proceso = Servicio.objects.filter(estado='EN PROCESO').count()
+    mantenimientos_pendientes = Servicio.objects.filter(estado='PENDIENTE').count()
+    piezas_bajo_stock = Pieza.objects.filter(cantidad_stock__lte=5).count()
+
+    # Servicios por estado para gráfico de barras
+    servicios_estado = Servicio.objects.values('estado').annotate(total=Count('id'))
+    servicios_labels = []
+    servicios_data = []
+    for estado in ['EN PROCESO', 'FINALIZADO']:
+        servicios_labels.append(estado.capitalize())
+        total = next((item['total'] for item in servicios_estado if item['estado'] == estado), 0)
+        servicios_data.append(total)
+
+    # Vehículos por estado para gráfico de pastel
+    vehiculos_estado = Vehiculo.objects.values('estado_vehi').annotate(total=Count('id'))
+    vehiculos_labels = []
+    vehiculos_data = []
+    for estado in ['OPERATIVO', 'INOPERATIVO', 'MANTENIMIENTO']:
+        vehiculos_labels.append(estado.replace('_', ' ').capitalize())
+        total = next((item['total'] for item in vehiculos_estado if item['estado_vehi'] == estado), 0)
+        vehiculos_data.append(total)
+
+    # TDRs generados por mes (últimos 12 meses)
+    hoy = timezone.now().date()
+    meses = []
+    tdrs_por_mes = []
+    for i in range(11, -1, -1):
+        mes = (hoy.replace(day=1) - timedelta(days=30*i))
+        meses.append(mes.strftime('%b %Y'))
+        tdrs_count = Requerimiento.objects.filter(
+            fecha_creacion__year=mes.year,
+            fecha_creacion__month=mes.month
+        ).count()
+        tdrs_por_mes.append(tdrs_count)
+
+    context = {
+        'total_vehiculos': total_vehiculos,
+        'vehiculos_en_servicio': vehiculos_en_servicio,
+        'servicios_en_proceso': servicios_en_proceso,
+        'mantenimientos_pendientes': mantenimientos_pendientes,
+        'piezas_bajo_stock': piezas_bajo_stock,
+        'servicios_labels': servicios_labels,
+        'servicios_data': servicios_data,
+        'vehiculos_labels': vehiculos_labels,
+        'vehiculos_data': vehiculos_data,
+        'meses': meses,
+        'tdrs_por_mes': tdrs_por_mes,
+    }
+    return render(request, 'dashboard.html', context)
+
 
 @login_required
 def detalle_objeto_modal_html(request, tipo_objeto, pk):

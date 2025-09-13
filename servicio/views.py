@@ -137,7 +137,6 @@ def finalizar_servicio(request, id):
     return redirect('servicio_lista')  
 
 class VehiculoAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = Vehiculo.objects.all().order_by('id')
         if self.q:
@@ -145,7 +144,6 @@ class VehiculoAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class PersonaAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = Persona.objects.all().order_by('id')
         if self.q:
@@ -153,7 +151,6 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class PiezaAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = Pieza.objects.all().order_by('id')
         if self.q:
@@ -161,7 +158,6 @@ class PiezaAutocomplete(autocomplete.Select2QuerySetView):
         return qs
     
 class TecnicoAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = Tecnico.objects.all().order_by('id')
         if self.q:

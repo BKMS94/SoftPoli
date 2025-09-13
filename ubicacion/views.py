@@ -103,7 +103,6 @@ def subunidad_borrar(request, id):
 
 
 class UnidadAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = Unidad.objects.all().order_by('id')
         if self.q:
@@ -112,7 +111,6 @@ class UnidadAutocomplete(autocomplete.Select2QuerySetView):
     
 
 class SubUnidadAutocomplete(autocomplete.Select2QuerySetView):
-    @login_required
     def get_queryset(self):
         qs = SubUnidad.objects.all().order_by('id')
         if self.q:
