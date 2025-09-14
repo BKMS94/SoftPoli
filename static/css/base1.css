@@ -449,3 +449,22 @@ input[type="checkbox"][name$="-DELETE"] {
     background-color: var(--Secondary-color) !important; /* Color secundario para seleccionado */
     color: #fff !important;
 }
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+@media (max-width: 576px) {
+    .chart-container {
+        max-width: 250px;
+    }
+}
+
+
+.piezas-bajo-stock-list {
+    max-height: 260px;   
+    overflow-y: auto;
+}

@@ -19,7 +19,21 @@ new Chart(document.getElementById('serviciosLine'), {
     },
     options: {
         responsive: true,
-        plugins: { legend: { display: false } }
+        maintainAspectRatio: false, // Permite controlar el tamaño por CSS
+        plugins: { 
+            legend: { display: false },
+            tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    maxRotation: 45,
+                    minRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 6
+                }
+            }
+        }
     }
 });
 
@@ -35,6 +49,16 @@ new Chart(document.getElementById('vehiculosPie'), {
     },
     options: {
         responsive: true,
-        plugins: { legend: { position: 'bottom' } }
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { 
+                position: 'bottom',
+                labels: {
+                    boxWidth: 18,
+                    font: { size: 14 },
+                    padding: 16
+                }
+            }
+        }
     }
 });

@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %}Dashboard{% endblock title %}
 {% block content %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <div class="container py-4">
     <h2 class="mb-4">Panel de Control</h2>
     <div class="row g-4 mb-4">
@@ -34,11 +33,20 @@
             </div>
         </div>
         <div class="col-6 col-md-2">
-            <div class="card shadow text-center border-info h-100">
+            <div class="card shadow text-center border-secondary h-100">
                 <div class="card-body">
-                    <i class="bi bi-file-earmark-text" style="font-size:2.5rem; color:#0dcaf0;"></i>
-                    <div class="fw-bold mt-2">TDRs Generados</div>
-                    <h3 class="text-info">{{ tdrs_generados }}</h3>
+                    <i class="bi bi-tools" style="font-size:2.5rem; color:#6c757d;"></i>
+                    <div class="fw-bold mt-2">Servicios Realizados</div>
+                    <h3 class="text-secondary">{{ servicios_finalizados }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="card shadow text-center border-success h-100">
+                <div class="card-body">
+                    <i class="bi bi-bar-chart-line" style="font-size:2.5rem; color:#198754;"></i>
+                    <div class="fw-bold mt-2">Cumplimiento (%)</div>
+                    <h3 class="text-success">{{ porcentaje_cumplimiento }}%</h3>
                 </div>
             </div>
         </div>
@@ -53,24 +61,26 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-12 col-lg-8">
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
             <div class="card shadow h-100">
-                <div class="card-header bg-primary text-white">
-                    Servicios Finalizados por Mes
+                <div class="card-header bg-success text-white">
+                    Vehículos por Estado
                 </div>
                 <div class="card-body">
-                    <canvas id="serviciosLine"></canvas>
+                    <div class="chart-container">
+                        <canvas id="vehiculosPie"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-6">
             <div class="card shadow h-100">
                 <div class="card-header bg-danger text-white">
                     Piezas con Bajo Stock
                 </div>
                 <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush piezas-bajo-stock-list">
                         {% if piezas_bajo_stock_list %}
                             {% for pieza in piezas_bajo_stock_list %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -86,14 +96,17 @@
             </div>
         </div>
     </div>
-    <div class="row g-4 mt-4">
-        <div class="col-12 col-lg-6">
+
+    <div class="row g-4">
+        <div class="col-12">
             <div class="card shadow h-100">
-                <div class="card-header bg-success text-white">
-                    Vehículos por Estado
+                <div class="card-header bg-primary text-white">
+                    Servicios Finalizados por Mes
                 </div>
-                <div class="card-body">
-                    <canvas id="vehiculosPie"></canvas>
+                <div class="card-body" style="height:340px;">
+                    <div class="chart-container" style="max-width:100%;height:300px;">
+                        <canvas id="serviciosLine"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
