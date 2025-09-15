@@ -25,7 +25,7 @@ SoftPoli es una aplicación web desarrollada en Django para la gestión integral
 
 1. **Clona el repositorio:**
    ```bash
-   git clone https://github.com/tuusuario/softpoli.git
+   git clone https://github.com/BKMS94/SoftPoli.git
    cd softpoli
 
 2. python -m venv venv
@@ -70,6 +70,6 @@ SoftPoli is a web application developed in Django for the comprehensive manageme
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/youruser/softpoli.git
+   git clone https://github.com/BKMS94/SoftPoli.git
    cd softpoli
 
