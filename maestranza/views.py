@@ -1,13 +1,15 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from grado.models import Grado
+from maestranza.utils import paginacion
 from persona.models import Persona, Tecnico
 from ubicacion.models import Unidad, SubUnidad
 from tdr.models import Requerimiento
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from vehiculo.models import Vehiculo
 from servicio.models import Servicio
@@ -155,3 +157,39 @@ def login_view(request):
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
     return render(request, "registration/login.html")
+
+
+@login_required
+@permission_required('auth.view_user', raise_exception=True)
+def usuario_lista(request):
+    usuarios = User.objects.filter(username__icontains= request.GET.get('search', '')).order_by('id')
+    usuarios = paginacion(request, usuarios)
+    return render(request, 'usuario/lista.html', {'usuarios': usuarios,
+                                                'urlindex': 'usuario_lista',
+                                                'urlcrear': 'usuario_crear'})
+
+
+@login_required
+@permission_required('auth.add_user', raise_exception=True)
+def usuario_crear(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "El usuario ya existe.")
+        else:
+            User.objects.create_user(username=username, password=password)
+            messages.success(request, "Usuario creado.")
+            return redirect('usuario_lista')
+    return render(request, 'usuario/crear.html')
+
+
+@login_required
+@permission_required('auth.delete_user', raise_exception=True)
+def usuario_eliminar(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "Usuario eliminado.")
+        return redirect('usuario_lista')
+    return render(request, 'usuario/eliminar.html', {'usuario': user})

@@ -32,5 +32,8 @@ urlpatterns = [
     path('tdr/', include('tdr.urls')),
     path('api/detalle-html/<str:tipo_objeto>/<str:pk>/', views.detalle_objeto_modal_html, name='detalle_objeto_modal_html'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('usuarios/', views.usuario_lista, name='usuario_lista'),
+    path('usuarios/crear/', views.usuario_crear, name='usuario_crear'),
+    path('usuarios/<int:pk>/eliminar/', views.usuario_eliminar, name='usuario_eliminar'),
 ]
 

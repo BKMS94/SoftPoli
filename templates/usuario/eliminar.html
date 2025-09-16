@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}
+{% block title %}Eliminar Usuario{% endblock title %}
+{% block content %}
+<div class="container py-4">
+    <h2>Eliminar Usuario</h2>
+    <p>¿Estás seguro que deseas eliminar el usuario <strong>{{ usuario.username }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'usuario_lista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock content %}
