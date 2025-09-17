@@ -1,5 +1,5 @@
 {% extends "components/tablas.html" %}
-
+{% load static %}
 {% block title %}Gestión Usuarios{% endblock title %}
 
 
@@ -20,8 +20,9 @@
                 <td>{{ usuario.is_active|yesno:"Sí,No" }}</td>
                 <td>{{ usuario.is_staff|yesno:"Sí,No" }}</td>
                 <td>
-                    <a href="{% url 'usuario_eliminar' usuario.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
+                    <a class="btn btn-danger" href="{% url 'usuario_eliminar' usuario.pk %}"
+            onclick="return confirm('¿Estás seguro de que deseas borrar este registro?');"><img
+                src="{% static 'img/delete.png' %}" alt=" "></a>
             </tr>
             {% empty %}
             <tr>

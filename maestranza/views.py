@@ -186,10 +186,8 @@ def usuario_crear(request):
 
 @login_required
 @permission_required('auth.delete_user', raise_exception=True)
-def usuario_eliminar(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    if request.method == 'POST':
-        user.delete()
-        messages.success(request, "Usuario eliminado.")
-        return redirect('usuario_lista')
-    return render(request, 'usuario/eliminar.html', {'usuario': user})
+def usuario_eliminar(request, id):
+    user = get_object_or_404(User, id=id)
+    user.delete()
+    messages.success(request, "Usuario eliminado.")
+    return redirect('usuario_lista')

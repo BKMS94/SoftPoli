@@ -38,4 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    setTimeout(function () {
+        const msgDiv = document.getElementById('django-messages');
+        if (msgDiv) {
+          msgDiv.style.transition = "opacity 0.5s";
+          msgDiv.style.opacity = 0;
+          setTimeout(() => msgDiv.remove(), 500);
+        }
+      }, 5000);
 });
+
