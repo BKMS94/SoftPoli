@@ -2,9 +2,7 @@
 
 {% block title %}Gestión de Vehículos{% endblock title %}
 
-
 {% block titabla %}Gestión de Vehículos{% endblock titabla %}
-
 
 {% block Thead %}
 <th>Placa</th>
@@ -12,21 +10,27 @@
 <th>Modelo</th>
 <th>Año</th>
 <th>Kilometraje</th>
+<th>Tipo</th>
+<th>Estado</th>
+<th>Subunidad</th>
 <th>Acciones</th>
 {% endblock Thead %}
 
 {% block tbody %}
 {% for vehiculo in vehiculos %}
 <tr>
-    <td>{{ vehiculo.placa_int}}</td>
-    <td>{{vehiculo.marca}}</td>
-    <td>{{vehiculo.modelo}}</td>
-    <td>{{vehiculo.anio}}</td>
-    <td>{{vehiculo.kilometraje}}</td>
+    <td>{{ vehiculo.placa_int }}</td>
+    <td>{{ vehiculo.marca }}</td>
+    <td>{{ vehiculo.modelo }}</td>
+    <td>{{ vehiculo.anio }}</td>
+    <td>{{ vehiculo.kilometraje }}</td>
+    <td>{{ vehiculo.get_tipo_display }}</td>
+    <td>{{ vehiculo.get_estado_vehi_display }}</td>
+    <td>{{ vehiculo.subunidad }}</td>
     {% include "includes/botones.html" with modelo=vehiculo modelomodal='vehiculo' modelo_id=vehiculo.id %}
 </tr>
 {% endfor %}
 {% endblock tbody %}
 {% block tfoot %}
-<td colspan="6">{% include "includes/pagination.html" with page=vehiculos %}</td>
+<td colspan="9">{% include "includes/pagination.html" with page=vehiculos %}</td>
 {% endblock tfoot %}

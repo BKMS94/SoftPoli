@@ -90,14 +90,26 @@ Crear Vehículos
         <div>{{form.valor}}</div>
     </div>
 </div>
-
 <div class="row">
-    <div class="col-md-12 mb-2">
+    <div class="col-md-4 mb-2">
         <div>{{form.subunidad.label}}:</div>
         <div>{{form.subunidad}}</div>
     </div>
+    <div class="col-md-4 mb-2">
+        <div>{{form.ubicacion_ino.label}}:</div>
+        <div>{{form.ubicacion_ino}}</div>
+    </div>
+    <div class="col-md-4 mb-2">
+        <div>{{form.fecha_ino.label}}:</div>
+        <div>{{form.fecha_ino}}</div>
+    </div>
 </div>
-
+<div class="row">
+    <div class="col-md-12 mb-2">
+        <div>{{form.motivo_ino.label}}:</div>
+        <div>{{form.motivo_ino}}</div>
+    </div>
+</div>
 <button class="btn btn-success" type="submit">
     {% if modo == 'editar' %}Actualizar{% else %}Guardar{% endif %}
 </button>

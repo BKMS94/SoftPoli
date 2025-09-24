@@ -6,7 +6,7 @@ class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
         fields = ['placa_int','placa_rod', 'vin', 'num_motor', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 
-                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion', 'subunidad','valor']
+                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion', 'subunidad','valor', 'motivo_ino', 'fecha_ino','ubicacion_ino']
         labels = {'anio': 'Año', 'subunidad': 'Sub Unidad Asignada'}
         widgets = {
             'placa_int': forms.TextInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe la Placa'}),
@@ -18,17 +18,23 @@ class VehiculoForm(forms.ModelForm):
             'tipo': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
             'anio': forms.NumberInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe el Año'}),
             'tipo_combustible': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
+            'procedencia': forms.TextInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe la procedencia'}),
             'kilometraje': forms.NumberInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe el kilometraje'}),
             'estado_vehi': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
             'estado_odo': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),
             'funcion': forms.Select(attrs={'class': 'form-control mb-3 mt-1'}),            
             'fecha_adquisicion': forms.DateInput(
-                attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'La fecha fin se llena al finalizar el servicio'},
+                attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'Escoje la fecha de adquisición'},
                 format='%Y-%m-%d'
             ),
-            'subunidad': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-select mb-3 mt-1'}),
+            'subunidad': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-control mb-3 mt-1'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe el valor de adquisicion'}),
-
+            'motivo_ino':forms.Textarea(attrs={'class': 'form-control-area mb-4 mt-1', 'placeholder': 'Escribe el motivo de inoperatividad', 'rows':3}),
+            'fecha_ino': forms.DateInput(
+                attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'Escoje la fecha de inoperatividad'},
+                format='%Y-%m-%d'
+            ),
+            'ubicacion_ino': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-control mb-3 mt-1'}),            
         }
 
 

@@ -25,9 +25,12 @@ TIPOS_VEHICULO_CHOICES = [
     ('TRIMOTO', 'TRIMOTO')
 ]
 
+
 ESTADOS_VEHICULO_CHOICES = [
     ('OPERATIVO', 'OPERATIVO'),
-    ('INOPERATIVO', 'INOPERATIVO'), 
+    ('INOPERATIVO', 'INOPERATIVO'),
+    ('RECUPERABLE', 'RECUPERABLE'),
+    ('IRRECUPERABLE', 'IRRECUPERABLE'), 
     ('MANTENIMIENTO', 'MANTENIMIENTO'),
 ]
 
@@ -120,6 +123,12 @@ class Vehiculo(models.Model):
         default='Gasolina', 
         verbose_name="Tipo de Combustible"
     )
+    procedencia= models.CharField(
+        null= True,
+        blank= True,
+        max_length=50,
+        verbose_name='Procedencia'
+    )
     funcion = models.CharField(
         max_length=30, 
         choices=FUNCION_VEHICULO_CHOICES,
@@ -137,6 +146,25 @@ class Vehiculo(models.Model):
         SubUnidad,
         on_delete= models.CASCADE,
         verbose_name= 'Sub Unidad Asignada'
+    )
+    motivo_ino = models.TextField(
+        blank=True,
+        null= True,
+        verbose_name='Motivo o causa de la inoperatividad'
+    )
+    fecha_ino = models.DateTimeField(
+        blank= True,
+        null= True,
+        editable=True,
+        verbose_name='Fecha de inoperatividad'
+
+    )
+    ubicacion_ino = models.ForeignKey(
+        SubUnidad, on_delete= models.CASCADE,
+        related_name='ubicacion_inoperativo',
+        verbose_name='Ubicación del vehículo inoperativo',
+        null=True,
+        blank=True
     )
     created = models.DateTimeField(
         auto_now_add=True,

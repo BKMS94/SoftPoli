@@ -16,7 +16,7 @@ class ServicioForm(ModelForm):
             'kilometraje_act':forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1'}),
             'kilometraje_diff': forms.NumberInput(attrs={'class': 'form-control mb-4 mt-1', 'readonly': True}),
             'tipo' : forms.Select(attrs={'class': 'form-control mb-4 mt-1'}),
-            'descripcion':forms.Textarea(attrs={'class': 'form-control mb-4 mt-1', 'placeholder': 'Escribe la observación', 'rows':3}),
+            'descripcion':forms.Textarea(attrs={'class': 'form-control-area mb-4 mt-1', 'placeholder': 'Escribe la observación', 'rows':3}),
             'fecha_fin': forms.DateInput(
                 attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'La fecha fin se llena al finalizar el servicio'},
                 format='%Y-%m-%d'

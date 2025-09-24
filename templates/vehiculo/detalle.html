@@ -1,99 +1,121 @@
 <div class="container-fluid">
-    <!-- Sección 1: Información General del Vehículo -->
+    <!-- Información principal del vehículo -->
     <div class="card mb-3 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0">Información General del Vehículo</h5>
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-truck text-primary me-1"></i> Información del Vehículo
+            </h5>
         </div>
         <div class="card-body">
-            <ul class="list-group list-group-flush">
+            <ul class="list-group list-group-flush mb-3">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-card-heading me-2 text-primary"></i><strong>Placa Interna:</strong></div>
+                    <span><i class="bi bi-hash text-primary me-1"></i> <strong>Placa Interna:</strong></span>
                     <span>{{ vehiculo.placa_int }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-card-heading me-2 text-primary"></i><strong>Placa Rodaje:</strong></div>
-                    <span>{{ vehiculo.placa_rod }}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-building me-2 text-primary"></i><strong>Marca:</strong></div>
+                    <span><i class="bi bi-car-front text-primary me-1"></i> <strong>Marca:</strong></span>
                     <span>{{ vehiculo.marca }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-car-front-fill me-2 text-primary"></i><strong>Modelo:</strong></div>
+                    <span><i class="bi bi-card-text text-primary me-1"></i> <strong>Modelo:</strong></span>
                     <span>{{ vehiculo.modelo }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-calendar-check-fill me-2 text-primary"></i><strong>Año:</strong></div>
+                    <span><i class="bi bi-calendar text-primary me-1"></i> <strong>Año:</strong></span>
                     <span>{{ vehiculo.anio }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-truck me-2 text-primary"></i><strong>Tipo:</strong></div>
+                    <span><i class="bi bi-speedometer2 text-primary me-1"></i> <strong>Kilometraje:</strong></span>
+                    <span>{{ vehiculo.kilometraje }} km</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-fuel-pump text-primary me-1"></i> <strong>Combustible:</strong></span>
+                    <span>{{ vehiculo.get_tipo_combustible_display }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-gear text-primary me-1"></i> <strong>Tipo:</strong></span>
                     <span>{{ vehiculo.get_tipo_display }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-speedometer me-2 text-primary"></i><strong>Kilometraje:</strong></div>
-                    <span>{{ vehiculo.kilometraje }} km</span>
+                    <span><i class="bi bi-geo-alt text-primary me-1"></i> <strong>Subunidad:</strong></span>
+                    <span>{{ vehiculo.subunidad }}</span>
                 </li>
-
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clipboard-check text-primary me-1"></i> <strong>Estado Vehículo:</strong></span>
+                    <span>{{ vehiculo.get_estado_vehi_display }}</span>
+                </li>
             </ul>
-        </div>
+            </div>
     </div>
-
-    <!-- Sección 2: Identificación Técnica (Colapsable) -->
-    <div class="card mb-3 shadow-sm">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center" style="cursor: pointer;"
-            data-bs-toggle="collapse" data-bs-target="#identificacionCollapse" aria-expanded="false"
-            aria-controls="identificacionCollapse">
-            <h5 class="mb-0">Detalles</h5>
-            <i class="bi bi-chevron-down"></i>
+            <!-- Collapse para datos secundarios -->
+            <div class="card shadow-sm mb-3">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center" 
+             style="cursor: pointer;" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#serviciosCollapse" 
+             aria-expanded="false" 
+             aria-controls="serviciosCollapse">
+            <h5 class="mb-0">Servicios Propuestos</h5>
+            <div class="d-flex align-items-center">
+                {% if requerimiento.detalles_servicio.all %}
+                    <span class="badge bg-primary me-1 me-2">{{ requerimiento.detalles_servicio.count }} servicios</span>
+                {% endif %}
+                <i class="bi bi-chevron-down"></i>
+            </div>
         </div>
-        <div class="collapse" id="identificacionCollapse">
-            <div class="card-body">
+        <div class="collapse show" id="serviciosCollapse">
+            <div class="card-body" style="max-height: 200px; overflow-y: auto;">
                 <ul class="list-group list-group-flush">
-                    {% if vehiculo.vin %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-hash me-2 text-primary"></i><strong>Nº de Serie (VIN):</strong></div>
+                        <span><i class="bi bi-hash text-primary me-1"></i> <strong>Placa Rodaje:</strong></span>
+                        <span>{{ vehiculo.placa_rod }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-123 text-primary me-1"></i> <strong>VIN:</strong></span>
                         <span>{{ vehiculo.vin }}</span>
                     </li>
-                    {% endif %}
-                    {% if vehiculo.num_motor %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-engine me-2 text-primary"></i><strong>Nº de Motor:</strong></div>
+                        <span><i class="bi bi-gear-wide-connected text-primary me-1"></i> <strong>N° Motor:</strong></span>
                         <span>{{ vehiculo.num_motor }}</span>
                     </li>
-                    {% endif %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-activity me-2 text-primary"></i><strong>Estado Vehículo:</strong></div>
-                        <span>{{ vehiculo.estado_vehi }}</span>
+                        <span><i class="bi bi-clipboard2-pulse text-primary me-1"></i> <strong>Estado Odómetro:</strong></span>
+                        <span>{{ vehiculo.get_estado_odo_display }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-activity me-2 text-primary"></i><strong>Estado Odómetro:</strong></div>
-                        <span>{{ vehiculo.estado_odo }}</span>
+                        <span><i class="bi bi-person-badge text-primary me-1"></i> <strong>Función Policial:</strong></span>
+                        <span>{{ vehiculo.get_funcion_display }}</span>
                     </li>
-                    {% if vehiculo.tipo_combustible %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-fuel-pump-fill me-2 text-primary"></i><strong>Combustible:</strong></div>
-                        <span>{{ vehiculo.get_tipo_combustible_display }}</span>
-                    </li>
-                    {% endif %}
-                    {% if vehiculo.valor %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-currency-dollar me-2 text-primary"></i><strong>Valor:</strong></div>
+                        <span><i class="bi bi-currency-dollar text-primary me-1"></i> <strong>Valor:</strong></span>
                         <span>S/ {{ vehiculo.valor|floatformat:2 }}</span>
                     </li>
-                    {% endif %}
-                    {% if vehiculo.fecha_adquisicion %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-calendar-plus-fill me-2 text-primary"></i><strong>Fecha de
-                                Adquisición:</strong></div>
+                        <span><i class="bi bi-calendar-event text-primary me-1"></i> <strong>Fecha de Adquisición:</strong></span>
                         <span>{{ vehiculo.fecha_adquisicion|date:"d/m/Y" }}</span>
                     </li>
-                    {% endif %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-clock-history me-2 text-primary"></i><strong>Registrado:</strong></div>
+                        <span><i class="bi bi-geo text-primary me-1"></i> <strong>Ubicación Inoperativo:</strong></span>
+                        <span>{{ vehiculo.ubicacion_ino }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-exclamation-triangle text-primary me-1"></i> <strong>Motivo Inoperatividad:</strong></span>
+                        <span>{{ vehiculo.motivo_ino }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-calendar-x text-primary me-1"></i> <strong>Fecha Inoperatividad:</strong></span>
+                        <span>{{ vehiculo.fecha_ino|date:"d/m/Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-flag text-primary me-1"></i> <strong>Procedencia:</strong></span>
+                        <span>{{ vehiculo.procedencia }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-clock-history text-primary me-1"></i> <strong>Registrado:</strong></span>
                         <span>{{ vehiculo.created|date:"d/m/Y H:i" }}</span>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
+</div>

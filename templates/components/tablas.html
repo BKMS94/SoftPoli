@@ -5,30 +5,30 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="row mb-2">
+<!-- <div class="container"> -->
+    <div class="row m-2">
         <h2 class="crud-title">{% block titabla %}{% endblock titabla %}</h2>
     </div>
-    <div class="row">
+    <div class="row m-2">
         <div class="col-lg-8 col-xl-8 col-md-7 col-sm-5 mt-4">
             <form action="{% url urlindex %}" method="get" autocomplete="off">
 
                 <input class="form-control w-100 w-md-25" type="search" name="search" placeholder="Buscar + Enter....">
 
         </div>
-        <div class="col-lg-4 col-xl-4 col-md-5 col-sm-7 align-items-space mt-4 ">
+        <div class="col-lg-4 col-xl-4 col-md-5 col-sm-7 align-items-space  ">
             <!-- <input class="btn btn-info px-4" type="submit" value="{% static 'img/buscar.png' %}"> -->
-            <a href="{% url urlcrear %}" class="btn btn-success btn-sm px-4 ms-4"><img src="{% static 'img/add.png' %}"
+            <a href="{% url urlcrear %}" class="btn btn-success btn-sm px-4 ms-4 mt-4"><img src="{% static 'img/add.png' %}"
                     alt=" "></a>
         </div>
 
         </form>
     </div>
 
-    <div class="mt-4 row">
+    <div class="m-2 row">
         <div class="col-12 col-lg-12 my-4 mb-lg-0">
-            <div class="tab-content">
-                <table class="table table-hover">
+            <div class="tab-content ">
+                <table class="table table-hover border ">
                     <thead>
                         <tr>
                             {% block Thead %}{% endblock Thead %}
@@ -46,6 +46,6 @@
             </div>
         </div>
     </div>
-</div>
+<!-- </div> -->
 
 {% endblock content %}
