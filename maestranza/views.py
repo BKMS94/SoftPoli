@@ -44,7 +44,7 @@ def index(request):
     )
     vehiculos_labels = []
     vehiculos_data = []
-    for estado in ["OPERATIVO", "INOPERATIVO", "MANTENIMIENTO"]:
+    for estado in ["OPERATIVO", "INOPERATIVO",'INOP. IRRECUP.','INOP. RECUP.','RECUPERABLE','IRRECUPERABLE', "MANTENIMIENTO"]:
         vehiculos_labels.append(estado.replace("_", " ").capitalize())
         total = next(
             (

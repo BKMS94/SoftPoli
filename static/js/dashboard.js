@@ -44,7 +44,7 @@ new Chart(document.getElementById('vehiculosPie'), {
         labels: vehiculosLabels,
         datasets: [{
             data: vehiculosData,
-            backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+            backgroundColor: ['#198754', '#dc3545', '#6c757d','#fd7e14', '#ffc107', '#212529', '#0d6efd'],
         }]
     },
     options: {

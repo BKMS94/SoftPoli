@@ -1,13 +1,13 @@
 <div class="pagination justify-content-center ">
     <span class="mx-auto step_links nav">
         {% if page.has_previous %}
-        <a class="nav-link" href="?page={{ page.previous_page_number }}">Atras</a>
+        <a class="nav-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page.previous_page_number }}">Atras</a>
         {% endif %}
         <span class="current mt-2 ">
             Pagina {{page.number}} de {{page.paginator.num_pages}}.
         </span>
         {% if page.has_next %}
-        <a class="nav-link" href="?page={{ page.next_page_number }}">Siguiente </a>
+        <a class="nav-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page.next_page_number }}">Siguiente </a>
         {% endif %}
     </span>
 </div>

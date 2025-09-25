@@ -29,6 +29,8 @@ TIPOS_VEHICULO_CHOICES = [
 ESTADOS_VEHICULO_CHOICES = [
     ('OPERATIVO', 'OPERATIVO'),
     ('INOPERATIVO', 'INOPERATIVO'),
+    ('INOP. IRRECUP.', 'INOP. IRRECUP.'),
+    ('INOP. RECUP.', 'INOP. RECUP.'), 
     ('RECUPERABLE', 'RECUPERABLE'),
     ('IRRECUPERABLE', 'IRRECUPERABLE'), 
     ('MANTENIMIENTO', 'MANTENIMIENTO'),
@@ -64,7 +66,9 @@ class Vehiculo(models.Model):
     placa_rod = models.CharField(
         max_length=8,
         unique=True,
-        verbose_name="Placa Rodaje"
+        verbose_name="Placa Rodaje",
+        null=True,
+        blank=True
     )
     vin = models.CharField(
         max_length= 20,
@@ -73,6 +77,8 @@ class Vehiculo(models.Model):
     )
     num_motor = models.CharField(
         max_length= 25,
+        blank=False,
+        null=False,
         verbose_name= 'N° de motor'
     )
     marca = models.CharField(
@@ -84,13 +90,18 @@ class Vehiculo(models.Model):
         verbose_name="Modelo"
     )
     anio = models.PositiveIntegerField(
-        verbose_name="Año"
+        verbose_name="Año",
+        blank=False,
+        null=False,
     )
     tipo = models.CharField(
         max_length=30, 
         choices=TIPOS_VEHICULO_CHOICES,
-        default='Sedan',
-        verbose_name='Tipo'
+        default= '',
+        verbose_name='Tipo',
+        blank=False,
+        null=False,
+
     )
     kilometraje = models.DecimalField(
         max_digits= 18,
@@ -132,7 +143,7 @@ class Vehiculo(models.Model):
     funcion = models.CharField(
         max_length=30, 
         choices=FUNCION_VEHICULO_CHOICES,
-        default='ADMINISTRATIVO', 
+        default='', 
         verbose_name='Función policial'
     )
     valor = models.DecimalField(
@@ -145,7 +156,9 @@ class Vehiculo(models.Model):
     subunidad = models.ForeignKey(
         SubUnidad,
         on_delete= models.CASCADE,
-        verbose_name= 'Sub Unidad Asignada'
+        verbose_name= 'Sub Unidad Asignada',
+        null=True,
+        blank=True
     )
     motivo_ino = models.TextField(
         blank=True,
@@ -157,7 +170,6 @@ class Vehiculo(models.Model):
         null= True,
         editable=True,
         verbose_name='Fecha de inoperatividad'
-
     )
     ubicacion_ino = models.ForeignKey(
         SubUnidad, on_delete= models.CASCADE,
@@ -165,6 +177,17 @@ class Vehiculo(models.Model):
         verbose_name='Ubicación del vehículo inoperativo',
         null=True,
         blank=True
+    )
+    resolucion_baja = models.CharField(
+        null= True,
+        blank= True,
+        max_length=30,
+        verbose_name='Resolución de la Baja'
+    )
+    fecha_baja = models.DateTimeField(
+        blank=True,
+        null= True,
+        verbose_name= 'Fecha de la Baja'
     )
     created = models.DateTimeField(
         auto_now_add=True,

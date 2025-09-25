@@ -8,4 +8,5 @@ urlpatterns=[
     path('editar/<int:id>/', views.vehiculo_gestion, name='vehiculo_editar'),
     path('borrar/<int:id>/', views.vehiculo_borrar, name='vehiculo_borrar'), 
     path('kilometraje/<int:id>/', views.vehiculo_kilometraje, name='vehiculo-kilometraje'),
+    path('importar/', views.vehiculo_importar, name='vehiculo_importar'), 
 ]

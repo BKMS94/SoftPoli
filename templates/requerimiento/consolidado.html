@@ -19,7 +19,7 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th><input type="checkbox" id="select-all"></th>
                             <th>ID</th>
                             <th>Vehículo</th>
                             <th>Informe Técnico</th>
@@ -30,7 +30,7 @@
                         {% for tdr in requerimientos %}
                         <tr>
                             <td>
-                                <input type="checkbox" name="ids" value="{{ tdr.id }}">
+                                <input type="checkbox" class="select-item" name="ids" value="{{ tdr.id }}">
                             </td>
                             <td>{{ tdr.id }}</td>
                             <td>{{ tdr.vehiculo }}</td>
@@ -54,4 +54,6 @@
         </div>
     </div>
 </form>
+
+
 {% endblock %}

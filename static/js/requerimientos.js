@@ -210,4 +210,27 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    // === CHECKBOX SELECCIONAR TODOS ===
+    const selectAllCheckbox = document.getElementById('select-all');
+    const itemCheckboxes = document.querySelectorAll('.select-item');
+
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            itemCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        itemCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                } else {
+                    const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
+                }
+            });
+        });
+    }
 });

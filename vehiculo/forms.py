@@ -5,8 +5,8 @@ from dal import  autocomplete
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        fields = ['placa_int','placa_rod', 'vin', 'num_motor', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 
-                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion', 'subunidad','valor', 'motivo_ino', 'fecha_ino','ubicacion_ino']
+        fields = ['placa_int','placa_rod', 'vin', 'num_motor', 'marca', 'modelo', 'tipo', 'anio', 'tipo_combustible', 'procedencia',
+                  'kilometraje', 'estado_vehi', 'estado_odo','funcion','fecha_adquisicion', 'subunidad','valor', 'motivo_ino', 'fecha_ino','ubicacion_ino','resolucion_baja','fecha_baja']
         labels = {'anio': 'Año', 'subunidad': 'Sub Unidad Asignada'}
         widgets = {
             'placa_int': forms.TextInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe la Placa'}),
@@ -34,7 +34,12 @@ class VehiculoForm(forms.ModelForm):
                 attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'Escoje la fecha de inoperatividad'},
                 format='%Y-%m-%d'
             ),
-            'ubicacion_ino': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-control mb-3 mt-1'}),            
+            'ubicacion_ino': autocomplete.ModelSelect2(url='subunidad-autocomplete',attrs={'class': 'form-control mb-3 mt-1'}),  
+            'resolucion_baja': forms.TextInput(attrs={'class': 'form-control mb-3 mt-1', 'placeholder': 'Escribe la resolución de la baja'}),
+            'fecha_baja': forms.DateInput(
+                attrs={'class': 'form-control mb-4 mt-1', 'type':'date', 'placeholder': 'Escoje la fecha de baja'},
+                format='%Y-%m-%d'
+            ),         
         }
 
 
@@ -49,3 +54,6 @@ class VehiculoForm(forms.ModelForm):
         if km < 0:
             raise forms.ValidationError("El kilometraje no puede ser negativo.")
         return km
+
+class VehiculoImportForm(forms.Form):
+    archivo = forms.FileField(label="Archivo Excel")
