@@ -9,11 +9,13 @@ TIPOS_VEHICULO_CHOICES = [
     ('AMBULANCIA', 'AMBULANCIA'),
     ('AUTOMOVIL', 'AUTOMOVIL'),
     ('AUTOMOVIL SEDAN', 'AUTOMOVIL SEDAN'),
+    ('BOTE','BOTE'),
     ('CAMION BARANDA', 'CAMION BARANDA'),
-    ('CAMIONETA  FUNERARIO', 'CAMIONETA  FUNERARIO'),
-    ('CAMIONETA  PANEL', 'CAMIONETA  PANEL'),
-    ('CAMIONETA  PICK UP', 'CAMIONETA  PICK UP'),
-    ('CAMIONETA  SUV', 'CAMIONETA  SUV'),
+    ('CAMIONETA','CAMIONETA'),
+    ('CAMIONETA FUNERARIO', 'CAMIONETA FUNERARIO'),
+    ('CAMIONETA PANEL', 'CAMIONETA PANEL'),
+    ('CAMIONETA PICK UP', 'CAMIONETA PICK UP'),
+    ('CAMIONETA SUV', 'CAMIONETA SUV'),
     ('MINIBUS', 'MINIBUS'),
     ('MICROBUS', 'MICROBUS'),
     ('MOTO ACUATICA', 'MOTO ACUATICA'),
@@ -59,24 +61,24 @@ FUNCION_VEHICULO_CHOICES = [
 
 class Vehiculo(models.Model):
     placa_int = models.CharField(
-        max_length=8,
+        max_length=10,
         unique=True,
         verbose_name="Placa Interna"
     )
     placa_rod = models.CharField(
-        max_length=8,
+        max_length=10,
         unique=True,
         verbose_name="Placa Rodaje",
         null=True,
         blank=True
     )
     vin = models.CharField(
-        max_length= 20,
+        max_length= 30,
         unique=True,
         verbose_name= 'N° de serie'
     )
     num_motor = models.CharField(
-        max_length= 25,
+        max_length= 30,
         blank=False,
         null=False,
         verbose_name= 'N° de motor'

@@ -38,10 +38,10 @@ class SubUnidad(models.Model):
         blank=True,
         null=True
     )
-    telefono_contacto = models.PositiveIntegerField(
-        default=000000000,
+    telefono_contacto = models.CharField(
         blank=True,
-        null=True
+        null=True,
+        verbose_name= 'Teléfono de contacto.',
     )
     responsable = models.ForeignKey(
         Persona, on_delete=models.CASCADE,
