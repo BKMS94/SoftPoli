@@ -6,7 +6,7 @@ from django.urls import reverse
 class Grado(models.Model):
     nombre = models.CharField(max_length=50, blank=False, null=False, verbose_name=' Nombre del Grado', unique= True)
     abreviatura = models.CharField(max_length= 10, unique=True, verbose_name= 'Abreviatura', blank= True, null= True)
-    orden = models.CharField(default= 0, verbose_name='Orden Jerárquico')
+    orden = models.CharField(max_length=2, verbose_name='Orden Jerárquico')
 
     class Meta:
         verbose_name = 'Grado'

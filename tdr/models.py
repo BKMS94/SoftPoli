@@ -14,10 +14,8 @@ class DescripcionServicio(models.Model):
     Modelo para almacenar descripciones de servicios únicas y predefinidas,
     actuando como un catálogo.
     """
-    descripcion_servicio = models.TextField(
-        unique=True,
-        verbose_name="Descripción del Servicio"
-    )
+    descripcion_servicio = models.TextField()  
+
 
     class Meta:
         verbose_name = "Descripción de Servicio (Catálogo)"

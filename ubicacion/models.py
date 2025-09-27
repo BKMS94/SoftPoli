@@ -5,7 +5,7 @@ from persona.models import Persona
 
 class Unidad(models.Model):
     nombre = models.CharField(
-        max_length= 50,
+        max_length= 100,
         verbose_name= 'Nombre de la Sub Unidad'
     )
 
@@ -29,7 +29,7 @@ class Unidad(models.Model):
 class SubUnidad(models.Model):
 
     nombre = models.CharField(
-        max_length= 50,
+        max_length= 100,
         verbose_name= 'Nombre de la Sub Unidad'
     )
     direccion = models.CharField(
@@ -39,6 +39,7 @@ class SubUnidad(models.Model):
         null=True
     )
     telefono_contacto = models.CharField(
+        max_length= 12,
         blank=True,
         null=True,
         verbose_name= 'Teléfono de contacto.',

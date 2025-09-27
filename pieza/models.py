@@ -48,6 +48,7 @@ class Pieza(models.Model):
 
 class PiezaTDR(models.Model):
     descripcion_pieza = models.CharField(
+        max_length= 200,
         unique=True,
         verbose_name= 'Nombre Pieza'
     )
